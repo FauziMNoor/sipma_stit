@@ -2,9 +2,47 @@
 
 import { Icon } from "@iconify/react";
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+interface DashboardStats {
+  totalMahasiswa: number;
+  totalKegiatan: number;
+  pendingVerifikasi: number;
+  totalPoin: number;
+}
 
 export function DashboardAdmin() {
   const router = useRouter();
+  const [stats, setStats] = useState<DashboardStats>({
+    totalMahasiswa: 0,
+    totalKegiatan: 0,
+    pendingVerifikasi: 0,
+    totalPoin: 0,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/dashboard/stats', {
+        credentials: 'include',
+      });
+      const result = await response.json();
+      if (result.success) {
+        setStats(result.data);
+      } else {
+        console.error('Error fetching stats:', result.error);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-background">
@@ -17,57 +55,84 @@ export function DashboardAdmin() {
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center size-11 rounded-xl bg-primary/10">
-                <Icon icon="solar:users-group-two-rounded-bold" className="size-5 text-primary" />
+        {/* Statistics Cards */}
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border animate-pulse">
+                <div className="flex items-center gap-3">
+                  <div className="size-11 rounded-xl bg-muted"></div>
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="h-3 bg-muted rounded w-20"></div>
+                    <div className="h-5 bg-muted rounded w-16"></div>
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground">Total Mahasiswa</p>
-                <p className="text-lg font-bold text-foreground font-heading">1,248</p>
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center size-11 rounded-xl bg-primary/10">
+                  <Icon icon="solar:users-group-two-rounded-bold" className="size-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground">Total Mahasiswa</p>
+                  <p className="text-lg font-bold text-foreground font-heading">
+                    {stats.totalMahasiswa.toLocaleString('id-ID')}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center size-11 rounded-xl bg-secondary/10">
-                <Icon icon="solar:calendar-bold" className="size-5 text-secondary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground">Total Kegiatan</p>
-                <p className="text-lg font-bold text-foreground font-heading">342</p>
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center size-11 rounded-xl bg-secondary/10">
+                  <Icon icon="solar:calendar-bold" className="size-5 text-secondary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground">Total Kegiatan</p>
+                  <p className="text-lg font-bold text-foreground font-heading">
+                    {stats.totalKegiatan.toLocaleString('id-ID')}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center size-11 rounded-xl bg-accent/20">
-                <Icon icon="solar:clock-circle-bold" className="size-5 text-accent" />
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center size-11 rounded-xl bg-accent/20">
+                  <Icon icon="solar:clock-circle-bold" className="size-5 text-accent" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground">Pengajuan Pending</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-lg font-bold text-foreground font-heading">
+                      {stats.pendingVerifikasi.toLocaleString('id-ID')}
+                    </p>
+                    {stats.pendingVerifikasi > 0 && (
+                      <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-accent text-accent-foreground">
+                        Pending
+                      </span>
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground">Pengajuan Pending</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg font-bold text-foreground font-heading">28</p>
-                  <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-accent text-accent-foreground">
-                    Pending
-                  </span>
+            </div>
+            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center justify-center size-11 rounded-xl bg-chart-2/10">
+                  <Icon icon="solar:medal-star-bold" className="size-5 text-chart-2" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs text-muted-foreground">Total Poin</p>
+                  <p className="text-lg font-bold text-foreground font-heading">
+                    {stats.totalPoin.toLocaleString('id-ID')}
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center size-11 rounded-xl bg-chart-2/10">
-                <Icon icon="solar:medal-star-bold" className="size-5 text-chart-2" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground">Total Poin</p>
-                <p className="text-lg font-bold text-foreground font-heading">45,620</p>
-              </div>
-            </div>
-          </div>
-        </div>
+        )}
         <div>
           <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Menu Manajemen</h3>
           <div className="grid grid-cols-2 gap-4">
@@ -82,30 +147,39 @@ export function DashboardAdmin() {
                 <p className="text-sm font-semibold text-foreground">Kelola Mahasiswa</p>
               </div>
             </button>
-            <div className="bg-card rounded-2xl p-6 shadow-md border border-border">
+            <button
+              onClick={() => router.push('/admin/kelola-kegiatan')}
+              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+            >
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-secondary/10">
                   <Icon icon="solar:clipboard-list-bold" className="size-8 text-secondary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Kelola Kegiatan</p>
               </div>
-            </div>
-            <div className="bg-card rounded-2xl p-6 shadow-md border border-border">
+            </button>
+            <button
+              onClick={() => router.push('/admin/verifikasi-pengajuan')}
+              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+            >
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-accent/20">
                   <Icon icon="solar:check-circle-bold" className="size-8 text-accent" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Verifikasi Semua</p>
               </div>
-            </div>
-            <div className="bg-card rounded-2xl p-6 shadow-md border border-border">
+            </button>
+            <button
+              onClick={() => router.push('/admin/laporan-statistik')}
+              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+            >
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-chart-2/10">
                   <Icon icon="solar:chart-bold" className="size-8 text-chart-2" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Laporan & Statistik</p>
               </div>
-            </div>
+            </button>
             <div className="bg-card rounded-2xl p-6 shadow-md border border-border">
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-chart-4/10">

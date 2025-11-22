@@ -299,7 +299,11 @@ export function PengaturanSistem() {
       {/* Header */}
       <div className="px-6 py-5 bg-card border-b border-border">
         <div className="flex items-center justify-between">
-          <button onClick={() => router.back()} className="flex items-center justify-center size-11 rounded-xl bg-muted">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center justify-center size-11 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer"
+            type="button"
+          >
             <Icon icon="solar:arrow-left-linear" className="size-6 text-primary" />
           </button>
           <h1 className="text-xl font-bold text-foreground font-heading">Pengaturan Sistem</h1>
