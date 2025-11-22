@@ -1,36 +1,121 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🎓 SIPMA - Sistem Poin Mahasiswa STIT
 
-## Getting Started
+Sistem Poin Mahasiswa (SIPMA) adalah aplikasi web modern untuk mencatat dan mengelola aktivitas mahasiswa STIT Riyadhusssholihiin, termasuk poin positif dan negatif, dengan sistem verifikasi multi-level.
 
-First, run the development server:
+## ✨ Features
+
+- 🔐 **Authentication** - JWT-based dengan bcrypt password hashing
+- 👥 **Multi-Role System** - Mahasiswa, Dosen PA, Musyrif, Waket 3, Admin
+- 📊 **Dashboard** - Statistik poin, progress kelulusan, charts
+- ✅ **Verifikasi Bertingkat** - Approval workflow untuk poin aktivitas
+- 🏆 **Leaderboard** - Ranking mahasiswa berdasarkan poin
+- 📱 **Mobile-First** - Responsive design untuk semua device
+- 🎨 **Modern UI** - Clean & elegant dengan Tailwind CSS v4
+
+## 🚀 Quick Start
+
+### 1. Install Dependencies
+
+```bash
+npm install
+```
+
+### 2. Setup Database
+
+Buka [Supabase Dashboard](https://supabase.com/dashboard) → SQL Editor, lalu jalankan:
+
+```sql
+-- Copy paste isi file scripts/seed-users.sql
+```
+
+### 3. Start Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Open Browser
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Buka http://localhost:3000 dan login dengan:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Staff:**
+- **Email:** admin@stit.ac.id
+- **Password:** password123
 
-## Learn More
+**Mahasiswa:**
+- **NIM:** 2024001
+- **Password:** password123
 
-To learn more about Next.js, take a look at the following resources:
+## 📝 Test Credentials
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### **Staff (Login dengan Email)**
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | admin@stit.ac.id | password123 |
+| Waket 3 | waket3@stit.ac.id | password123 |
+| Dosen PA | dosen.pa@stit.ac.id | password123 |
+| Musyrif | musyrif@stit.ac.id | password123 |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### **Mahasiswa (Login dengan NIM)**
+| Nama | NIM | Password |
+|------|-----|----------|
+| Ahmad Zaki | 2024001 | password123 |
+| Fatimah Azzahra | 2024002 | password123 |
 
-## Deploy on Vercel
+## 🛠️ Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework:** Next.js 16 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **Database:** Supabase (PostgreSQL)
+- **Auth:** Custom JWT + bcrypt
+- **State:** Zustand
+- **Validation:** Zod
+- **Icons:** Lucide React
+- **Charts:** Recharts
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📁 Project Structure
+
+```
+sipma/
+├── src/
+│   ├── app/              # Next.js pages & API routes
+│   ├── components/       # React components
+│   ├── hooks/            # Custom hooks
+│   ├── lib/              # Core utilities
+│   ├── store/            # State management
+│   └── types/            # TypeScript types
+├── scripts/              # Database seeds & utilities
+└── public/               # Static assets
+```
+
+## 📊 Development Progress
+
+Lihat [PROGRESS.md](./PROGRESS.md) untuk detail lengkap progress development.
+
+**Current Status:** ✅ FASE 1 Complete | 🚀 Ready for FASE 2
+
+## 🔐 Security
+
+- JWT tokens stored in httpOnly cookies
+- Password hashing dengan bcrypt (10 rounds)
+- Row-level security (RLS) di Supabase
+- Input validation dengan Zod
+- Role-based access control
+
+## 📖 Documentation
+
+- [PROGRESS.md](./PROGRESS.md) - Development progress & roadmap
+- [scripts/seed-users.sql](./scripts/seed-users.sql) - Database seed file
+
+## 🤝 Contributing
+
+Untuk development guidelines dan best practices, lihat dokumentasi di folder `docs/` (coming soon).
+
+## 📄 License
+
+Private project untuk STIT Riyadhusssholihiin.
+
+---
+
+**Developed with ❤️ for STIT Riyadhusssholihiin**
