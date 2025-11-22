@@ -42,7 +42,7 @@ export async function PUT(
     console.log('📝 PUT /api/mahasiswa/[id] - ID:', id);
     const body = await request.json();
     console.log('📝 PUT /api/mahasiswa/[id] - Body:', body);
-    const { nim, nama, prodi, angkatan, semester, password, foto, is_active } = body;
+    const { nim, nama, prodi, angkatan, semester, password, foto, is_active, tahun_ajaran_masuk } = body;
 
     // Validate required fields
     if (!nim || !nama || !prodi || !angkatan || !semester) {
@@ -61,6 +61,11 @@ export async function PUT(
       semester: typeof semester === 'number' ? semester : parseInt(semester),
       is_active: is_active !== undefined ? is_active : true,
     };
+
+    // Update tahun_ajaran_masuk if provided
+    if (tahun_ajaran_masuk) {
+      updateData.tahun_ajaran_masuk = tahun_ajaran_masuk;
+    }
 
     // Update foto if provided
     if (foto !== undefined) {

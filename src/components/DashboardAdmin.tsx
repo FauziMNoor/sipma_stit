@@ -114,14 +114,14 @@ export function DashboardAdmin() {
                 <p className="text-sm font-semibold text-foreground">Kelola Pengguna</p>
               </div>
             </div>
-            <div className="bg-card rounded-2xl p-6 shadow-md border border-border">
+            <button onClick={() => router.push('/admin/pengaturan-sistem')} className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow">
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-muted">
                   <Icon icon="solar:settings-bold" className="size-8 text-primary" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Pengaturan Sistem</p>
               </div>
-            </div>
+            </button>
           </div>
         </div>
       </div>

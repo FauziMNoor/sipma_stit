@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nim, nama, prodi, angkatan, semester, password, foto } = body;
+    const { nim, nama, prodi, angkatan, semester, password, foto, tahun_ajaran_masuk } = body;
 
     // Validation
     if (!nim || !nama || !prodi || !angkatan || !semester || !password) {
@@ -54,6 +54,19 @@ export async function POST(request: NextRequest) {
         { success: false, error: 'Semua field wajib diisi' },
         { status: 400 }
       );
+    }
+
+    // Auto-generate tahun_ajaran_masuk if not provided
+    let tahunAjaranMasuk = tahun_ajaran_masuk;
+    if (!tahunAjaranMasuk) {
+      // Get from system settings or calculate from angkatan
+      const { data: settingData } = await supabase
+        .from('system_settings')
+        .select('setting_value')
+        .eq('setting_key', 'tahun_ajaran_aktif')
+        .single();
+
+      tahunAjaranMasuk = settingData?.setting_value || `${angkatan}/${parseInt(angkatan) + 1}`;
     }
 
     // Check if NIM already exists
@@ -82,6 +95,7 @@ export async function POST(request: NextRequest) {
         prodi,
         angkatan: typeof angkatan === 'number' ? angkatan : parseInt(angkatan),
         semester: typeof semester === 'number' ? semester : parseInt(semester),
+        tahun_ajaran_masuk: tahunAjaranMasuk,
         password: hashedPassword,
         foto: foto || null,
         is_active: true,

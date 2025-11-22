@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       // Skip empty rows
       if (!row || row.every(col => !col || col === '')) continue;
 
-      const [nim, nama, prodi, angkatan, semester, password] = row.map(col =>
+      const [nim, nama, prodi, angkatan, semester, tahun_ajaran_masuk, password] = row.map(col =>
         typeof col === 'string' ? col.trim() : String(col || '').trim()
       );
 
@@ -97,6 +97,19 @@ export async function POST(request: NextRequest) {
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Auto-generate tahun_ajaran_masuk if not provided
+        let finalTahunAjaranMasuk = tahun_ajaran_masuk;
+        if (!finalTahunAjaranMasuk || finalTahunAjaranMasuk === '') {
+          // Get from system settings or calculate from angkatan
+          const { data: settingData } = await supabase
+            .from('system_settings')
+            .select('setting_value')
+            .eq('setting_key', 'tahun_ajaran_aktif')
+            .single();
+
+          finalTahunAjaranMasuk = settingData?.setting_value || `${angkatan}/${parseInt(angkatan) + 1}`;
+        }
+
         // Insert mahasiswa
         const { error } = await supabase
           .from('mahasiswa')
@@ -106,6 +119,7 @@ export async function POST(request: NextRequest) {
             prodi,
             angkatan: parseInt(angkatan),
             semester: parseInt(semester),
+            tahun_ajaran_masuk: finalTahunAjaranMasuk,
             password: hashedPassword,
             is_active: true,
           });

@@ -11,6 +11,7 @@ nama: string;
 prodi: string;
 angkatan: number;
 semester: number;
+tahun_ajaran_masuk: string;
 foto: string | null;
 is_active: boolean;
 }
@@ -31,6 +32,7 @@ nama: '',
 prodi: '',
 angkatan: new Date().getFullYear(),
 semester: 1,
+tahun_ajaran_masuk: '',
 password: '',
 foto: null as File | null,
 fotoUrl: '',
@@ -38,6 +40,7 @@ fotoUrl: '',
 const [showImportModal, setShowImportModal] = useState(false);
 const [importFile, setImportFile] = useState<File | null>(null);
 const [uploading, setUploading] = useState(false);
+const [isSubmitting, setIsSubmitting] = useState(false);
 
 useEffect(() => {
 fetchMahasiswa();
@@ -62,13 +65,34 @@ setLoading(false);
 };
 
 const handleAdd = () => {
-setFormData({ nim: '', nama: '', prodi: '', angkatan: new Date().getFullYear(), semester: 1, password: '', foto: null, fotoUrl: '' });
+const currentYear = new Date().getFullYear();
+setFormData({
+  nim: '',
+  nama: '',
+  prodi: '',
+  angkatan: currentYear,
+  semester: 1,
+  tahun_ajaran_masuk: `${currentYear}/${currentYear + 1}`,
+  password: '',
+  foto: null,
+  fotoUrl: ''
+});
 setShowAddModal(true);
 };
 
 const handleEdit = (mahasiswa: Mahasiswa) => {
 setSelectedMahasiswa(mahasiswa);
-setFormData({ nim: mahasiswa.nim, nama: mahasiswa.nama, prodi: mahasiswa.prodi, angkatan: mahasiswa.angkatan, semester: mahasiswa.semester, password: '', foto: null, fotoUrl: mahasiswa.foto || '' });
+setFormData({
+  nim: mahasiswa.nim,
+  nama: mahasiswa.nama,
+  prodi: mahasiswa.prodi,
+  angkatan: mahasiswa.angkatan,
+  semester: mahasiswa.semester,
+  tahun_ajaran_masuk: mahasiswa.tahun_ajaran_masuk || `${mahasiswa.angkatan}/${mahasiswa.angkatan + 1}`,
+  password: '',
+  foto: null,
+  fotoUrl: mahasiswa.foto || ''
+});
 setShowEditModal(true);
 };
 
@@ -114,6 +138,7 @@ setShowDeleteModal(true);
 };
 
 const submitAdd = async () => {
+setIsSubmitting(true);
 try {
 let fotoUrl = '';
 if (formData.foto) {
@@ -131,6 +156,8 @@ nim: formData.nim,
 nama: formData.nama,
 prodi: formData.prodi,
 angkatan: formData.angkatan,
+semester: formData.semester,
+tahun_ajaran_masuk: formData.tahun_ajaran_masuk,
 password: formData.password,
 foto: fotoUrl || null,
 }),
@@ -139,6 +166,18 @@ const result = await response.json();
 if (result.success) {
 alert('Mahasiswa berhasil ditambahkan');
 setShowAddModal(false);
+// Reset form data
+setFormData({
+  nim: '',
+  nama: '',
+  prodi: '',
+  angkatan: 2024,
+  semester: 1,
+  tahun_ajaran_masuk: '2024/2025',
+  password: '',
+  foto: null,
+  fotoUrl: ''
+});
 fetchMahasiswa();
 } else {
 alert(result.error || 'Gagal menambahkan mahasiswa');
@@ -146,11 +185,14 @@ alert(result.error || 'Gagal menambahkan mahasiswa');
 } catch (error) {
 console.error('Error adding mahasiswa:', error);
 alert('Terjadi kesalahan');
+} finally {
+setIsSubmitting(false);
 }
 };
 
 const submitEdit = async () => {
 if (!selectedMahasiswa) return;
+setIsSubmitting(true);
 try {
 let fotoUrl = formData.fotoUrl || selectedMahasiswa.foto || '';
 if (formData.foto) {
@@ -177,6 +219,8 @@ nim: formData.nim,
 nama: formData.nama,
 prodi: formData.prodi,
 angkatan: formData.angkatan,
+semester: formData.semester,
+tahun_ajaran_masuk: formData.tahun_ajaran_masuk,
 password: formData.password,
 foto: fotoUrl || null,
 }),
@@ -192,11 +236,14 @@ alert(result.error || 'Gagal mengupdate mahasiswa');
 } catch (error) {
 console.error('Error updating mahasiswa:', error);
 alert('Terjadi kesalahan');
+} finally {
+setIsSubmitting(false);
 }
 };
 
 const submitDelete = async () => {
 if (!selectedMahasiswa) return;
+setIsSubmitting(true);
 try {
 const response = await fetch(`/api/mahasiswa/${selectedMahasiswa.id}`, { method: 'DELETE' });
 const result = await response.json();
@@ -210,6 +257,8 @@ alert(result.error || 'Gagal menghapus mahasiswa');
 } catch (error) {
 console.error('Error deleting mahasiswa:', error);
 alert('Terjadi kesalahan');
+} finally {
+setIsSubmitting(false);
 }
 };
 
@@ -329,8 +378,8 @@ filteredMahasiswa.map((mahasiswa) => (
 <button onClick={() => handleEdit(mahasiswa)} className="flex items-center justify-center size-9 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 transition-colors">
 <Icon icon="solar:pen-bold" className="size-5 text-blue-600" />
 </button>
-<button onClick={() => handleDeleteConfirm(mahasiswa)} className="flex items-center justify-center size-9 rounded-lg bg-destructive/10 hover:bg-destructive/20 transition-colors">
-<Icon icon="solar:trash-bin-trash-bold" className="size-5 text-destructive" />
+<button onClick={() => handleDeleteConfirm(mahasiswa)} className="flex items-center justify-center size-9 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors">
+<Icon icon="solar:trash-bin-trash-bold" className="size-5 text-red-600" />
 </button>
 </div>
 </div>
@@ -384,14 +433,25 @@ filteredMahasiswa.map((mahasiswa) => (
 </div>
 </div>
 <div>
+<label className="block text-sm font-medium mb-2">Tahun Ajaran Masuk</label>
+<input type="text" value={formData.tahun_ajaran_masuk} onChange={(e) => setFormData({ ...formData, tahun_ajaran_masuk: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="2024/2025" />
+</div>
+<div>
 <label className="block text-sm font-medium mb-2">Password</label>
 <input type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan password" />
 </div>
 </div>
 <div className="flex gap-3 mt-6">
-<button onClick={() => setShowAddModal(false)} disabled={uploading} className="flex-1 px-4 py-2 rounded-xl border border-border hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Batal</button>
-<button onClick={submitAdd} disabled={uploading} className="flex-1 px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-{uploading ? 'Menyimpan...' : 'Simpan'}
+<button onClick={() => setShowAddModal(false)} disabled={uploading || isSubmitting} className="flex-1 px-4 py-2 rounded-xl border border-border hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Batal</button>
+<button onClick={submitAdd} disabled={uploading || isSubmitting} className="flex-1 px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+{uploading || isSubmitting ? (
+<>
+<Icon icon="svg-spinners:ring-resize" className="size-5" />
+<span>Menyimpan...</span>
+</>
+) : (
+'Simpan'
+)}
 </button>
 </div>
 </div>
@@ -442,16 +502,27 @@ filteredMahasiswa.map((mahasiswa) => (
 </div>
 </div>
 <div>
-<label className="block text-sm font-medium mb-2">Password (kosongkan jika tidak ingin mengubah)</label>
+<label className="block text-sm font-medium mb-2">Tahun Ajaran Masuk</label>
+<input type="text" value={formData.tahun_ajaran_masuk} onChange={(e) => setFormData({ ...formData, tahun_ajaran_masuk: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="2024/2025" />
+</div>
+<div>
+<label className="block text-sm font-medium mb-2">Password</label>
 <input type="password" value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan password baru" />
 </div>
 </div>
 <div className="flex gap-3 mt-6">
-<button onClick={() => setShowEditModal(false)} disabled={uploading} className="flex-1 px-4 py-3 rounded-xl border-2 border-border bg-background hover:bg-muted transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
+<button onClick={() => setShowEditModal(false)} disabled={uploading || isSubmitting} className="flex-1 px-4 py-3 rounded-xl border-2 border-border bg-background hover:bg-muted transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
 Batal
 </button>
-<button onClick={submitEdit} disabled={uploading} className="flex-1 px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed">
-{uploading ? 'Mengupload...' : 'Update'}
+<button onClick={submitEdit} disabled={uploading || isSubmitting} className="flex-1 px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+{uploading || isSubmitting ? (
+<>
+<Icon icon="svg-spinners:ring-resize" className="size-5" />
+<span>Mengupdate...</span>
+</>
+) : (
+'Update'
+)}
 </button>
 </div>
 </div>
@@ -487,6 +558,10 @@ Batal
 </div>
 </div>
 <div>
+<p className="text-sm text-muted-foreground">Tahun Ajaran Masuk</p>
+<p className="font-medium">{selectedMahasiswa.tahun_ajaran_masuk || `${selectedMahasiswa.angkatan}/${selectedMahasiswa.angkatan + 1}`}</p>
+</div>
+<div>
 <p className="text-sm text-muted-foreground">Status</p>
 <p className="font-medium">{selectedMahasiswa.is_active ? 'Aktif' : 'Nonaktif'}</p>
 </div>
@@ -505,8 +580,17 @@ Batal
 <h2 className="text-xl font-bold mb-4">Hapus Mahasiswa</h2>
 <p className="text-muted-foreground mb-6">Apakah Anda yakin ingin menghapus mahasiswa <strong>{selectedMahasiswa.nama}</strong>? Tindakan ini tidak dapat dibatalkan.</p>
 <div className="flex gap-3">
-<button onClick={() => setShowDeleteModal(false)} className="flex-1 px-4 py-2 rounded-xl border border-border hover:bg-muted transition-colors">Batal</button>
-<button onClick={submitDelete} className="flex-1 px-4 py-2 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors">Hapus</button>
+<button onClick={() => setShowDeleteModal(false)} disabled={isSubmitting} className="flex-1 px-4 py-2 rounded-xl border border-border hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Batal</button>
+<button onClick={submitDelete} disabled={isSubmitting} className="flex-1 px-4 py-2 rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+{isSubmitting ? (
+<>
+<Icon icon="svg-spinners:ring-resize" className="size-5" />
+<span>Menghapus...</span>
+</>
+) : (
+'Hapus'
+)}
+</button>
 </div>
 </div>
 </div>
@@ -542,9 +626,16 @@ Batal
 </div>
 </div>
 <div className="flex gap-3 mt-6">
-<button onClick={() => { setShowImportModal(false); setImportFile(null); }} className="flex-1 px-4 py-2 rounded-xl border border-border hover:bg-muted transition-colors">Batal</button>
-<button onClick={submitImport} disabled={!importFile || uploading} className="flex-1 px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-{uploading ? 'Mengimport...' : 'Import'}
+<button onClick={() => { setShowImportModal(false); setImportFile(null); }} disabled={uploading} className="flex-1 px-4 py-2 rounded-xl border border-border hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Batal</button>
+<button onClick={submitImport} disabled={!importFile || uploading} className="flex-1 px-4 py-2 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+{uploading ? (
+<>
+<Icon icon="svg-spinners:ring-resize" className="size-5" />
+<span>Mengimport...</span>
+</>
+) : (
+'Import'
+)}
 </button>
 </div>
 </div>
