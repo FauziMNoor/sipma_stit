@@ -32,6 +32,8 @@ export default function LoginPage() {
           redirectPath = '/dosen-pa/dashboard';
         } else if (result.user.role === 'waket3') {
           redirectPath = '/waket3/dashboard';
+        } else if (result.user.role === 'musyrif') {
+          redirectPath = '/musyrif/dashboard';
         } else if (result.user.role === 'mahasiswa') {
           redirectPath = '/mahasiswa/dashboard';
         }

@@ -46,13 +46,13 @@ export async function GET(request: NextRequest) {
         const { data: approvedActivities } = await supabaseAdmin
           .from('poin_aktivitas')
           .select(`
-            kategori_poin:kategori_id (poin)
+            kategori_poin:kategori_id (bobot)
           `)
           .eq('mahasiswa_id', mhs.id)
           .eq('status', 'approved');
 
         const totalPoin = (approvedActivities || []).reduce((sum, item: any) => {
-          return sum + (item.kategori_poin?.poin || 0);
+          return sum + (item.kategori_poin?.bobot || 0);
         }, 0);
 
         return {

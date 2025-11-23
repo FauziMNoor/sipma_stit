@@ -45,7 +45,11 @@ export async function GET(request: NextRequest) {
       all: allUsers?.length || 0,
       admin: allUsers?.filter((u: any) => u.role === 'admin').length || 0,
       dosen: allUsers?.filter((u: any) => u.role === 'dosen').length || 0,
+      dosen_pa: allUsers?.filter((u: any) => u.role === 'dosen_pa').length || 0,
+      musyrif: allUsers?.filter((u: any) => u.role === 'musyrif').length || 0,
+      waket3: allUsers?.filter((u: any) => u.role === 'waket3').length || 0,
       staff: allUsers?.filter((u: any) => u.role === 'staff').length || 0,
+      mahasiswa: allUsers?.filter((u: any) => u.role === 'mahasiswa').length || 0,
     };
 
     return NextResponse.json({
@@ -80,10 +84,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Validate role
-    const validRoles = ['admin', 'dosen', 'staff'];
+    const validRoles = ['mahasiswa', 'dosen', 'dosen_pa', 'musyrif', 'waket3', 'admin', 'staff'];
     if (!validRoles.includes(role)) {
       return NextResponse.json(
-        { success: false, error: 'Role harus admin, dosen, atau staff' },
+        { success: false, error: 'Role tidak valid' },
         { status: 400 }
       );
     }
@@ -228,10 +232,10 @@ export async function PUT(request: NextRequest) {
         );
       }
 
-      const validRoles = ['admin', 'dosen', 'staff'];
+      const validRoles = ['mahasiswa', 'dosen', 'dosen_pa', 'musyrif', 'waket3', 'admin', 'staff'];
       if (!validRoles.includes(role)) {
         return NextResponse.json(
-          { success: false, error: 'Role harus admin, dosen, atau staff' },
+          { success: false, error: 'Role tidak valid' },
           { status: 400 }
         );
       }

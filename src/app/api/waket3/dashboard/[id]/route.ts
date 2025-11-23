@@ -79,7 +79,7 @@ export async function GET(
         ),
         kategori_poin:kategori_id (
           nama,
-          poin
+          bobot
         )
       `)
       .eq('status', 'pending')

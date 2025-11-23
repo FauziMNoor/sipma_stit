@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
         ),
         kategori_poin:kategori_id (
           nama,
-          poin
+          bobot
         )
       `)
       .order('created_at', { ascending: false });
@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       mahasiswa_foto: item.mahasiswa?.foto || null,
       kategori_id: item.kategori_id,
       kategori_nama: item.kategori_poin?.nama || 'Unknown',
-      kategori_poin: item.kategori_poin?.poin || 0,
+      kategori_poin: item.kategori_poin?.bobot || 0,
       deskripsi_kegiatan: item.deskripsi_kegiatan,
       tanggal: item.tanggal,
       bukti: item.bukti,

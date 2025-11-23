@@ -31,7 +31,7 @@ export async function GET(
         ),
         kategori_poin:kategori_id (
           nama,
-          poin
+          bobot
         ),
         verifikator:verifikator_id (
           nama
@@ -59,7 +59,7 @@ export async function GET(
       mahasiswa_foto: pengajuan.mahasiswa?.foto || null,
       kategori_id: pengajuan.kategori_id,
       kategori_nama: pengajuan.kategori_poin?.nama || 'Unknown',
-      kategori_poin: pengajuan.kategori_poin?.poin || 0,
+      kategori_poin: pengajuan.kategori_poin?.bobot || 0,
       deskripsi_kegiatan: pengajuan.deskripsi_kegiatan,
       tanggal: pengajuan.tanggal,
       bukti: pengajuan.bukti,

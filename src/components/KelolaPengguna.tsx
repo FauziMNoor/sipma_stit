@@ -5,12 +5,14 @@ import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
+type UserRole = 'mahasiswa' | 'dosen' | 'dosen_pa' | 'musyrif' | 'waket3' | 'admin' | 'staff';
+
 interface User {
   id: string;
   email: string;
   nama: string;
   nip: string | null;
-  role: 'admin' | 'dosen' | 'staff';
+  role: UserRole;
   foto: string | null;
   is_active: boolean;
   created_at: string;
@@ -20,18 +22,31 @@ interface Counts {
   all: number;
   admin: number;
   dosen: number;
+  dosen_pa: number;
+  musyrif: number;
+  waket3: number;
   staff: number;
+  mahasiswa: number;
 }
 
 export default function KelolaPengguna() {
   const router = useRouter();
   const [users, setUsers] = useState<User[]>([]);
-  const [counts, setCounts] = useState<Counts>({ all: 0, admin: 0, dosen: 0, staff: 0 });
+  const [counts, setCounts] = useState<Counts>({
+    all: 0,
+    admin: 0,
+    dosen: 0,
+    dosen_pa: 0,
+    musyrif: 0,
+    waket3: 0,
+    staff: 0,
+    mahasiswa: 0
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filters
-  const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'dosen' | 'staff'>('all');
+  const [roleFilter, setRoleFilter] = useState<'all' | UserRole>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
   // Modals
@@ -45,7 +60,7 @@ export default function KelolaPengguna() {
     email: '',
     nama: '',
     nip: '',
-    role: 'dosen' as 'admin' | 'dosen' | 'staff',
+    role: 'dosen' as UserRole,
     password: '',
     is_active: true,
   });
@@ -365,8 +380,16 @@ export default function KelolaPengguna() {
         return 'Admin';
       case 'dosen':
         return 'Dosen';
+      case 'dosen_pa':
+        return 'Dosen PA';
+      case 'musyrif':
+        return 'Musyrif';
+      case 'waket3':
+        return 'Wakil Ketua III';
       case 'staff':
         return 'Staff';
+      case 'mahasiswa':
+        return 'Mahasiswa';
       default:
         return role;
     }
@@ -664,13 +687,17 @@ export default function KelolaPengguna() {
                 </label>
                 <select
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'dosen' | 'staff' })}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
                   required
                 >
-                  <option value="dosen">Dosen</option>
-                  <option value="staff">Staff</option>
                   <option value="admin">Admin</option>
+                  <option value="dosen">Dosen</option>
+                  <option value="dosen_pa">Dosen PA</option>
+                  <option value="musyrif">Musyrif</option>
+                  <option value="waket3">Wakil Ketua III</option>
+                  <option value="staff">Staff</option>
+                  <option value="mahasiswa">Mahasiswa</option>
                 </select>
               </div>
 
@@ -827,13 +854,17 @@ export default function KelolaPengguna() {
                 </label>
                 <select
                   value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value as 'admin' | 'dosen' | 'staff' })}
+                  onChange={(e) => setFormData({ ...formData, role: e.target.value as UserRole })}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
                   required
                 >
-                  <option value="dosen">Dosen</option>
-                  <option value="staff">Staff</option>
                   <option value="admin">Admin</option>
+                  <option value="dosen">Dosen</option>
+                  <option value="dosen_pa">Dosen PA</option>
+                  <option value="musyrif">Musyrif</option>
+                  <option value="waket3">Wakil Ketua III</option>
+                  <option value="staff">Staff</option>
+                  <option value="mahasiswa">Mahasiswa</option>
                 </select>
               </div>
 

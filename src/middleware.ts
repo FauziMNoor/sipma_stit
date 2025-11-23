@@ -12,6 +12,9 @@ const protectedRoutes = [
   '/kategori',
   '/leaderboard',
   '/profile',
+  '/waket3',
+  '/musyrif',
+  '/dosen-pa',
 ];
 
 // Routes that are only accessible when not authenticated

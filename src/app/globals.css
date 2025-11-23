@@ -1,12 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  /* Primary Colors */
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
+  /* Primary Colors - STIT Riyadhussholihiin Brand */
+  --color-primary: #0059a8;
+  --color-primary-foreground: #ffffff;
+  --color-primary-50: #e6f0f9;
+  --color-primary-100: #cce1f3;
+  --color-primary-500: #0059a8;
+  --color-primary-600: #004a8a;
+  --color-primary-700: #003b6c;
+
+  /* Secondary Colors */
+  --color-secondary: #009ee3;
+  --color-secondary-foreground: #ffffff;
+
+  /* Accent Color - Yellow */
+  --color-accent: #ffd646;
+  --color-accent-foreground: #013463;
 
   /* Success Colors */
   --color-success-50: #ecfdf5;
@@ -14,11 +24,12 @@
   --color-success-600: #059669;
   --color-success-800: #065f46;
 
-  /* Danger Colors */
+  /* Danger/Destructive Colors */
   --color-danger-50: #fef2f2;
   --color-danger-500: #ef4444;
   --color-danger-600: #dc2626;
   --color-danger-800: #991b1b;
+  --color-destructive: #e63946;
 
   /* Warning Colors */
   --color-warning-50: #fffbeb;
@@ -38,31 +49,35 @@
   --color-neutral-900: #171717;
 
   /* Semantic Colors for Dashboard */
-  --color-background: #fafafa;
-  --color-foreground: #171717;
+  --color-background: #f9fafb;
+  --color-foreground: #013463;
   --color-card: #ffffff;
-  --color-border: #e5e5e5;
-  --color-muted: #f5f5f5;
-  --color-muted-foreground: #737373;
-
-  /* Secondary Color */
-  --color-secondary: #8b5cf6;
-  --color-secondary-foreground: #ffffff;
-
-  /* Accent Color */
-  --color-accent: #f59e0b;
-  --color-accent-foreground: #ffffff;
+  --color-card-foreground: #013463;
+  --color-border: #d1e0ed;
+  --color-muted: #e5edf5;
+  --color-muted-foreground: #5a7a9b;
+  --color-input: #ffffff;
+  --color-ring: #0059a8;
 
   /* Chart Colors */
-  --color-chart-1: #0ea5e9;
-  --color-chart-2: #10b981;
-  --color-chart-3: #f59e0b;
-  --color-chart-4: #ef4444;
-  --color-chart-5: #8b5cf6;
+  --color-chart-1: #0059a8;
+  --color-chart-2: #009ee3;
+  --color-chart-3: #ffd646;
+  --color-chart-4: #5a7a9b;
+  --color-chart-5: #1e88e5;
 
   /* Font Family */
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Playfair Display', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Border Radius */
+  --radius: 0.75rem;
+  --radius-sm: calc(0.75rem - 4px);
+  --radius-md: calc(0.75rem - 2px);
+  --radius-lg: 0.75rem;
+  --radius-xl: calc(0.75rem + 4px);
 }
 
 body {

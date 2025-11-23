@@ -83,16 +83,17 @@ export default function ProfilWaket3({ userId }: ProfilWaket3Props) {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
+      <div className="px-6 py-5 bg-primary border-b border-border">
         <div className="flex items-center justify-between">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center size-11"
-          >
-            <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
-          </button>
-          <h1 className="text-lg font-bold text-white font-heading">Profil Saya</h1>
-          <div className="size-11" />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
+            >
+              <Icon icon="solar:arrow-left-linear" className="size-6 text-primary-foreground" />
+            </button>
+            <h1 className="text-xl font-bold text-primary-foreground font-heading">Profil Saya</h1>
+          </div>
         </div>
       </div>
 

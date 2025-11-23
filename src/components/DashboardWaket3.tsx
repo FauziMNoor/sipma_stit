@@ -107,24 +107,21 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary border-b border-primary">
-        <div className="flex items-center justify-between mb-4">
+      <div className="px-6 py-5 bg-primary border-b border-border">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
               alt="Wakil Ketua III Profile"
               src={data.waket3.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(data.waket3.nama)}
               className="size-12 rounded-full border-2 border-accent object-cover"
             />
-            <div>
-              <p className="text-base font-bold text-white">Dashboard Wakil Ketua III</p>
-              <p className="text-xs text-white/80">Verifikasi Kemahasiswaan</p>
-            </div>
+            <h1 className="text-xl font-bold text-primary-foreground font-heading">Dashboard Wakil Ketua III</h1>
           </div>
           <button
             onClick={() => router.push('/waket3/profil')}
-            className="flex items-center justify-center size-11 rounded-xl bg-white/20 hover:bg-white/30 transition-colors"
+            className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
           >
-            <Icon icon="solar:bell-bold" className="size-6 text-accent" />
+            <Icon icon="solar:bell-bold" className="size-6 text-primary-foreground" />
           </button>
         </div>
       </div>
@@ -173,8 +170,7 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
           <div className="grid grid-cols-2 gap-3">
             <button
               onClick={() => router.push('/waket3/verifikasi')}
-              style={{ background: 'linear-gradient(to bottom right, #0ea5e9, #8b5cf6)' }}
-              className="rounded-3xl p-5 shadow-lg"
+              className="bg-linear-to-br from-primary to-secondary rounded-3xl p-5 shadow-lg hover:shadow-xl transition-shadow"
             >
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-14 rounded-2xl bg-white/20">
