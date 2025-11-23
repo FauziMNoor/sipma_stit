@@ -2,9 +2,10 @@ import { z } from 'zod';
 
 /**
  * Login validation schema
+ * Accepts both email (for staff/admin) and NIM (for mahasiswa)
  */
 export const loginSchema = z.object({
-  email: z.string().email('Email tidak valid'),
+  email: z.string().min(1, 'Email atau NIM harus diisi'),
   password: z.string().min(6, 'Password minimal 6 karakter'),
 });
 
@@ -27,7 +28,7 @@ export type AktivitasInput = z.infer<typeof aktivitasSchema>;
  */
 export const verifikasiSchema = z.object({
   status: z.enum(['approved', 'rejected'], {
-    errorMap: () => ({ message: 'Status harus approved atau rejected' }),
+    message: 'Status harus approved atau rejected',
   }),
   notes_verifikator: z.string().max(500, 'Catatan maksimal 500 karakter').optional(),
 });
@@ -41,7 +42,7 @@ export const kategoriPoinSchema = z.object({
   kode: z.string().min(3, 'Kode minimal 3 karakter').max(10, 'Kode maksimal 10 karakter'),
   nama: z.string().min(3, 'Nama minimal 3 karakter').max(100, 'Nama maksimal 100 karakter'),
   jenis: z.enum(['positif', 'negatif'], {
-    errorMap: () => ({ message: 'Jenis harus positif atau negatif' }),
+    message: 'Jenis harus positif atau negatif',
   }),
   bobot: z.number().int('Bobot harus bilangan bulat').min(1, 'Bobot minimal 1'),
   deskripsi: z.string().max(500, 'Deskripsi maksimal 500 karakter').optional(),

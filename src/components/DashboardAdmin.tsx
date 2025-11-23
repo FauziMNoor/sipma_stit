@@ -44,13 +44,38 @@ export function DashboardAdmin() {
     }
   };
 
+  const handleLogout = async () => {
+    if (!confirm('Apakah Anda yakin ingin logout?')) return;
+
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // Clear localStorage
+        localStorage.removeItem('auth-token');
+        // Redirect to login
+        window.location.href = '/login';
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+      alert('Gagal logout. Silakan coba lagi.');
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-background">
       <div className="px-6 py-5 bg-card border-b border-border">
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold text-foreground font-heading">Admin Dashboard</h1>
-          <button className="flex items-center justify-center size-11 rounded-xl bg-muted">
-            <Icon icon="solar:settings-bold" className="size-6 text-primary" />
+          <button
+            onClick={handleLogout}
+            className="flex items-center justify-center size-11 rounded-xl bg-muted hover:bg-destructive/10 transition-colors"
+            title="Logout"
+          >
+            <Icon icon="solar:logout-2-bold" className="size-6 text-destructive" />
           </button>
         </div>
       </div>
@@ -180,14 +205,17 @@ export function DashboardAdmin() {
                 <p className="text-sm font-semibold text-foreground">Laporan & Statistik</p>
               </div>
             </button>
-            <div className="bg-card rounded-2xl p-6 shadow-md border border-border">
+            <button
+              onClick={() => router.push('/admin/kelola-pengguna')}
+              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+            >
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-chart-4/10">
                   <Icon icon="solar:user-id-bold" className="size-8 text-chart-4" />
                 </div>
                 <p className="text-sm font-semibold text-foreground">Kelola Pengguna</p>
               </div>
-            </div>
+            </button>
             <button onClick={() => router.push('/admin/pengaturan-sistem')} className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow">
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-muted">

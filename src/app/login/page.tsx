@@ -25,7 +25,12 @@ export default function LoginPage() {
         toast.success('Login berhasil!');
 
         // Redirect based on role
-        const redirectPath = result.user.role === 'admin' ? '/admin' : '/dashboard';
+        let redirectPath = '/dashboard';
+        if (result.user.role === 'admin' || result.user.role === 'dosen' || result.user.role === 'staff') {
+          redirectPath = '/admin';
+        } else if (result.user.role === 'mahasiswa') {
+          redirectPath = '/mahasiswa/dashboard';
+        }
 
         // Use window.location for full page reload
         window.location.href = redirectPath;

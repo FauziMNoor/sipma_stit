@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Splash } from '@/components/Splash';
 import { Onboarding } from '@/components/Onboarding';
 import { useAuth } from '@/hooks/useAuth';
 
-export default function Home() {
+function HomeContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isLoading } = useAuth();
@@ -51,7 +51,17 @@ export default function Home() {
     if (!showSplash && !showOnboarding && !isLoading) {
       if (user) {
         console.log('🚀 Redirecting to dashboard (user logged in)');
-        const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
+        let redirectPath = '/login';
+
+        if (user.role === 'admin') {
+          redirectPath = '/admin';
+        } else if (user.role === 'mahasiswa') {
+          redirectPath = '/mahasiswa/dashboard';
+        } else {
+          // For other roles (dosen, staff, etc.)
+          redirectPath = '/admin';
+        }
+
         window.location.href = redirectPath;
       } else {
         console.log('🚀 Redirecting to login (no user)');
@@ -95,5 +105,20 @@ export default function Home() {
         <p className="text-neutral-600">Memuat...</p>
       </div>
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center h-screen bg-neutral-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mx-auto mb-4"></div>
+          <p className="text-neutral-600">Memuat...</p>
+        </div>
+      </div>
+    }>
+      <HomeContent />
+    </Suspense>
   );
 }
