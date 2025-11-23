@@ -9,6 +9,7 @@ interface User {
   id: string;
   email: string;
   nama: string;
+  nip: string | null;
   role: 'admin' | 'dosen' | 'staff';
   foto: string | null;
   is_active: boolean;
@@ -43,6 +44,7 @@ export default function KelolaPengguna() {
   const [formData, setFormData] = useState({
     email: '',
     nama: '',
+    nip: '',
     role: 'dosen' as 'admin' | 'dosen' | 'staff',
     password: '',
     is_active: true,
@@ -184,6 +186,7 @@ export default function KelolaPengguna() {
           id: selectedUser.id,
           email: formData.email,
           nama: formData.nama,
+          nip: formData.nip,
           role: formData.role,
           foto: photoUrl,
         }),
@@ -318,6 +321,7 @@ export default function KelolaPengguna() {
     setFormData({
       email: '',
       nama: '',
+      nip: '',
       role: 'dosen',
       password: '',
       is_active: true,
@@ -331,6 +335,7 @@ export default function KelolaPengguna() {
     setFormData({
       email: user.email,
       nama: user.nama,
+      nip: user.nip || '',
       role: user.role,
       password: '',
       is_active: user.is_active,
@@ -514,8 +519,11 @@ export default function KelolaPengguna() {
                 />
                 <div className="flex-1">
                   <p className="text-sm font-bold text-foreground">{user.nama}</p>
-                  <p className="text-xs text-muted-foreground mb-2">{user.email}</p>
-                  <div className="flex gap-2">
+                  <p className="text-xs text-muted-foreground">{user.email}</p>
+                  {user.nip && (
+                    <p className="text-xs text-muted-foreground">NIP: {user.nip}</p>
+                  )}
+                  <div className="flex gap-2 mt-2">
                     <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold ${getRoleBadgeClass(user.role)}`}>
                       {getRoleLabel(user.role)}
                     </span>
@@ -606,6 +614,19 @@ export default function KelolaPengguna() {
                   onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
                   required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  NIP (Nomor Induk Pegawai)
+                </label>
+                <input
+                  type="text"
+                  value={formData.nip}
+                  onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  placeholder="Opsional"
                 />
               </div>
 
@@ -771,6 +792,19 @@ export default function KelolaPengguna() {
                   onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
                   required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  NIP (Nomor Induk Pegawai)
+                </label>
+                <input
+                  type="text"
+                  value={formData.nip}
+                  onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  placeholder="Opsional"
                 />
               </div>
 

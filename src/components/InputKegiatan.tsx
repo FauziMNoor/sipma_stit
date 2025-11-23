@@ -4,6 +4,7 @@ import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth';
 
 interface KategoriPoin {
   id: string;
@@ -16,6 +17,7 @@ interface KategoriPoin {
 
 export default function InputKegiatan() {
   const router = useRouter();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [kategoriList, setKategoriList] = useState<KategoriPoin[]>([]);
@@ -26,30 +28,10 @@ export default function InputKegiatan() {
   const [keterangan, setKeterangan] = useState('');
   const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
 
   useEffect(() => {
-    fetchCurrentUser();
     fetchKategori();
   }, []);
-
-  const fetchCurrentUser = async () => {
-    try {
-      const response = await fetch('/api/auth/me', {
-        credentials: 'include',
-      });
-      const result = await response.json();
-
-      if (result.success && result.user) {
-        setCurrentUser(result.user);
-      } else {
-        router.push('/login');
-      }
-    } catch (error) {
-      console.error('Error fetching current user:', error);
-      router.push('/login');
-    }
-  };
 
   const fetchKategori = async () => {
     try {

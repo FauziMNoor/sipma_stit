@@ -87,43 +87,64 @@ export async function GET(
       };
     }
 
-    // 4. Fetch recent activities (last 5)
-    const { data: recentActivities, error: activitiesError } = await supabase
+    // 4. Fetch all activities (for riwayat page)
+    const { data: allActivities, error: activitiesError } = await supabase
       .from('poin_aktivitas')
       .select(`
         id,
         tanggal,
-        keterangan,
-        poin,
-        status_verifikasi,
+        deskripsi_kegiatan,
+        status,
         created_at,
-        kategori_poin:kategori_poin_id (
+        kategori:kategori_id (
           id,
           kode,
           nama,
           kategori_utama,
-          jenis
+          jenis,
+          bobot
         )
       `)
       .eq('mahasiswa_id', id)
-      .order('created_at', { ascending: false })
-      .limit(5);
+      .order('tanggal', { ascending: false });
+
+    // Format activities for frontend
+    const formattedActivities = (allActivities || []).map((item: any) => ({
+      id: item.id,
+      tanggal: item.tanggal,
+      deskripsi_kegiatan: item.deskripsi_kegiatan,
+      status: item.status,
+      kategori: {
+        nama: item.kategori?.nama || 'Unknown',
+        kategori_utama: item.kategori?.kategori_utama || 'Unknown',
+        bobot: item.kategori?.bobot || 0,
+        jenis: item.kategori?.jenis || 'positif',
+      },
+    }));
 
     // 5. Count pending submissions
-    const { data: pendingCount } = await supabase
+    const { count: pendingCount } = await supabase
       .from('poin_aktivitas')
       .select('id', { count: 'exact', head: true })
       .eq('mahasiswa_id', id)
-      .eq('status_verifikasi', 'pending');
+      .eq('status', 'pending');
 
     return NextResponse.json({
       success: true,
       data: {
         mahasiswa,
-        poinSummary: summary,
-        statusKelulusan,
-        recentActivities: recentActivities || [],
-        pendingCount: pendingCount || 0,
+        total_poin: summary.total_poin || 0,
+        total_poin_positif: summary.total_poin_positif || 0,
+        total_poin_negatif: summary.total_poin_negatif || 0,
+        total_akademik: summary.total_akademik || 0,
+        total_dakwah: summary.total_dakwah || 0,
+        total_sosial: summary.total_sosial || 0,
+        total_adab: summary.total_adab || 0,
+        total_pelanggaran: summary.total_pelanggaran || 0,
+        status_kelulusan: statusKelulusan.status,
+        progress_percentage: statusKelulusan.progress,
+        aktivitas: formattedActivities,
+        pending_count: pendingCount || 0,
       },
     });
   } catch (error: any) {

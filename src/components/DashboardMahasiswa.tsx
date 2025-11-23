@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Mahasiswa {
   id: string;
@@ -34,45 +35,40 @@ interface StatusKelulusan {
 
 interface DashboardData {
   mahasiswa: Mahasiswa;
-  poinSummary: PoinSummary;
-  statusKelulusan: StatusKelulusan;
-  recentActivities: any[];
-  pendingCount: number;
+  total_poin: number;
+  total_poin_positif: number;
+  total_poin_negatif: number;
+  total_akademik: number;
+  total_dakwah: number;
+  total_sosial: number;
+  total_adab: number;
+  total_pelanggaran: number;
+  status_kelulusan: string;
+  progress_percentage: number;
+  aktivitas: any[];
+  pending_count: number;
 }
 
 export default function DashboardMahasiswa() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<DashboardData | null>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const { user } = useAuth();
 
   useEffect(() => {
-    fetchCurrentUser();
-  }, []);
-
-  const fetchCurrentUser = async () => {
-    try {
-      const response = await fetch('/api/auth/me', {
-        credentials: 'include',
-      });
-      const result = await response.json();
-
-      if (result.success && result.user) {
-        setCurrentUser(result.user);
-        fetchDashboardData(result.user.id);
-      } else {
-        router.push('/login');
-      }
-    } catch (error) {
-      console.error('Error fetching current user:', error);
-      router.push('/login');
+    if (user?.id) {
+      fetchDashboardData(user.id);
     }
-  };
+  }, [user]);
 
   const fetchDashboardData = async (mahasiswaId: string) => {
     try {
       setIsLoading(true);
+      const token = localStorage.getItem('auth-token');
       const response = await fetch(`/api/mahasiswa/dashboard/${mahasiswaId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         credentials: 'include',
       });
       const result = await response.json();
@@ -99,6 +95,7 @@ export default function DashboardMahasiswa() {
       });
 
       if (response.ok) {
+        localStorage.removeItem('auth-token');
         router.push('/login');
       }
     } catch (error) {
@@ -117,7 +114,7 @@ export default function DashboardMahasiswa() {
     );
   }
 
-  const { mahasiswa, poinSummary, statusKelulusan } = data;
+  const { mahasiswa } = data;
 
   return (
     <div className="flex flex-col h-full bg-background">
@@ -155,20 +152,20 @@ export default function DashboardMahasiswa() {
             <div className="text-center">
               <p className="text-sm text-white/90 mb-2">Total Poin Anda</p>
               <h2 className="text-5xl font-bold text-white font-heading">
-                {poinSummary.total_poin.toLocaleString('id-ID')} Poin
+                {data.total_poin.toLocaleString('id-ID')} Poin
               </h2>
             </div>
             <div className="bg-white/20 rounded-xl px-4 py-3 text-center">
-              <p className="text-sm font-semibold text-white">Status: {statusKelulusan.status}</p>
+              <p className="text-sm font-semibold text-white">Status: {data.status_kelulusan}</p>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-xs text-white/90">
                 <span>Progress Kelulusan</span>
-                <span>{statusKelulusan.progress}%</span>
+                <span>{data.progress_percentage}%</span>
               </div>
               <div className="h-3 bg-white/20 rounded-full overflow-hidden">
                 <div
-                  style={{ width: `${statusKelulusan.progress}%` }}
+                  style={{ width: `${data.progress_percentage}%` }}
                   className="h-full bg-accent rounded-full transition-all duration-500"
                 />
               </div>
@@ -191,7 +188,7 @@ export default function DashboardMahasiswa() {
                 <div>
                   <p className="text-sm font-semibold text-foreground">Akademik</p>
                   <p className="text-xs text-primary font-bold mt-1">
-                    {poinSummary.total_akademik} poin
+                    {data.total_akademik} poin
                   </p>
                 </div>
               </div>
@@ -208,7 +205,7 @@ export default function DashboardMahasiswa() {
                 <div>
                   <p className="text-sm font-semibold text-foreground">Dakwah & Keagamaan</p>
                   <p className="text-xs text-secondary font-bold mt-1">
-                    {poinSummary.total_dakwah} poin
+                    {data.total_dakwah} poin
                   </p>
                 </div>
               </div>
@@ -225,7 +222,7 @@ export default function DashboardMahasiswa() {
                 <div>
                   <p className="text-sm font-semibold text-foreground">Sosial & Kepemimpinan</p>
                   <p className="text-xs text-chart-2 font-bold mt-1">
-                    {poinSummary.total_sosial} poin
+                    {data.total_sosial} poin
                   </p>
                 </div>
               </div>
@@ -242,7 +239,7 @@ export default function DashboardMahasiswa() {
                 <div>
                   <p className="text-sm font-semibold text-foreground">Adab & Akhlak</p>
                   <p className="text-xs text-green-600 font-bold mt-1">
-                    {poinSummary.total_adab} poin
+                    {data.total_adab} poin
                   </p>
                 </div>
               </div>
@@ -259,7 +256,7 @@ export default function DashboardMahasiswa() {
                 <div>
                   <p className="text-sm font-semibold text-foreground">Pelanggaran</p>
                   <p className="text-xs text-destructive font-bold mt-1">
-                    {poinSummary.total_pelanggaran} poin
+                    {data.total_pelanggaran} poin
                   </p>
                 </div>
               </div>

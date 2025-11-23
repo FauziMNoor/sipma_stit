@@ -11,13 +11,17 @@ export default function DashboardPage() {
   useEffect(() => {
     if (!isLoading && user) {
       // Redirect based on role
-      if (user.role === 'admin') {
+      if (user.role === 'admin' || user.role === 'staff') {
         router.push('/admin');
+      } else if (user.role === 'dosen_pa') {
+        router.push('/dosen-pa/dashboard');
+      } else if (user.role === 'waket3') {
+        router.push('/waket3/dashboard');
       } else if (user.role === 'mahasiswa') {
         router.push('/mahasiswa/dashboard');
       } else {
-        // For other roles (dosen, staff, etc.)
-        router.push('/admin');
+        // For other unknown roles, redirect to login
+        router.push('/login');
       }
     }
   }, [user, isLoading, router]);

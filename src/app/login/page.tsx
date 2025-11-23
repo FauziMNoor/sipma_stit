@@ -26,8 +26,12 @@ export default function LoginPage() {
 
         // Redirect based on role
         let redirectPath = '/dashboard';
-        if (result.user.role === 'admin' || result.user.role === 'dosen' || result.user.role === 'staff') {
+        if (result.user.role === 'admin' || result.user.role === 'staff') {
           redirectPath = '/admin';
+        } else if (result.user.role === 'dosen_pa') {
+          redirectPath = '/dosen-pa/dashboard';
+        } else if (result.user.role === 'waket3') {
+          redirectPath = '/waket3/dashboard';
         } else if (result.user.role === 'mahasiswa') {
           redirectPath = '/mahasiswa/dashboard';
         }

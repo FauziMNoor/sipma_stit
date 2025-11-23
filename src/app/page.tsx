@@ -53,13 +53,17 @@ function HomeContent() {
         console.log('🚀 Redirecting to dashboard (user logged in)');
         let redirectPath = '/login';
 
-        if (user.role === 'admin') {
+        if (user.role === 'admin' || user.role === 'staff') {
           redirectPath = '/admin';
+        } else if (user.role === 'dosen_pa') {
+          redirectPath = '/dosen-pa/dashboard';
+        } else if (user.role === 'waket3') {
+          redirectPath = '/waket3/dashboard';
         } else if (user.role === 'mahasiswa') {
           redirectPath = '/mahasiswa/dashboard';
         } else {
-          // For other roles (dosen, staff, etc.)
-          redirectPath = '/admin';
+          // For other unknown roles, redirect to login
+          redirectPath = '/login';
         }
 
         window.location.href = redirectPath;

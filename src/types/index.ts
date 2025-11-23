@@ -14,6 +14,7 @@ export interface User {
   id: string;
   email: string;
   nama: string;
+  nip: string | null;
   role: UserRole;
   foto: string | null;
   is_active: boolean;
@@ -34,6 +35,7 @@ export interface Mahasiswa {
   foto: string | null;
   wali_dosen_id: string | null;
   musyrif_id: string | null;
+  dosen_pa_id: string | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -41,6 +43,7 @@ export interface Mahasiswa {
   user?: User;
   wali_dosen?: User;
   musyrif?: User;
+  dosen_pa?: User;
   poin_summary?: PoinSummary;
 }
 

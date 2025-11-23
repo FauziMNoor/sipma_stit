@@ -37,7 +37,8 @@ export type Database = {
           email: string;
           password: string;
           nama: string;
-          role: 'mahasiswa' | 'dosen_pa' | 'musyrif' | 'waket3' | 'admin';
+          nip: string | null;
+          role: 'mahasiswa' | 'dosen' | 'dosen_pa' | 'musyrif' | 'waket3' | 'admin' | 'staff';
           foto: string | null;
           is_active: boolean;
           created_at: string;
@@ -55,9 +56,12 @@ export type Database = {
           nama: string;
           prodi: string;
           angkatan: number;
+          semester: number;
+          tahun_ajaran_masuk: string;
           foto: string | null;
           wali_dosen_id: string | null;
           musyrif_id: string | null;
+          dosen_pa_id: string | null;
           is_active: boolean;
           created_at: string;
           updated_at: string;

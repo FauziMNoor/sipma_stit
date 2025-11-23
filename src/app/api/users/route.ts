@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
     // Build query
     let query = supabase
       .from('users')
-      .select('id, email, nama, role, foto, is_active, created_at')
+      .select('id, email, nama, nip, role, foto, is_active, created_at')
       .order('created_at', { ascending: false });
 
     // Filter by role
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, nama, role, password, is_active = true } = body;
+    const { email, nama, nip, role, password, is_active = true } = body;
 
     // Validation
     if (!email || !nama || !role || !password) {
@@ -119,11 +119,12 @@ export async function POST(request: NextRequest) {
       .insert({
         email,
         nama,
+        nip: nip || null,
         role,
         password: hashedPassword,
         is_active,
       })
-      .select('id, email, nama, role, foto, is_active, created_at')
+      .select('id, email, nama, nip, role, foto, is_active, created_at')
       .single();
 
     if (error) {
@@ -155,7 +156,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, action, email, nama, role, foto, is_active, new_password } = body;
+    const { id, action, email, nama, nip, role, foto, is_active, new_password } = body;
 
     if (!id) {
       return NextResponse.json(
@@ -171,7 +172,7 @@ export async function PUT(request: NextRequest) {
         .from('users')
         .update({ is_active })
         .eq('id', id)
-        .select('id, email, nama, role, foto, is_active, created_at')
+        .select('id, email, nama, nip, role, foto, is_active, created_at')
         .single();
 
       if (error) {
@@ -202,7 +203,7 @@ export async function PUT(request: NextRequest) {
         .from('users')
         .update({ password: hashedPassword })
         .eq('id', id)
-        .select('id, email, nama, role, foto, is_active, created_at')
+        .select('id, email, nama, nip, role, foto, is_active, created_at')
         .single();
 
       if (error) {
@@ -252,6 +253,9 @@ export async function PUT(request: NextRequest) {
 
       // Build update object
       const updateData: any = { email, nama, role };
+      if (nip !== undefined) {
+        updateData.nip = nip || null;
+      }
       if (foto !== undefined) {
         updateData.foto = foto;
       }
@@ -260,7 +264,7 @@ export async function PUT(request: NextRequest) {
         .from('users')
         .update(updateData)
         .eq('id', id)
-        .select('id, email, nama, role, foto, is_active, created_at')
+        .select('id, email, nama, nip, role, foto, is_active, created_at')
         .single();
 
       if (error) {
