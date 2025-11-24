@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useToast } from '@/hooks/useToast';
 import { Icon } from '@iconify/react';
 import { useAuth } from '@/hooks/useAuth';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const toast = useToast();
@@ -52,18 +53,28 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col h-screen bg-white">
-      <div className="flex-1 flex flex-col justify-center px-8 py-12">
-        <div className="space-y-8">
-          <div className="text-center space-y-3 mb-12">
-            <h1 className="text-3xl font-bold text-neutral-900">
+      <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-12">
+        <div className="w-full max-w-md mx-auto space-y-8">
+          <div className="text-center space-y-4 mb-12">
+            <div className="flex justify-center mb-6">
+              <Image
+                src="/logo.png"
+                alt="Logo STIT Riyadhusssholihiin"
+                width={120}
+                height={120}
+                className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 object-contain"
+                priority
+              />
+            </div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-900">
               Selamat Datang di SIPMA
             </h1>
-            <p className="text-base text-neutral-600">Silakan masuk untuk melanjutkan</p>
+            <p className="text-sm sm:text-base text-neutral-600">Silakan masuk untuk melanjutkan</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-3">
+              <label className="block text-sm font-medium text-neutral-900 mb-2 sm:mb-3">
                 NIM / Email
               </label>
               <div className="relative">
@@ -71,7 +82,7 @@ export default function LoginPage() {
                   type="text"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-5 py-4 rounded-2xl bg-neutral-50 border-2 border-neutral-200 text-neutral-900 placeholder:text-neutral-500 focus:border-primary-500 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 sm:px-5 sm:py-4 rounded-xl sm:rounded-2xl bg-neutral-50 border-2 border-neutral-200 text-sm sm:text-base text-neutral-900 placeholder:text-neutral-500 focus:border-primary-500 focus:outline-none transition-colors"
                   placeholder="Masukkan NIM atau Email Anda"
                   required
                   disabled={isLoading}
@@ -80,7 +91,7 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-neutral-900 mb-3">
+              <label className="block text-sm font-medium text-neutral-900 mb-2 sm:mb-3">
                 Password
               </label>
               <div className="relative">
@@ -88,7 +99,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-5 py-4 pr-14 rounded-2xl bg-neutral-50 border-2 border-neutral-200 text-neutral-900 placeholder:text-neutral-500 focus:border-primary-500 focus:outline-none transition-colors"
+                  className="w-full px-4 py-3 pr-12 sm:px-5 sm:py-4 sm:pr-14 rounded-xl sm:rounded-2xl bg-neutral-50 border-2 border-neutral-200 text-sm sm:text-base text-neutral-900 placeholder:text-neutral-500 focus:border-primary-500 focus:outline-none transition-colors"
                   placeholder="Masukkan password Anda"
                   required
                   disabled={isLoading}
@@ -96,12 +107,12 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 transition"
+                  className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 transition"
                   disabled={isLoading}
                 >
                   <Icon
                     icon={showPassword ? 'solar:eye-bold' : 'solar:eye-closed-bold'}
-                    className="size-6"
+                    className="size-5 sm:size-6"
                   />
                 </button>
               </div>
@@ -110,7 +121,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 px-6 rounded-2xl font-semibold text-lg shadow-lg bg-primary-500 text-white hover:bg-primary-600 transition disabled:opacity-50 disabled:cursor-not-allowed mt-8"
+              className="w-full py-3 sm:py-4 px-6 rounded-xl sm:rounded-2xl font-semibold text-base sm:text-lg shadow-lg bg-primary-500 text-white hover:bg-primary-600 transition disabled:opacity-50 disabled:cursor-not-allowed mt-6 sm:mt-8"
             >
               {isLoading ? 'Memuat...' : 'Masuk'}
             </button>
@@ -124,8 +135,8 @@ export default function LoginPage() {
         </div>
       </div>
 
-      <div className="px-6 pb-8 text-center space-y-4">
-        <p className="text-sm font-medium text-neutral-700">STIT Riyadhusssholihiin</p>
+      <div className="px-6 pb-6 sm:pb-8 text-center space-y-4">
+        <p className="text-xs sm:text-sm font-medium text-neutral-700">STIT Riyadhusssholihiin</p>
       </div>
     </div>
   );

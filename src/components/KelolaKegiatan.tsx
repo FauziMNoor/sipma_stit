@@ -216,31 +216,34 @@ export default function KelolaKegiatan() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-card border-b border-border">
+      <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={() => router.back()}
-              className="flex items-center justify-center size-11 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer"
+              className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer"
               type="button"
             >
-              <Icon icon="solar:arrow-left-linear" className="size-6 text-primary" />
+              <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-primary" />
             </button>
-            <h1 className="text-xl font-bold text-foreground font-heading">
+            <h1 className="text-lg sm:text-xl font-bold text-foreground font-heading">
               Kelola Kegiatan & Kategori
             </h1>
           </div>
         </div>
         <button
           onClick={handleAddKegiatan}
-          className="w-full py-3 px-4 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2"
+          className="w-full py-2.5 sm:py-3 px-4 bg-primary text-primary-foreground rounded-xl font-semibold flex items-center justify-center gap-2"
         >
           <Icon icon="solar:add-circle-bold" className="size-5" />Tambah Kegiatan
         </button>
+        </div>
       </div>
 
       {/* Search */}
-      <div className="px-6 py-4 bg-card border-b border-border">
+      <div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto">
         <div className="relative">
           <input
             type="text"
@@ -254,11 +257,13 @@ export default function KelolaKegiatan() {
             className="size-5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2"
           />
         </div>
+        </div>
       </div>
 
       {/* Filter Kategori */}
       <div className="bg-card border-b border-border overflow-x-auto">
-        <div className="flex px-6 gap-4 py-4">
+        <div className="max-w-7xl mx-auto">
+        <div className="flex px-4 sm:px-6 gap-3 sm:gap-4 py-4">
           {KATEGORI_UTAMA.map((kategori) => (
             <button
               key={kategori}
@@ -273,10 +278,12 @@ export default function KelolaKegiatan() {
             </button>
           ))}
         </div>
+        </div>
       </div>
 
       {/* List Kegiatan */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <div className="max-w-7xl mx-auto space-y-4">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Icon icon="svg-spinners:ring-resize" className="size-8 text-primary" />
@@ -289,23 +296,23 @@ export default function KelolaKegiatan() {
           filteredKegiatan.map((item) => {
             const style = getKategoriStyle(item.kategori_utama);
             return (
-              <div key={item.id} className="bg-card rounded-2xl p-5 shadow-sm border border-border">
-                <div className="flex items-center gap-4">
-                  <div className={`flex items-center justify-center size-14 rounded-xl ${style.bg}`}>
-                    <Icon icon={style.icon} className={`size-7 ${style.text}`} />
+              <div key={item.id} className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-sm border border-border">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className={`flex items-center justify-center size-12 sm:size-14 rounded-xl ${style.bg} flex-shrink-0`}>
+                    <Icon icon={style.icon} className={`size-6 sm:size-7 ${style.text}`} />
                   </div>
-                  <div className="flex-1">
-                    <p className="text-base font-semibold text-foreground mb-1">{item.nama}</p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm sm:text-base font-semibold text-foreground mb-1 truncate">{item.nama}</p>
                     <span
-                      className={`inline-block px-3 py-1 text-xs font-semibold rounded-full ${style.bg} ${style.text}`}
+                      className={`inline-block px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold rounded-full ${style.bg} ${style.text}`}
                     >
                       {item.kategori_utama || 'Lainnya'}
                     </span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-muted-foreground mb-1">Poin</p>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs sm:text-sm text-muted-foreground mb-1">Poin</p>
                     <p
-                      className={`text-2xl font-bold font-heading ${
+                      className={`text-xl sm:text-2xl font-bold font-heading ${
                         item.jenis === 'negatif' ? 'text-destructive' : 'text-accent'
                       }`}
                     >
@@ -314,31 +321,32 @@ export default function KelolaKegiatan() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border">
+                <div className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-border">
                   <button
                     onClick={() => handleEditKegiatan(item)}
-                    className="flex-1 py-2 px-4 bg-secondary/10 text-secondary rounded-xl font-semibold flex items-center justify-center gap-2"
+                    className="flex-1 py-2 px-3 sm:px-4 bg-secondary/10 text-secondary rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold flex items-center justify-center gap-1.5 sm:gap-2"
                   >
-                    <Icon icon="solar:pen-bold" className="size-5" />
-                    Edit
+                    <Icon icon="solar:pen-bold" className="size-4 sm:size-5" />
+                    <span className="hidden sm:inline">Edit</span>
                   </button>
                   <button
                     onClick={() => handleDeleteKegiatan(item.id)}
                     disabled={isSubmitting}
-                    className="flex-1 py-2 px-4 bg-destructive/10 text-destructive rounded-xl font-semibold flex items-center justify-center gap-2 disabled:opacity-50"
+                    className="flex-1 py-2 px-3 sm:px-4 bg-destructive/10 text-destructive rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold flex items-center justify-center gap-1.5 sm:gap-2 disabled:opacity-50"
                   >
                     {isSubmitting ? (
-                      <Icon icon="svg-spinners:ring-resize" className="size-5" />
+                      <Icon icon="svg-spinners:ring-resize" className="size-4 sm:size-5" />
                     ) : (
-                      <Icon icon="solar:trash-bin-trash-bold" className="size-5" />
+                      <Icon icon="solar:trash-bin-trash-bold" className="size-4 sm:size-5" />
                     )}
-                    Hapus
+                    <span className="hidden sm:inline">Hapus</span>
                   </button>
                 </div>
               </div>
             );
           })
         )}
+        </div>
       </div>
 
       {/* Modal Tambah Kegiatan */}

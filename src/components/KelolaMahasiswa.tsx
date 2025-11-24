@@ -342,31 +342,34 @@ m.nim.toLowerCase().includes(searchQuery.toLowerCase())
 
 return (
 <div className="flex flex-col h-full bg-background">
-<div className="px-6 py-5 bg-primary border-b border-border">
-<div className="flex items-center justify-between">
-<div className="flex items-center gap-3">
-<button onClick={() => router.back()} className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors">
-<Icon icon="solar:arrow-left-linear" className="size-6 text-primary-foreground" />
+<div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
+<div className="max-w-7xl mx-auto flex items-center justify-between">
+<div className="flex items-center gap-2 sm:gap-3">
+<button onClick={() => router.back()} className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors">
+<Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-primary-foreground" />
 </button>
-<h1 className="text-xl font-bold text-primary-foreground font-heading">Kelola Mahasiswa</h1>
+<h1 className="text-lg sm:text-xl font-bold text-primary-foreground font-heading">Kelola Mahasiswa</h1>
 </div>
 <div className="flex gap-2">
-<button onClick={() => setShowImportModal(true)} className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors">
-<Icon icon="solar:import-bold" className="size-6 text-primary-foreground" />
+<button onClick={() => setShowImportModal(true)} className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors">
+<Icon icon="solar:import-bold" className="size-5 sm:size-6 text-primary-foreground" />
 </button>
-<button onClick={handleAdd} className="flex items-center justify-center size-11 rounded-xl bg-accent hover:bg-accent/90 transition-colors">
-<Icon icon="solar:add-circle-bold" className="size-6 text-accent-foreground" />
+<button onClick={handleAdd} className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-accent hover:bg-accent/90 transition-colors">
+<Icon icon="solar:add-circle-bold" className="size-5 sm:size-6 text-accent-foreground" />
 </button>
 </div>
 </div>
 </div>
-<div className="px-6 py-4 bg-card border-b border-border space-y-3">
+<div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
+<div className="max-w-7xl mx-auto">
 <div className="relative">
 <Icon icon="solar:magnifer-linear" className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
 <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-input text-foreground" placeholder="Cari mahasiswa..." />
 </div>
 </div>
-<div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+</div>
+<div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
+<div className="max-w-7xl mx-auto space-y-4">
 {loading ? (
 <div className="flex items-center justify-center py-12">
 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -378,29 +381,29 @@ return (
 </div>
 ) : (
 filteredMahasiswa.map((mahasiswa) => (
-<div key={mahasiswa.id} className="bg-card rounded-2xl p-4 shadow-md border border-border">
-<div className="flex gap-4">
-<img alt={mahasiswa.nama} src={mahasiswa.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mahasiswa.nama)}&background=random`} className="size-16 rounded-full object-cover" />
+<div key={mahasiswa.id} className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md border border-border">
+<div className="flex gap-3 sm:gap-4">
+<img alt={mahasiswa.nama} src={mahasiswa.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mahasiswa.nama)}&background=random`} className="size-14 sm:size-16 rounded-full object-cover flex-shrink-0" />
 <div className="flex-1 min-w-0">
 <div className="flex items-start justify-between gap-2 mb-1">
 <div className="min-w-0">
-<h3 className="text-base font-bold text-foreground truncate">{mahasiswa.nama}</h3>
-<p className="text-sm text-muted-foreground">NIM: {mahasiswa.nim}</p>
+<h3 className="text-sm sm:text-base font-bold text-foreground truncate">{mahasiswa.nama}</h3>
+<p className="text-xs sm:text-sm text-muted-foreground">NIM: {mahasiswa.nim}</p>
 </div>
-<span className={`px-3 py-1 text-xs font-bold rounded-full whitespace-nowrap ${mahasiswa.is_active ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+<span className={`px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-bold rounded-full whitespace-nowrap flex-shrink-0 ${mahasiswa.is_active ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
 {mahasiswa.is_active ? 'Aktif' : 'Nonaktif'}
 </span>
 </div>
-<p className="text-sm text-muted-foreground mb-3">{mahasiswa.prodi} • Semester {mahasiswa.semester}</p>
-<div className="flex gap-2">
-<button onClick={() => handleDetail(mahasiswa)} className="flex items-center justify-center size-9 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors">
-<Icon icon="solar:eye-bold" className="size-5 text-primary" />
+<p className="text-xs sm:text-sm text-muted-foreground mb-2 sm:mb-3">{mahasiswa.prodi} • Semester {mahasiswa.semester}</p>
+<div className="flex gap-1.5 sm:gap-2">
+<button onClick={() => handleDetail(mahasiswa)} className="flex items-center justify-center size-8 sm:size-9 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors">
+<Icon icon="solar:eye-bold" className="size-4 sm:size-5 text-primary" />
 </button>
-<button onClick={() => handleEdit(mahasiswa)} className="flex items-center justify-center size-9 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 transition-colors">
-<Icon icon="solar:pen-bold" className="size-5 text-blue-600" />
+<button onClick={() => handleEdit(mahasiswa)} className="flex items-center justify-center size-8 sm:size-9 rounded-lg bg-blue-500/20 hover:bg-blue-500/30 transition-colors">
+<Icon icon="solar:pen-bold" className="size-4 sm:size-5 text-blue-600" />
 </button>
-<button onClick={() => handleDeleteConfirm(mahasiswa)} className="flex items-center justify-center size-9 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors">
-<Icon icon="solar:trash-bin-trash-bold" className="size-5 text-red-600" />
+<button onClick={() => handleDeleteConfirm(mahasiswa)} className="flex items-center justify-center size-8 sm:size-9 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors">
+<Icon icon="solar:trash-bin-trash-bold" className="size-4 sm:size-5 text-red-600" />
 </button>
 </div>
 </div>
@@ -408,6 +411,7 @@ filteredMahasiswa.map((mahasiswa) => (
 </div>
 ))
 )}
+</div>
 </div>
 
 {/* Modal Tambah Mahasiswa */}

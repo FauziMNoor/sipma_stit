@@ -297,24 +297,27 @@ export function PengaturanSistem() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-card border-b border-border">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center size-11 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer"
-            type="button"
-          >
-            <Icon icon="solar:arrow-left-linear" className="size-6 text-primary" />
-          </button>
-          <h1 className="text-xl font-bold text-foreground font-heading">Pengaturan Sistem</h1>
-          <div className="size-11" />
+      <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center size-11 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors cursor-pointer"
+              type="button"
+            >
+              <Icon icon="solar:arrow-left-linear" className="size-6 text-primary" />
+            </button>
+            <h1 className="text-xl font-bold text-foreground font-heading">Pengaturan Sistem</h1>
+            <div className="size-11" />
+          </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
-        {/* Tahun Ajaran Aktif */}
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <div className="max-w-7xl mx-auto space-y-4">
+          {/* Tahun Ajaran Aktif */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-start gap-4">
             <div className="flex items-center justify-center size-12 rounded-xl bg-blue-500/10 shrink-0">
               <Icon icon="solar:calendar-bold" className="size-6 text-blue-600" />
@@ -353,10 +356,10 @@ export function PengaturanSistem() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Pengaturan Poin */}
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+          {/* Pengaturan Poin */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-start gap-4">
             <div className="flex items-center justify-center size-12 rounded-xl bg-accent/10 shrink-0">
               <Icon icon="solar:medal-star-bold" className="size-6 text-accent" />
@@ -401,10 +404,10 @@ export function PengaturanSistem() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Manajemen Role */}
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+          {/* Manajemen Role */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-start gap-4">
             <div className="flex items-center justify-center size-12 rounded-xl bg-secondary/10 shrink-0">
               <Icon icon="solar:user-id-bold" className="size-6 text-secondary" />
@@ -444,10 +447,10 @@ export function PengaturanSistem() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Notifikasi */}
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+          {/* Notifikasi */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-start gap-4">
             <div className="flex items-center justify-center size-12 rounded-xl bg-chart-2/10 shrink-0">
               <Icon icon="solar:bell-bold" className="size-6 text-chart-2" />
@@ -475,10 +478,10 @@ export function PengaturanSistem() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Backup & Data */}
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+          {/* Backup & Data */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-start gap-4">
             <div className="flex items-center justify-center size-12 rounded-xl bg-accent/20 shrink-0">
               <Icon icon="solar:database-bold" className="size-6 text-accent" />
@@ -503,10 +506,10 @@ export function PengaturanSistem() {
               </div>
             </div>
           </div>
-        </div>
+          </div>
 
-        {/* Informasi Aplikasi */}
-        <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+          {/* Informasi Aplikasi */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-start gap-4">
             <div className="flex items-center justify-center size-12 rounded-xl bg-chart-4/10 shrink-0">
               <Icon icon="solar:info-circle-bold" className="size-6 text-chart-4" />
@@ -544,6 +547,7 @@ export function PengaturanSistem() {
                 </div>
               </div>
             </div>
+          </div>
           </div>
         </div>
       </div>

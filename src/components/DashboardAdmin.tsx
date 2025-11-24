@@ -67,26 +67,27 @@ export function DashboardAdmin() {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <div className="px-6 py-5 bg-card border-b border-border">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold text-foreground font-heading">Admin Dashboard</h1>
+      <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <h1 className="text-lg sm:text-xl font-bold text-foreground font-heading">Admin Dashboard</h1>
           <button
             onClick={handleLogout}
-            className="flex items-center justify-center size-11 rounded-xl bg-muted hover:bg-destructive/10 transition-colors"
+            className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-muted hover:bg-destructive/10 transition-colors"
             title="Logout"
           >
-            <Icon icon="solar:logout-2-bold" className="size-6 text-destructive" />
+            <Icon icon="solar:logout-2-bold" className="size-5 sm:size-6 text-destructive" />
           </button>
         </div>
       </div>
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <div className="max-w-7xl mx-auto space-y-6">
         {/* Statistics Cards */}
         {isLoading ? (
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border animate-pulse">
-                <div className="flex items-center gap-3">
-                  <div className="size-11 rounded-xl bg-muted"></div>
+              <div key={i} className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border animate-pulse">
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="size-10 sm:size-11 rounded-xl bg-muted"></div>
                   <div className="flex-1 min-w-0 space-y-2">
                     <div className="h-3 bg-muted rounded w-20"></div>
                     <div className="h-5 bg-muted rounded w-16"></div>
@@ -96,46 +97,46 @@ export function DashboardAdmin() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center size-11 rounded-xl bg-primary/10">
-                  <Icon icon="solar:users-group-two-rounded-bold" className="size-5 text-primary" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-primary/10">
+                  <Icon icon="solar:users-group-two-rounded-bold" className="size-4 sm:size-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground">Total Mahasiswa</p>
-                  <p className="text-lg font-bold text-foreground font-heading">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Total Mahasiswa</p>
+                  <p className="text-base sm:text-lg font-bold text-foreground font-heading">
                     {stats.totalMahasiswa.toLocaleString('id-ID')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center size-11 rounded-xl bg-secondary/10">
-                  <Icon icon="solar:calendar-bold" className="size-5 text-secondary" />
+            <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-secondary/10">
+                  <Icon icon="solar:calendar-bold" className="size-4 sm:size-5 text-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground">Total Kegiatan</p>
-                  <p className="text-lg font-bold text-foreground font-heading">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Total Kegiatan</p>
+                  <p className="text-base sm:text-lg font-bold text-foreground font-heading">
                     {stats.totalKegiatan.toLocaleString('id-ID')}
                   </p>
                 </div>
               </div>
             </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center size-11 rounded-xl bg-accent/20">
-                  <Icon icon="solar:clock-circle-bold" className="size-5 text-accent" />
+            <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-accent/20">
+                  <Icon icon="solar:clock-circle-bold" className="size-4 sm:size-5 text-accent" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground">Pengajuan Pending</p>
-                  <div className="flex items-center gap-2">
-                    <p className="text-lg font-bold text-foreground font-heading">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Pengajuan Pending</p>
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <p className="text-base sm:text-lg font-bold text-foreground font-heading">
                       {stats.pendingVerifikasi.toLocaleString('id-ID')}
                     </p>
                     {stats.pendingVerifikasi > 0 && (
-                      <span className="px-2 py-0.5 text-[10px] font-semibold rounded-full bg-accent text-accent-foreground">
+                      <span className="px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-semibold rounded-full bg-accent text-accent-foreground">
                         Pending
                       </span>
                     )}
@@ -143,14 +144,14 @@ export function DashboardAdmin() {
                 </div>
               </div>
             </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center justify-center size-11 rounded-xl bg-chart-2/10">
-                  <Icon icon="solar:medal-star-bold" className="size-5 text-chart-2" />
+            <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-chart-2/10">
+                  <Icon icon="solar:medal-star-bold" className="size-4 sm:size-5 text-chart-2" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-muted-foreground">Total Poin</p>
-                  <p className="text-lg font-bold text-foreground font-heading">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Total Poin</p>
+                  <p className="text-base sm:text-lg font-bold text-foreground font-heading">
                     {stats.totalPoin.toLocaleString('id-ID')}
                   </p>
                 </div>
@@ -159,72 +160,73 @@ export function DashboardAdmin() {
           </div>
         )}
         <div>
-          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Menu Manajemen</h3>
-          <div className="grid grid-cols-2 gap-4">
+          <h3 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4 font-heading">Menu Manajemen</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             <button
               onClick={() => router.push('/admin/kelola-mahasiswa')}
-              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+              className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
             >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-16 rounded-2xl bg-primary/10">
-                  <Icon icon="solar:users-group-rounded-bold" className="size-8 text-primary" />
+              <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+                <div className="flex items-center justify-center size-12 sm:size-16 rounded-xl sm:rounded-2xl bg-primary/10">
+                  <Icon icon="solar:users-group-rounded-bold" className="size-6 sm:size-8 text-primary" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Kelola Mahasiswa</p>
+                <p className="text-xs sm:text-sm font-semibold text-foreground">Kelola Mahasiswa</p>
               </div>
             </button>
             <button
               onClick={() => router.push('/admin/kelola-kegiatan')}
-              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+              className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
             >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-16 rounded-2xl bg-secondary/10">
-                  <Icon icon="solar:clipboard-list-bold" className="size-8 text-secondary" />
+              <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+                <div className="flex items-center justify-center size-12 sm:size-16 rounded-xl sm:rounded-2xl bg-secondary/10">
+                  <Icon icon="solar:clipboard-list-bold" className="size-6 sm:size-8 text-secondary" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Kelola Kegiatan</p>
+                <p className="text-xs sm:text-sm font-semibold text-foreground">Kelola Kegiatan</p>
               </div>
             </button>
             <button
               onClick={() => router.push('/admin/verifikasi-pengajuan')}
-              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+              className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
             >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-16 rounded-2xl bg-accent/20">
-                  <Icon icon="solar:check-circle-bold" className="size-8 text-accent" />
+              <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+                <div className="flex items-center justify-center size-12 sm:size-16 rounded-xl sm:rounded-2xl bg-accent/20">
+                  <Icon icon="solar:check-circle-bold" className="size-6 sm:size-8 text-accent" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Verifikasi Semua</p>
+                <p className="text-xs sm:text-sm font-semibold text-foreground">Verifikasi Semua</p>
               </div>
             </button>
             <button
               onClick={() => router.push('/admin/laporan-statistik')}
-              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+              className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
             >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-16 rounded-2xl bg-chart-2/10">
-                  <Icon icon="solar:chart-bold" className="size-8 text-chart-2" />
+              <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+                <div className="flex items-center justify-center size-12 sm:size-16 rounded-xl sm:rounded-2xl bg-chart-2/10">
+                  <Icon icon="solar:chart-bold" className="size-6 sm:size-8 text-chart-2" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Laporan & Statistik</p>
+                <p className="text-xs sm:text-sm font-semibold text-foreground">Laporan & Statistik</p>
               </div>
             </button>
             <button
               onClick={() => router.push('/admin/kelola-pengguna')}
-              className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
+              className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border border-border hover:shadow-lg transition-shadow"
             >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-16 rounded-2xl bg-chart-4/10">
-                  <Icon icon="solar:user-id-bold" className="size-8 text-chart-4" />
+              <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+                <div className="flex items-center justify-center size-12 sm:size-16 rounded-xl sm:rounded-2xl bg-chart-4/10">
+                  <Icon icon="solar:user-id-bold" className="size-6 sm:size-8 text-chart-4" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Kelola Pengguna</p>
+                <p className="text-xs sm:text-sm font-semibold text-foreground">Kelola Pengguna</p>
               </div>
             </button>
-            <button onClick={() => router.push('/admin/pengaturan-sistem')} className="bg-card rounded-2xl p-6 shadow-md border border-border hover:shadow-lg transition-shadow">
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-16 rounded-2xl bg-muted">
-                  <Icon icon="solar:settings-bold" className="size-8 text-primary" />
+            <button onClick={() => router.push('/admin/pengaturan-sistem')} className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border border-border hover:shadow-lg transition-shadow">
+              <div className="flex flex-col items-center text-center space-y-2 sm:space-y-3">
+                <div className="flex items-center justify-center size-12 sm:size-16 rounded-xl sm:rounded-2xl bg-muted">
+                  <Icon icon="solar:settings-bold" className="size-6 sm:size-8 text-primary" />
                 </div>
-                <p className="text-sm font-semibold text-foreground">Pengaturan Sistem</p>
+                <p className="text-xs sm:text-sm font-semibold text-foreground">Pengaturan Sistem</p>
               </div>
             </button>
           </div>
+        </div>
         </div>
       </div>
     </div>

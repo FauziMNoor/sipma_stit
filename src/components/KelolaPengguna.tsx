@@ -424,7 +424,8 @@ export default function KelolaPengguna() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
+      <div className="px-4 sm:px-6 py-5 bg-primary">
+        <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-1">
           <button
             onClick={() => router.back()}
@@ -448,10 +449,12 @@ export default function KelolaPengguna() {
         <p className="text-sm text-white/80 text-center">
           Kelola akun pengguna sistem
         </p>
+        </div>
       </div>
 
       {/* Search Bar */}
-      <div className="bg-card border-b border-border px-6 py-4">
+      <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
         <div className="relative">
           <Icon icon="solar:magnifer-linear" className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
           <input
@@ -462,10 +465,12 @@ export default function KelolaPengguna() {
             className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
           />
         </div>
+        </div>
       </div>
 
       {/* Role Filter Tabs */}
-      <div className="bg-card border-b border-border px-6 py-4">
+      <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
         <div className="flex gap-2 overflow-x-auto">
           <button
             onClick={() => setRoleFilter('all')}
@@ -522,10 +527,12 @@ export default function KelolaPengguna() {
             </span>
           </button>
         </div>
+        </div>
       </div>
 
       {/* Users List */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+        <div className="max-w-7xl mx-auto space-y-4">
         {users.length === 0 ? (
           <div className="text-center py-12">
             <Icon icon="solar:user-cross-rounded-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
@@ -533,7 +540,7 @@ export default function KelolaPengguna() {
           </div>
         ) : (
           users.map((user) => (
-            <div key={user.id} className="bg-card rounded-2xl p-4 shadow-sm border border-border relative">
+            <div key={user.id} className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border relative">
               <div className="flex gap-3">
                 <img
                   alt={user.nama}
@@ -606,6 +613,7 @@ export default function KelolaPengguna() {
             </div>
           ))
         )}
+        </div>
       </div>
 
       {/* Add User Modal */}

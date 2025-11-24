@@ -183,31 +183,34 @@ export default function VerifikasiSemuaPengajuan() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
+      <div className="px-4 sm:px-6 py-5 bg-primary">
+        <div className="max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-1">
           <button
             onClick={() => router.back()}
-            className="flex items-center justify-center size-11"
+            className="flex items-center justify-center size-10 sm:size-11"
             type="button"
           >
-            <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
+            <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
           </button>
-          <h1 className="text-lg font-bold text-white font-heading">Verifikasi Semua Pengajuan</h1>
+          <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Semua Pengajuan</h1>
           <button
             onClick={() => setShowFilterModal(true)}
-            className="flex items-center justify-center size-11"
+            className="flex items-center justify-center size-10 sm:size-11"
             type="button"
           >
-            <Icon icon="solar:filter-bold" className="size-6 text-white" />
+            <Icon icon="solar:filter-bold" className="size-5 sm:size-6 text-white" />
           </button>
         </div>
-        <p className="text-sm text-white/80 text-center">
+        <p className="text-xs sm:text-sm text-white/80 text-center">
           Kelola semua pengajuan kegiatan mahasiswa
         </p>
+        </div>
       </div>
 
       {/* Status Tabs */}
-      <div className="bg-card border-b border-border px-6 py-4">
+      <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
         <div className="flex gap-2 overflow-x-auto">
           <button
             onClick={() => setStatusFilter('all')}
@@ -292,10 +295,12 @@ export default function VerifikasiSemuaPengajuan() {
             )}
           </button>
         </div>
+        </div>
       </div>
 
       {/* Pengajuan List */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+        <div className="max-w-7xl mx-auto space-y-4">
         {pengajuan.length === 0 ? (
           <div className="text-center py-12">
             <Icon icon="solar:inbox-line-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
@@ -303,7 +308,7 @@ export default function VerifikasiSemuaPengajuan() {
           </div>
         ) : (
           pengajuan.map((item) => (
-            <div key={item.id} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+            <div key={item.id} className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
               {/* Mahasiswa Info */}
               <div className="flex gap-3 mb-3">
                 <img
@@ -406,6 +411,7 @@ export default function VerifikasiSemuaPengajuan() {
             </div>
           ))
         )}
+        </div>
       </div>
 
       {/* Filter Modal */}
