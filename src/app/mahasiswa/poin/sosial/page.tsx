@@ -1,10 +1,10 @@
 'use client';
 
-import KategoriPoinMahasiswa from '@/components/KategoriPoinMahasiswa';
+import RiwayatKegiatanByKategori from '@/components/RiwayatKegiatanByKategori';
 
 export default function SosialPage() {
   return (
-    <KategoriPoinMahasiswa
+    <RiwayatKegiatanByKategori
       kategoriUtama="Sosial"
       title="Sosial & Kepemimpinan"
       icon="solar:users-group-rounded-bold"

@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nim, nama, prodi, angkatan, semester, password, foto, tahun_ajaran_masuk } = body;
+    const { nim, nama, email, no_telepon, prodi, angkatan, semester, password, foto, alamat, tahun_ajaran_masuk } = body;
 
     // Validation
     if (!nim || !nama || !prodi || !angkatan || !semester || !password) {
@@ -92,9 +92,12 @@ export async function POST(request: NextRequest) {
       .insert({
         nim,
         nama,
+        email: email || null,
+        no_telepon: no_telepon || null,
         prodi,
         angkatan: typeof angkatan === 'number' ? angkatan : parseInt(angkatan),
         semester: typeof semester === 'number' ? semester : parseInt(semester),
+        alamat: alamat || null,
         tahun_ajaran_masuk: tahunAjaranMasuk,
         password: hashedPassword,
         foto: foto || null,

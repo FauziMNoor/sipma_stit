@@ -42,7 +42,7 @@ export async function PUT(
     console.log('📝 PUT /api/mahasiswa/[id] - ID:', id);
     const body = await request.json();
     console.log('📝 PUT /api/mahasiswa/[id] - Body:', body);
-    const { nim, nama, prodi, angkatan, semester, password, foto, is_active, tahun_ajaran_masuk } = body;
+    const { nim, nama, email, no_telepon, prodi, angkatan, semester, password, foto, alamat, is_active, tahun_ajaran_masuk } = body;
 
     // Validate required fields
     if (!nim || !nama || !prodi || !angkatan || !semester) {
@@ -62,9 +62,24 @@ export async function PUT(
       is_active: is_active !== undefined ? is_active : true,
     };
 
+    // Update email if provided
+    if (email !== undefined) {
+      updateData.email = email;
+    }
+
+    // Update no_telepon if provided
+    if (no_telepon !== undefined) {
+      updateData.no_telepon = no_telepon;
+    }
+
     // Update tahun_ajaran_masuk if provided
     if (tahun_ajaran_masuk) {
       updateData.tahun_ajaran_masuk = tahun_ajaran_masuk;
+    }
+
+    // Update alamat if provided
+    if (alamat !== undefined) {
+      updateData.alamat = alamat;
     }
 
     // Update foto if provided
@@ -110,6 +125,59 @@ export async function PUT(
     return NextResponse.json({ success: true, data });
   } catch (error: any) {
     console.error('❌ Error in PUT /api/mahasiswa/[id]:', error);
+    return NextResponse.json(
+      { success: false, error: 'Terjadi kesalahan server' },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Partial update mahasiswa (for profile edit)
+export async function PATCH(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+    const body = await request.json();
+    const { nama, email, no_telepon, alamat, prodi, foto } = body;
+
+    const updateData: any = {};
+
+    // Only update fields that are provided
+    if (nama !== undefined) updateData.nama = nama;
+    if (email !== undefined) updateData.email = email;
+    if (no_telepon !== undefined) updateData.no_telepon = no_telepon;
+    if (alamat !== undefined) updateData.alamat = alamat;
+    if (prodi !== undefined) updateData.prodi = prodi;
+    if (foto !== undefined) updateData.foto = foto;
+
+    // Check if there's anything to update
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json(
+        { success: false, error: 'Tidak ada data yang diupdate' },
+        { status: 400 }
+      );
+    }
+
+    const { data, error } = await supabase
+      .from('mahasiswa')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('❌ Error updating mahasiswa profile:', error);
+      return NextResponse.json(
+        { success: false, error: `Gagal mengupdate profil: ${error.message}` },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, data });
+  } catch (error: any) {
+    console.error('❌ Error in PATCH /api/mahasiswa/[id]:', error);
     return NextResponse.json(
       { success: false, error: 'Terjadi kesalahan server' },
       { status: 500 }

@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
       // Skip empty rows
       if (!row || row.every(col => !col || col === '')) continue;
 
-      const [nim, nama, prodi, angkatan, semester, tahun_ajaran_masuk, password] = row.map(col =>
+      const [nim, nama, email, no_telepon, prodi, angkatan, semester, alamat, tahun_ajaran_masuk, password] = row.map(col =>
         typeof col === 'string' ? col.trim() : String(col || '').trim()
       );
 
@@ -116,9 +116,12 @@ export async function POST(request: NextRequest) {
           .insert({
             nim,
             nama,
+            email: email || null,
+            no_telepon: no_telepon || null,
             prodi,
             angkatan: parseInt(angkatan),
             semester: parseInt(semester),
+            alamat: alamat || null,
             tahun_ajaran_masuk: finalTahunAjaranMasuk,
             password: hashedPassword,
             is_active: true,

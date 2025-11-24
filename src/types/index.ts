@@ -30,8 +30,11 @@ export interface Mahasiswa {
   user_id: string | null;
   nim: string;
   nama: string;
+  email: string | null;
+  no_telepon: string | null;
   prodi: string;
   angkatan: number;
+  alamat: string | null;
   foto: string | null;
   wali_dosen_id: string | null;
   musyrif_id: string | null;

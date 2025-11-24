@@ -1,10 +1,10 @@
 'use client';
 
-import KategoriPoinMahasiswa from '@/components/KategoriPoinMahasiswa';
+import RiwayatKegiatanByKategori from '@/components/RiwayatKegiatanByKategori';
 
 export default function AdabPage() {
   return (
-    <KategoriPoinMahasiswa
+    <RiwayatKegiatanByKategori
       kategoriUtama="Adab"
       title="Adab & Akhlak"
       icon="solar:leaf-bold"

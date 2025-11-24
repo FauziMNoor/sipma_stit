@@ -20,6 +20,7 @@ interface KategoriPoinMahasiswaProps {
   title: string;
   icon: string;
   color: string;
+  jenis?: 'positif' | 'negatif'; // Optional, default 'positif'
 }
 
 export default function KategoriPoinMahasiswa({
@@ -27,6 +28,7 @@ export default function KategoriPoinMahasiswa({
   title,
   icon,
   color,
+  jenis = 'positif', // Default to 'positif'
 }: KategoriPoinMahasiswaProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -36,26 +38,29 @@ export default function KategoriPoinMahasiswa({
 
   useEffect(() => {
     fetchKegiatan();
-  }, [kategoriUtama]);
+  }, [kategoriUtama, jenis]);
 
   const fetchKegiatan = async () => {
     try {
       setIsLoading(true);
+      console.log('🔍 Fetching kegiatan:', { kategoriUtama, jenis });
+
       const { data, error } = await supabase
         .from('kategori_poin')
         .select('id, kode, nama, kategori_utama, bobot, jenis, deskripsi')
         .eq('kategori_utama', kategoriUtama)
-        .eq('jenis', 'positif')
+        .eq('jenis', jenis)
         .eq('is_active', true)
         .order('bobot', { ascending: false });
 
       if (error) {
-        console.error('Error fetching kegiatan:', error);
+        console.error('❌ Error fetching kegiatan:', error);
       } else {
+        console.log('✅ Kegiatan fetched:', { count: data?.length, data });
         setKegiatanList(data || []);
       }
     } catch (error) {
-      console.error('Error fetching kegiatan:', error);
+      console.error('❌ Error fetching kegiatan:', error);
     } finally {
       setIsLoading(false);
     }
@@ -152,7 +157,7 @@ export default function KategoriPoinMahasiswa({
                   className="bg-card rounded-2xl p-4 shadow-sm border border-border"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center size-12 rounded-full bg-secondary flex-shrink-0">
+                    <div className="flex items-center justify-center size-12 rounded-full bg-secondary shrink-0">
                       <span className="text-2xl">{getEmojiByKategori(kategoriUtama)}</span>
                     </div>
                     <div className="flex-1 min-w-0">
@@ -161,9 +166,9 @@ export default function KategoriPoinMahasiswa({
                         {item.deskripsi || 'Tidak ada deskripsi'}
                       </p>
                     </div>
-                    <div className="flex items-center justify-center px-3 py-1 rounded-full bg-accent shrink-0">
-                      <span className="text-sm font-bold text-accent-foreground">
-                        +{item.bobot}
+                    <div className={`flex items-center justify-center px-3 py-1 rounded-full shrink-0 ${jenis === 'negatif' ? 'bg-destructive/10' : 'bg-accent'}`}>
+                      <span className={`text-sm font-bold ${jenis === 'negatif' ? 'text-destructive' : 'text-accent-foreground'}`}>
+                        {jenis === 'negatif' ? '-' : '+'}{item.bobot}
                       </span>
                     </div>
                   </div>

@@ -1,10 +1,10 @@
 'use client';
 
-import KategoriPoinMahasiswa from '@/components/KategoriPoinMahasiswa';
+import RiwayatKegiatanByKategori from '@/components/RiwayatKegiatanByKategori';
 
 export default function AkademikPage() {
   return (
-    <KategoriPoinMahasiswa
+    <RiwayatKegiatanByKategori
       kategoriUtama="Akademik"
       title="Kegiatan Akademik"
       icon="solar:book-bold"

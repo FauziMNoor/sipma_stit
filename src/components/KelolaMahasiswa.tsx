@@ -8,9 +8,12 @@ interface Mahasiswa {
 id: string;
 nim: string;
 nama: string;
+email: string | null;
+no_telepon: string | null;
 prodi: string;
 angkatan: number;
 semester: number;
+alamat: string | null;
 tahun_ajaran_masuk: string;
 foto: string | null;
 is_active: boolean;
@@ -29,9 +32,12 @@ const [selectedMahasiswa, setSelectedMahasiswa] = useState<Mahasiswa | null>(nul
 const [formData, setFormData] = useState({
 nim: '',
 nama: '',
+email: '',
+no_telepon: '',
 prodi: '',
 angkatan: new Date().getFullYear(),
 semester: 1,
+alamat: '',
 tahun_ajaran_masuk: '',
 password: '',
 foto: null as File | null,
@@ -69,9 +75,12 @@ const currentYear = new Date().getFullYear();
 setFormData({
   nim: '',
   nama: '',
+  email: '',
+  no_telepon: '',
   prodi: '',
   angkatan: currentYear,
   semester: 1,
+  alamat: '',
   tahun_ajaran_masuk: `${currentYear}/${currentYear + 1}`,
   password: '',
   foto: null,
@@ -85,9 +94,12 @@ setSelectedMahasiswa(mahasiswa);
 setFormData({
   nim: mahasiswa.nim,
   nama: mahasiswa.nama,
+  email: mahasiswa.email || '',
+  no_telepon: mahasiswa.no_telepon || '',
   prodi: mahasiswa.prodi,
   angkatan: mahasiswa.angkatan,
   semester: mahasiswa.semester,
+  alamat: mahasiswa.alamat || '',
   tahun_ajaran_masuk: mahasiswa.tahun_ajaran_masuk || `${mahasiswa.angkatan}/${mahasiswa.angkatan + 1}`,
   password: '',
   foto: null,
@@ -154,9 +166,12 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({
 nim: formData.nim,
 nama: formData.nama,
+email: formData.email,
+no_telepon: formData.no_telepon,
 prodi: formData.prodi,
 angkatan: formData.angkatan,
 semester: formData.semester,
+alamat: formData.alamat,
 tahun_ajaran_masuk: formData.tahun_ajaran_masuk,
 password: formData.password,
 foto: fotoUrl || null,
@@ -170,9 +185,12 @@ setShowAddModal(false);
 setFormData({
   nim: '',
   nama: '',
+  email: '',
+  no_telepon: '',
   prodi: '',
   angkatan: 2024,
   semester: 1,
+  alamat: '',
   tahun_ajaran_masuk: '2024/2025',
   password: '',
   foto: null,
@@ -217,9 +235,12 @@ headers: { 'Content-Type': 'application/json' },
 body: JSON.stringify({
 nim: formData.nim,
 nama: formData.nama,
+email: formData.email,
+no_telepon: formData.no_telepon,
 prodi: formData.prodi,
 angkatan: formData.angkatan,
 semester: formData.semester,
+alamat: formData.alamat,
 tahun_ajaran_masuk: formData.tahun_ajaran_masuk,
 password: formData.password,
 foto: fotoUrl || null,
@@ -419,6 +440,14 @@ filteredMahasiswa.map((mahasiswa) => (
 <input type="text" value={formData.nama} onChange={(e) => setFormData({ ...formData, nama: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan nama lengkap" />
 </div>
 <div>
+<label className="block text-sm font-medium mb-2">Email</label>
+<input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan email" />
+</div>
+<div>
+<label className="block text-sm font-medium mb-2">No. Telepon</label>
+<input type="tel" value={formData.no_telepon} onChange={(e) => setFormData({ ...formData, no_telepon: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan nomor telepon" />
+</div>
+<div>
 <label className="block text-sm font-medium mb-2">Program Studi</label>
 <input type="text" value={formData.prodi} onChange={(e) => setFormData({ ...formData, prodi: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan prodi" />
 </div>
@@ -431,6 +460,10 @@ filteredMahasiswa.map((mahasiswa) => (
 <label className="block text-sm font-medium mb-2">Semester</label>
 <input type="number" min="1" max="14" value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: parseInt(e.target.value) })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="1" />
 </div>
+</div>
+<div>
+<label className="block text-sm font-medium mb-2">Alamat</label>
+<textarea value={formData.alamat} onChange={(e) => setFormData({ ...formData, alamat: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input h-20 resize-none" placeholder="Masukkan alamat lengkap" />
 </div>
 <div>
 <label className="block text-sm font-medium mb-2">Tahun Ajaran Masuk</label>
@@ -488,6 +521,14 @@ filteredMahasiswa.map((mahasiswa) => (
 <input type="text" value={formData.nama} onChange={(e) => setFormData({ ...formData, nama: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" />
 </div>
 <div>
+<label className="block text-sm font-medium mb-2">Email</label>
+<input type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan email" />
+</div>
+<div>
+<label className="block text-sm font-medium mb-2">No. Telepon</label>
+<input type="tel" value={formData.no_telepon} onChange={(e) => setFormData({ ...formData, no_telepon: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan nomor telepon" />
+</div>
+<div>
 <label className="block text-sm font-medium mb-2">Program Studi</label>
 <input type="text" value={formData.prodi} onChange={(e) => setFormData({ ...formData, prodi: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" />
 </div>
@@ -500,6 +541,10 @@ filteredMahasiswa.map((mahasiswa) => (
 <label className="block text-sm font-medium mb-2">Semester</label>
 <input type="number" min="1" max="14" value={formData.semester} onChange={(e) => setFormData({ ...formData, semester: parseInt(e.target.value) })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" />
 </div>
+</div>
+<div>
+<label className="block text-sm font-medium mb-2">Alamat</label>
+<textarea value={formData.alamat} onChange={(e) => setFormData({ ...formData, alamat: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input h-20 resize-none" placeholder="Masukkan alamat lengkap" />
 </div>
 <div>
 <label className="block text-sm font-medium mb-2">Tahun Ajaran Masuk</label>
@@ -544,6 +589,14 @@ Batal
 <p className="font-medium">{selectedMahasiswa.nama}</p>
 </div>
 <div>
+<p className="text-sm text-muted-foreground">Email</p>
+<p className="font-medium">{selectedMahasiswa.email || '-'}</p>
+</div>
+<div>
+<p className="text-sm text-muted-foreground">No. Telepon</p>
+<p className="font-medium">{selectedMahasiswa.no_telepon || '-'}</p>
+</div>
+<div>
 <p className="text-sm text-muted-foreground">Program Studi</p>
 <p className="font-medium">{selectedMahasiswa.prodi}</p>
 </div>
@@ -556,6 +609,10 @@ Batal
 <p className="text-sm text-muted-foreground">Semester</p>
 <p className="font-medium">{selectedMahasiswa.semester}</p>
 </div>
+</div>
+<div>
+<p className="text-sm text-muted-foreground">Alamat</p>
+<p className="font-medium">{selectedMahasiswa.alamat || '-'}</p>
 </div>
 <div>
 <p className="text-sm text-muted-foreground">Tahun Ajaran Masuk</p>

@@ -7,16 +7,19 @@ export async function GET() {
     const workbook = XLSX.utils.book_new();
 
     // Create worksheet with headers only (no example data)
-    const headers = [['NIM', 'Nama Lengkap', 'Program Studi', 'Angkatan', 'Semester', 'Tahun Ajaran Masuk', 'Password']];
+    const headers = [['NIM', 'Nama Lengkap', 'Email', 'No. Telepon', 'Program Studi', 'Angkatan', 'Semester', 'Alamat', 'Tahun Ajaran Masuk', 'Password']];
     const worksheet = XLSX.utils.aoa_to_sheet(headers);
 
     // Set column widths for better readability
     worksheet['!cols'] = [
       { wch: 15 },  // NIM
       { wch: 25 },  // Nama Lengkap
+      { wch: 25 },  // Email
+      { wch: 15 },  // No. Telepon
       { wch: 30 },  // Program Studi
       { wch: 10 },  // Angkatan
       { wch: 10 },  // Semester
+      { wch: 40 },  // Alamat
       { wch: 18 },  // Tahun Ajaran Masuk
       { wch: 15 },  // Password
     ];
