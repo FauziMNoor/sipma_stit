@@ -111,7 +111,7 @@ export default function InputKegiatan() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!currentUser) {
+    if (!user) {
       alert('Anda harus login terlebih dahulu');
       return;
     }

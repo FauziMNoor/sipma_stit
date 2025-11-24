@@ -49,24 +49,29 @@ export async function GET(
     }
 
     // Format the data
+    // Handle mahasiswa as array (Supabase returns array for foreign key relations)
+    const mahasiswaData = Array.isArray(pengajuan.mahasiswa) ? pengajuan.mahasiswa[0] : pengajuan.mahasiswa;
+    const kategoriData = Array.isArray(pengajuan.kategori_poin) ? pengajuan.kategori_poin[0] : pengajuan.kategori_poin;
+    const verifikatorData = Array.isArray(pengajuan.verifikator) ? pengajuan.verifikator[0] : pengajuan.verifikator;
+
     const formattedData = {
       id: pengajuan.id,
       mahasiswa_id: pengajuan.mahasiswa_id,
-      mahasiswa_nama: pengajuan.mahasiswa?.nama || 'Unknown',
-      mahasiswa_nim: pengajuan.mahasiswa?.nim || 'Unknown',
-      mahasiswa_prodi: pengajuan.mahasiswa?.prodi || 'Unknown',
-      mahasiswa_angkatan: pengajuan.mahasiswa?.angkatan || 'Unknown',
-      mahasiswa_foto: pengajuan.mahasiswa?.foto || null,
+      mahasiswa_nama: mahasiswaData?.nama || 'Unknown',
+      mahasiswa_nim: mahasiswaData?.nim || 'Unknown',
+      mahasiswa_prodi: mahasiswaData?.prodi || 'Unknown',
+      mahasiswa_angkatan: mahasiswaData?.angkatan || 'Unknown',
+      mahasiswa_foto: mahasiswaData?.foto || null,
       kategori_id: pengajuan.kategori_id,
-      kategori_nama: pengajuan.kategori_poin?.nama || 'Unknown',
-      kategori_poin: pengajuan.kategori_poin?.bobot || 0,
+      kategori_nama: kategoriData?.nama || 'Unknown',
+      kategori_poin: kategoriData?.bobot || 0,
       deskripsi_kegiatan: pengajuan.deskripsi_kegiatan,
       tanggal: pengajuan.tanggal,
       bukti: pengajuan.bukti,
       status: pengajuan.status,
       notes_verifikator: pengajuan.notes_verifikator,
       verified_at: pengajuan.verified_at,
-      verifikator_nama: pengajuan.verifikator?.nama || null,
+      verifikator_nama: verifikatorData?.nama || null,
       created_at: pengajuan.created_at,
     };
 

@@ -8,7 +8,7 @@ import { verifyJWT } from '@/lib/auth';
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Get token from cookie or Authorization header
@@ -40,7 +40,7 @@ export async function PUT(
     }
 
     const userId = payload.userId;
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
     const { action, notes } = body;
 

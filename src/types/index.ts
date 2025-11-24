@@ -2,7 +2,7 @@
  * Core types for SIPMA application
  */
 
-export type UserRole = 'mahasiswa' | 'dosen_pa' | 'musyrif' | 'waket3' | 'admin';
+export type UserRole = 'mahasiswa' | 'dosen_pa' | 'musyrif' | 'waket3' | 'admin' | 'staff';
 export type PoinStatus = 'pending' | 'approved' | 'rejected';
 export type PoinJenis = 'positif' | 'negatif';
 export type StatusKelulusan = 'lulus' | 'belum_lulus';

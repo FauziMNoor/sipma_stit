@@ -14,6 +14,7 @@ export const ROLES = {
   MUSYRIF: 'musyrif',
   WAKET3: 'waket3',
   ADMIN: 'admin',
+  STAFF: 'staff',
 } as const;
 
 export type UserRole = typeof ROLES[keyof typeof ROLES];
