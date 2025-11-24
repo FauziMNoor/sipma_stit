@@ -89,101 +89,105 @@ export default function MahasiswaBimbinganDosenPA() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
-        <div className="flex items-center justify-between mb-4">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center size-11 rounded-xl bg-white/10"
-          >
-            <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
-          </button>
-          <h1 className="text-lg font-bold text-white font-heading">Mahasiswa Bimbingan</h1>
-          <div className="size-11" />
-        </div>
-        <div className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 pl-12 rounded-xl bg-white text-foreground placeholder:text-muted-foreground"
-            placeholder="Cari nama atau NIM mahasiswa..."
-          />
-          <Icon
-            icon="solar:magnifer-linear"
-            className="size-5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2"
-          />
+      <div className="px-4 sm:px-6 py-5 bg-primary">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-white/10"
+            >
+              <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
+            </button>
+            <h1 className="text-base sm:text-lg font-bold text-white font-heading">Mahasiswa Bimbingan</h1>
+            <div className="size-10 sm:size-11" />
+          </div>
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2.5 sm:py-3 pl-11 sm:pl-12 rounded-xl bg-white text-sm sm:text-base text-foreground placeholder:text-muted-foreground"
+              placeholder="Cari nama atau NIM mahasiswa..."
+            />
+            <Icon
+              icon="solar:magnifer-linear"
+              className="size-4 sm:size-5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2"
+            />
+          </div>
         </div>
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="mb-4">
-          <p className="text-sm text-muted-foreground">
-            Total <span className="font-semibold text-foreground">{mahasiswaList.length} Mahasiswa</span> Bimbingan
-          </p>
-        </div>
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="mb-4">
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              Total <span className="font-semibold text-foreground">{mahasiswaList.length} Mahasiswa</span> Bimbingan
+            </p>
+          </div>
 
-        {filteredMahasiswa.length === 0 ? (
-          <div className="text-center py-12">
-            <Icon icon="solar:user-cross-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
-            <p className="text-muted-foreground">Tidak ada mahasiswa ditemukan</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredMahasiswa.map((mahasiswa) => {
-              const statusColors = getStatusColor(mahasiswa.status_keaktifan);
-              const [textColor, bgColor] = statusColors.split(' bg-');
-              
-              return (
-                <button
-                  key={mahasiswa.id}
-                  onClick={() => router.push(`/dosen-pa/mahasiswa/${mahasiswa.id}`)}
-                  className="w-full"
-                >
-                  <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-                    <div className="flex items-center gap-4 p-5">
-                      <img
-                        alt={mahasiswa.nama}
-                        src={
-                          mahasiswa.foto ||
-                          `https://ui-avatars.com/api/?name=${encodeURIComponent(mahasiswa.nama)}`
-                        }
-                        className="size-14 rounded-full border-2 border-secondary object-cover"
-                      />
-                      <div className="flex-1 text-left">
-                        <p className="text-base font-bold text-foreground">{mahasiswa.nama}</p>
-                        <p className="text-xs text-muted-foreground mb-2">
-                          {mahasiswa.nim} • Semester {mahasiswa.semester}
-                        </p>
-                        <div className="flex items-center gap-2 mb-2">
-                          <div className="flex items-center justify-center px-3 py-1 rounded-lg bg-accent/20">
-                            <p className="text-xl font-bold text-accent">{mahasiswa.total_poin}</p>
+          {filteredMahasiswa.length === 0 ? (
+            <div className="text-center py-12">
+              <Icon icon="solar:user-cross-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">Tidak ada mahasiswa ditemukan</p>
+            </div>
+          ) : (
+            <div className="space-y-3 sm:space-y-4">
+              {filteredMahasiswa.map((mahasiswa) => {
+                const statusColors = getStatusColor(mahasiswa.status_keaktifan);
+                const [textColor, bgColor] = statusColors.split(' bg-');
+                
+                return (
+                  <button
+                    key={mahasiswa.id}
+                    onClick={() => router.push(`/dosen-pa/mahasiswa/${mahasiswa.id}`)}
+                    className="w-full"
+                  >
+                    <div className="bg-card rounded-xl sm:rounded-2xl shadow-sm border border-border overflow-hidden">
+                      <div className="flex items-center gap-3 sm:gap-4 p-4 sm:p-5">
+                        <img
+                          alt={mahasiswa.nama}
+                          src={
+                            mahasiswa.foto ||
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(mahasiswa.nama)}`
+                          }
+                          className="size-12 sm:size-14 rounded-full border-2 border-secondary object-cover flex-shrink-0"
+                        />
+                        <div className="flex-1 text-left min-w-0">
+                          <p className="text-sm sm:text-base font-bold text-foreground truncate">{mahasiswa.nama}</p>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">
+                            {mahasiswa.nim} • Semester {mahasiswa.semester}
+                          </p>
+                          <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center justify-center px-2 sm:px-3 py-0.5 sm:py-1 rounded-lg bg-accent/20">
+                              <p className="text-lg sm:text-xl font-bold text-accent">{mahasiswa.total_poin}</p>
+                            </div>
+                            <p className="text-[10px] sm:text-xs font-semibold text-accent">Poin</p>
                           </div>
-                          <p className="text-xs font-semibold text-accent">Poin</p>
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <p className={`text-[10px] sm:text-xs font-semibold ${textColor}`}>
+                                {mahasiswa.status_keaktifan}
+                              </p>
+                              <p className="text-[10px] sm:text-xs text-muted-foreground">{mahasiswa.progress_percentage}%</p>
+                            </div>
+                            <div className="h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
+                              <div
+                                style={{ width: `${mahasiswa.progress_percentage}%` }}
+                                className={`h-full bg-${bgColor} rounded-full`}
+                              />
+                            </div>
+                          </div>
                         </div>
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <p className={`text-xs font-semibold ${textColor}`}>
-                              {mahasiswa.status_keaktifan}
-                            </p>
-                            <p className="text-xs text-muted-foreground">{mahasiswa.progress_percentage}%</p>
-                          </div>
-                          <div className="h-2 bg-muted rounded-full overflow-hidden">
-                            <div
-                              style={{ width: `${mahasiswa.progress_percentage}%` }}
-                              className={`h-full bg-${bgColor} rounded-full`}
-                            />
-                          </div>
-                        </div>
+                        <Icon icon="solar:alt-arrow-right-linear" className="size-4 sm:size-5 text-muted-foreground flex-shrink-0" />
                       </div>
-                      <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-muted-foreground" />
                     </div>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

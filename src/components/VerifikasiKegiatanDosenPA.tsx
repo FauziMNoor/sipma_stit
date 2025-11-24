@@ -122,23 +122,26 @@ export default function VerifikasiKegiatanDosenPA() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
-        <div className="flex items-center justify-between mb-1">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center size-11"
-          >
-            <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
-          </button>
-          <h1 className="text-lg font-bold text-white font-heading">Verifikasi Kegiatan</h1>
-          <div className="size-11" />
+      <div className="px-4 sm:px-6 py-5 bg-primary">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-center justify-between mb-1">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center size-10 sm:size-11"
+            >
+              <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
+            </button>
+            <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Kegiatan</h1>
+            <div className="size-10 sm:size-11" />
+          </div>
+          <p className="text-xs sm:text-sm text-white/80 text-center">Pengajuan kegiatan mahasiswa bimbingan</p>
         </div>
-        <p className="text-sm text-white/80 text-center">Pengajuan kegiatan mahasiswa bimbingan</p>
       </div>
 
       {/* Filter Tabs */}
-      <div className="bg-card border-b border-border px-6 py-4">
-        <div className="flex gap-2 overflow-x-auto">
+      <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex gap-2 overflow-x-auto">
           <button
             onClick={() => setFilter('all')}
             className={`px-5 py-2.5 rounded-xl font-semibold text-sm whitespace-nowrap shadow-sm ${
@@ -193,11 +196,13 @@ export default function VerifikasiKegiatanDosenPA() {
               {countByStatus('rejected')}
             </span>
           </button>
+          </div>
         </div>
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+        <div className="max-w-7xl mx-auto space-y-4">
         {filteredAktivitas.length === 0 ? (
           <div className="text-center py-12">
             <Icon icon="solar:document-text-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
@@ -207,59 +212,59 @@ export default function VerifikasiKegiatanDosenPA() {
           filteredAktivitas.map((aktivitas) => (
             <div
               key={aktivitas.id}
-              className="bg-secondary/5 rounded-2xl p-4 shadow-sm border border-secondary/20"
+              className="bg-secondary/5 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-secondary/20"
             >
-              <div className="flex gap-3 mb-3">
+              <div className="flex gap-2 sm:gap-3 mb-3">
                 <img
                   alt={aktivitas.mahasiswa.nama}
                   src={
                     aktivitas.mahasiswa.foto ||
                     `https://ui-avatars.com/api/?name=${encodeURIComponent(aktivitas.mahasiswa.nama)}`
                   }
-                  className="size-12 rounded-full border-2 border-secondary object-cover"
+                  className="size-11 sm:size-12 rounded-full border-2 border-secondary object-cover flex-shrink-0"
                 />
-                <div className="flex-1">
-                  <p className="text-sm font-bold text-foreground">{aktivitas.mahasiswa.nama}</p>
-                  <p className="text-xs text-muted-foreground">{aktivitas.mahasiswa.nim}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs sm:text-sm font-bold text-foreground truncate">{aktivitas.mahasiswa.nama}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">{aktivitas.mahasiswa.nim}</p>
                   <span className={`inline-block mt-1 ${getStatusBadge(aktivitas.status)}`}>
                     {getStatusLabel(aktivitas.status)}
                   </span>
                 </div>
-                <div className="text-right">
-                  <p className={`text-lg font-bold ${
+                <div className="text-right flex-shrink-0">
+                  <p className={`text-base sm:text-lg font-bold ${
                     aktivitas.kategori.jenis === 'positif' ? 'text-primary' : 'text-destructive'
                   }`}>
                     {aktivitas.kategori.jenis === 'positif' ? '+' : '-'}{aktivitas.kategori.bobot}
                   </p>
-                  <p className="text-xs text-muted-foreground">Poin</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Poin</p>
                 </div>
               </div>
               <div className="space-y-2 mb-3">
-                <p className="text-sm font-semibold text-foreground">
+                <p className="text-xs sm:text-sm font-semibold text-foreground">
                   {aktivitas.deskripsi_kegiatan}
                 </p>
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-lg bg-primary/10 text-primary text-xs font-semibold">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-lg bg-primary/10 text-primary text-[10px] sm:text-xs font-semibold">
                     {aktivitas.kategori.nama}
                   </span>
                   <span className="text-xs text-muted-foreground">•</span>
-                  <span className="text-xs text-muted-foreground">{formatDate(aktivitas.tanggal)}</span>
+                  <span className="text-[10px] sm:text-xs text-muted-foreground">{formatDate(aktivitas.tanggal)}</span>
                 </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2 sm:gap-3">
                 {aktivitas.bukti && (
                   <img
                     alt="Bukti"
                     src={aktivitas.bukti}
-                    className="size-20 rounded-xl object-cover border border-border"
+                    className="size-16 sm:size-20 rounded-xl object-cover border border-border flex-shrink-0"
                   />
                 )}
-                <div className="flex-1">
-                  <p className="text-xs text-muted-foreground mb-2">Bukti Kegiatan</p>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mb-2">Bukti Kegiatan</p>
                   <div className="flex gap-2">
                     <button
                       onClick={() => router.push(`/dosen-pa/verifikasi/${aktivitas.id}`)}
-                      className="flex-1 py-2 px-3 rounded-xl bg-primary text-primary-foreground text-xs font-semibold"
+                      className="flex-1 py-2 px-3 rounded-lg sm:rounded-xl bg-primary text-primary-foreground text-xs sm:text-sm font-semibold"
                     >
                       Lihat Detail
                     </button>
@@ -269,6 +274,7 @@ export default function VerifikasiKegiatanDosenPA() {
             </div>
           ))
         )}
+        </div>
       </div>
     </div>
   );
