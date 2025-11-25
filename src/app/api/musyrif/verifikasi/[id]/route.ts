@@ -59,12 +59,7 @@ export async function PUT(
     // Get pengajuan data
     const { data: pengajuan, error: fetchError } = await supabaseAdmin
       .from('poin_aktivitas')
-      .select(`
-        *,
-        mahasiswa:mahasiswa_id (
-          musyrif_id
-        )
-      `)
+      .select('*')
       .eq('id', id)
       .single();
 
@@ -75,13 +70,7 @@ export async function PUT(
       );
     }
 
-    // Check if this musyrif is responsible for this mahasiswa
-    if (pengajuan.mahasiswa?.musyrif_id !== userId) {
-      return NextResponse.json(
-        { success: false, error: 'Anda tidak berwenang memverifikasi pengajuan ini' },
-        { status: 403 }
-      );
-    }
+    // NOTE: Musyrif can approve Adab from ALL mahasiswa (no musyrif_id check)
 
     // Get kategori_utama from pengajuan
     const { data: kategoriData, error: kategoriError } = await supabaseAdmin

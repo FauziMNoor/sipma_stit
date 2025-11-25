@@ -73,40 +73,22 @@ export default function DashboardMusyrif() {
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return (
-          <span className="text-xs font-medium text-accent-foreground bg-accent/20 px-2 py-1 rounded-lg">
-            Pending
-          </span>
-        );
-      case 'approved':
-        return (
-          <span className="text-xs font-medium text-green-700 bg-green-100 px-2 py-1 rounded-lg">
-            Disetujui
-          </span>
-        );
-      case 'rejected':
-        return (
-          <span className="text-xs font-medium text-destructive bg-destructive/10 px-2 py-1 rounded-lg">
-            Ditolak
-          </span>
-        );
-      default:
-        return null;
-    }
-  };
-
   const getTimeAgo = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-    if (diffInMinutes < 1) return 'Baru saja';
-    if (diffInMinutes < 60) return `${diffInMinutes} menit yang lalu`;
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)} jam yang lalu`;
-    return `${Math.floor(diffInMinutes / 1440)} hari yang lalu`;
+    if (diffHours < 1) return 'Baru saja';
+    if (diffHours < 24) return `${diffHours} jam lalu`;
+    if (diffDays === 1) return '1 hari lalu';
+    return `${diffDays} hari lalu`;
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
   const handleLogout = async () => {
@@ -205,7 +187,7 @@ export default function DashboardMusyrif() {
         <div className="max-w-2xl mx-auto space-y-6">
         {/* Ringkasan */}
         <div>
-          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Ringkasan</h3>
+          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Ringkasan Verifikasi</h3>
           <div className="grid grid-cols-3 gap-3">
             <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
               <div className="flex flex-col items-center text-center space-y-2">
@@ -299,63 +281,141 @@ export default function DashboardMusyrif() {
                 </div>
               </div>
             </button>
+            <button
+              onClick={() => router.push('/musyrif/riwayat')}
+              className="bg-card rounded-2xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+            >
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="flex items-center justify-center size-14 rounded-xl bg-blue-500/10">
+                  <Icon icon="solar:history-bold" className="size-7 text-blue-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Riwayat Verifikasi</p>
+                  <p className="text-xs text-muted-foreground">Lihat riwayat</p>
+                </div>
+              </div>
+            </button>
+            <button
+              onClick={() => router.push('/musyrif/riwayat-pelanggaran')}
+              className="bg-card rounded-2xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+            >
+              <div className="flex flex-col items-center text-center space-y-3">
+                <div className="flex items-center justify-center size-14 rounded-xl bg-orange-500/10">
+                  <Icon icon="solar:clipboard-list-bold" className="size-7 text-orange-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-foreground">Riwayat Pelanggaran</p>
+                  <p className="text-xs text-muted-foreground">Monitoring & tracking</p>
+                </div>
+              </div>
+            </button>
           </div>
         </div>
 
-        {/* Aktivitas Terbaru */}
-        <div>
-          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Aktivitas Terbaru</h3>
-          {data.recentActivities.length === 0 ? (
-            <div className="bg-card rounded-2xl p-8 shadow-sm border border-border text-center">
-              <Icon icon="solar:inbox-line-bold" className="size-12 text-muted-foreground mx-auto mb-2" />
-              <p className="text-muted-foreground text-sm">Belum ada aktivitas</p>
+        {/* Kegiatan Menunggu Verifikasi */}
+        <div className="pb-6">
+          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
+            Kegiatan Menunggu Verifikasi
+          </h3>
+          {data.recentActivities.filter((activity) => activity.status === 'pending').length === 0 ? (
+            <div className="bg-card rounded-2xl p-8 text-center">
+              <Icon icon="solar:inbox-line-bold" className="size-12 text-muted-foreground mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground">Tidak ada pengajuan pending</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {data.recentActivities.map((activity) => (
-                <div key={activity.id} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-                  <div className="flex items-start gap-3">
-                    <img
-                      alt="Student"
-                      src={activity.mahasiswa.foto || 'https://randomuser.me/api/portraits/men/67.jpg'}
-                      className="size-11 rounded-xl border border-border object-cover"
-                    />
-                    <div className="flex-1">
-                      <div className="flex items-start justify-between mb-1">
-                        <div>
-                          <p className="text-sm font-semibold text-foreground">
-                            {activity.mahasiswa.nama}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            {activity.kategori_poin.nama}
-                          </p>
+              {data.recentActivities
+                .filter((activity) => activity.status === 'pending')
+                .map((activity) => {
+                  const isPelanggaran = activity.kategori_poin.kategori_utama === 'Pelanggaran';
+                  const isAdab = activity.kategori_poin.kategori_utama === 'Adab';
+                  
+                  // Pelanggaran: tidak clickable, hanya info (approval by Waket3)
+                  // Adab: clickable untuk approve/reject by Musyrif
+                  if (isPelanggaran) {
+                    return (
+                      <div
+                        key={activity.id}
+                        className="w-full bg-card rounded-2xl p-5 shadow-sm border border-orange-200 text-left"
+                      >
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full bg-orange-100 text-xs font-semibold text-orange-700">
+                            Menunggu Waket3
+                          </span>
+                          <span className="text-xs text-muted-foreground">{getTimeAgo(activity.created_at)}</span>
                         </div>
-                        {getStatusBadge(activity.status)}
+                        <div className="flex items-start gap-4">
+                          <img
+                            alt="Student"
+                            src={activity.mahasiswa.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(activity.mahasiswa.nama)}
+                            className="size-12 rounded-full border-2 border-border object-cover"
+                          />
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2 mb-1">
+                              <Icon icon="solar:danger-triangle-bold" className="size-4 text-orange-600" />
+                              <span className="text-xs font-semibold text-orange-600">Pelanggaran</span>
+                            </div>
+                            <p className="text-sm font-semibold text-foreground">
+                              {activity.deskripsi_kegiatan || activity.kategori_poin.nama}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-1">
+                              {activity.mahasiswa.nama} - {activity.mahasiswa.nim}
+                            </p>
+                            <div className="flex items-center gap-2 mt-2">
+                              <Icon icon="solar:calendar-bold" className="size-4 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground">{formatDate(activity.tanggal)}</span>
+                            </div>
+                            <p className="text-xs text-orange-600 mt-2 flex items-center gap-1">
+                              <Icon icon="solar:info-circle-bold" className="size-3" />
+                              Pelanggaran divalidasi oleh Waket3
+                            </p>
+                          </div>
+                        </div>
                       </div>
-                      <p className="text-xs text-muted-foreground">{getTimeAgo(activity.created_at)}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                    );
+                  }
+                  
+                  // Adab: clickable untuk approve
+                  return (
+                    <button
+                      key={activity.id}
+                      onClick={() => router.push(`/musyrif/verifikasi/${activity.id}`)}
+                      className="w-full bg-card rounded-2xl p-5 shadow-sm border border-border hover:border-primary transition-colors text-left"
+                    >
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="inline-flex items-center px-3 py-1 rounded-full bg-accent/20 text-xs font-semibold text-accent-foreground">
+                          Pending
+                        </span>
+                        <span className="text-xs text-muted-foreground">{getTimeAgo(activity.created_at)}</span>
+                      </div>
+                      <div className="flex items-start gap-4">
+                        <img
+                          alt="Student"
+                          src={activity.mahasiswa.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(activity.mahasiswa.nama)}
+                          className="size-12 rounded-full border-2 border-border object-cover"
+                        />
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <Icon icon="solar:star-bold" className="size-4 text-accent-foreground" />
+                            <span className="text-xs font-semibold text-accent-foreground">Adab</span>
+                          </div>
+                          <p className="text-sm font-semibold text-foreground">
+                            {activity.deskripsi_kegiatan || activity.kategori_poin.nama}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            {activity.mahasiswa.nama} - {activity.mahasiswa.nim}
+                          </p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Icon icon="solar:calendar-bold" className="size-4 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">{formatDate(activity.tanggal)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
             </div>
           )}
-        </div>
-
-        {/* Catatan Penting */}
-        <div className="pb-6">
-          <div className="bg-linear-to-r from-primary/10 to-secondary/10 rounded-2xl p-5 border border-primary/20">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center justify-center size-14 rounded-xl bg-primary/20">
-                <Icon icon="solar:info-circle-bold" className="size-7 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground">Catatan Penting</p>
-                <p className="text-xs text-muted-foreground">
-                  Verifikasi paling lambat 24 jam setelah pengajuan diterima
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
         </div>
       </div>

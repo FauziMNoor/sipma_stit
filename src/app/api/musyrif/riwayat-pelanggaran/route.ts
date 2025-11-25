@@ -6,10 +6,10 @@ import { verifyJWT } from '@/lib/auth';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-
 /**
- * GET /api/musyrif/verifikasi
- * Get all pengajuan for Adab & Asrama verification
+ * GET /api/musyrif/riwayat-pelanggaran
+ * Get all Pelanggaran records (for monitoring/tracking only)
+ * Musyrif can input but cannot approve Pelanggaran (Waket3 approves)
  */
 export async function GET(request: NextRequest) {
   try {
@@ -44,13 +44,11 @@ export async function GET(request: NextRequest) {
     const userId = payload.userId;
     const { searchParams } = new URL(request.url);
     const statusFilter = searchParams.get('status') || 'all';
-    const searchQuery = searchParams.get('search') || '';
 
-    console.log('🔍 [MUSYRIF VERIFIKASI] User ID:', userId);
-    console.log('🔍 [MUSYRIF VERIFIKASI] Status filter:', statusFilter);
-    console.log('🔍 [MUSYRIF VERIFIKASI] Search query:', searchQuery);
+    console.log('🔍 [MUSYRIF RIWAYAT PELANGGARAN] User ID:', userId);
+    console.log('🔍 Status filter:', statusFilter);
 
-    // 1. Fetch all aktivitas (similar to Dosen PA approach)
+    // 1. Fetch all aktivitas
     let aktivitasQuery = supabaseAdmin
       .from('poin_aktivitas')
       .select(`
@@ -61,6 +59,7 @@ export async function GET(request: NextRequest) {
         deskripsi_kegiatan,
         notes_verifikator,
         verified_at,
+        verifikator_id,
         created_at,
         mahasiswa_id,
         kategori_id
@@ -77,24 +76,21 @@ export async function GET(request: NextRequest) {
     if (aktivitasError) {
       console.error('❌ Error fetching aktivitas:', aktivitasError);
       return NextResponse.json(
-        { success: false, error: 'Gagal mengambil data pengajuan' },
+        { success: false, error: 'Gagal mengambil data pelanggaran' },
         { status: 500 }
       );
     }
 
-    console.log('📝 Total aktivitas fetched (all categories):', aktivitas?.length || 0);
+    console.log('📝 Total aktivitas fetched:', aktivitas?.length || 0);
 
     // 2. Get unique mahasiswa IDs and kategori IDs
     const mahasiswaIds = [...new Set(aktivitas?.map((a: any) => a.mahasiswa_id) || [])];
     const kategoriIds = [...new Set(aktivitas?.map((a: any) => a.kategori_id) || [])];
 
-    console.log('👥 Unique mahasiswa IDs:', mahasiswaIds.length);
-    console.log('📋 Unique kategori IDs:', kategoriIds.length);
-
     // 3. Fetch mahasiswa details
     const { data: mahasiswaDetails, error: mahasiswaError } = await supabaseAdmin
       .from('mahasiswa')
-      .select('id, nim, nama, foto, musyrif_id')
+      .select('id, nim, nama, foto')
       .in('id', mahasiswaIds);
 
     if (mahasiswaError) {
@@ -102,61 +98,31 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('👥 Mahasiswa details fetched:', mahasiswaDetails?.length || 0);
-    console.log('👥 Mahasiswa dengan musyrif_id:', mahasiswaDetails?.filter((m: any) => m.musyrif_id).length || 0);
 
-    // 4. Fetch kategori details (only Adab - Pelanggaran in separate page)
+    // 4. Fetch kategori Pelanggaran only
     const { data: kategoriDetails, error: kategoriError } = await supabaseAdmin
       .from('kategori_poin')
       .select('id, kode, nama, jenis, bobot, kategori_utama')
       .in('id', kategoriIds)
-      .eq('kategori_utama', 'Adab');
+      .eq('kategori_utama', 'Pelanggaran');
 
     if (kategoriError) {
       console.error('❌ Error fetching kategori:', kategoriError);
     }
 
-    console.log('📋 Kategori Adab fetched:', kategoriDetails?.length || 0);
-    if (kategoriDetails && kategoriDetails.length > 0) {
-      console.log('📋 Kategori details:', kategoriDetails.map((k: any) => ({ nama: k.nama, kategori_utama: k.kategori_utama })));
-    }
-    console.log('ℹ️ Note: Pelanggaran will be shown in separate "Riwayat Pelanggaran" page');
+    console.log('📋 Kategori Pelanggaran fetched:', kategoriDetails?.length || 0);
 
     // 5. Create maps for quick lookup
     const mahasiswaMap = new Map(mahasiswaDetails?.map((m: any) => [m.id, m]) || []);
     const kategoriMap = new Map(kategoriDetails?.map((k: any) => [k.id, k]) || []);
 
-    console.log('🗺️ Mahasiswa map size:', mahasiswaMap.size);
-    console.log('🗺️ Kategori map size:', kategoriMap.size);
-
-    // 6. Map and filter data
-    let processedCount = 0;
-    let skippedNoKategori = 0;
-    let skippedNoMusyrif = 0;
-    let includedCount = 0;
-
+    // 6. Map and filter data - only Pelanggaran
     let formattedData = aktivitas?.map((item: any) => {
-      processedCount++;
       const mahasiswa = mahasiswaMap.get(item.mahasiswa_id);
       const kategori = kategoriMap.get(item.kategori_id);
 
-      // Skip if kategori is not Adab (Pelanggaran in separate page)
-      if (!kategori) {
-        skippedNoKategori++;
-        return null;
-      }
-
-      // NOTE: Musyrif can approve Adab from ALL mahasiswa
-      // Pelanggaran shown in separate "Riwayat Pelanggaran" page
-
-      includedCount++;
-      if (includedCount <= 3) { // Log first 3 only
-        console.log(`✅ Including:`, {
-          mahasiswa: mahasiswa?.nama,
-          kategori: kategori?.nama,
-          kategori_utama: kategori?.kategori_utama,
-          status: item.status
-        });
-      }
+      // Skip if not Pelanggaran
+      if (!kategori) return null;
 
       return {
         id: item.id,
@@ -180,27 +146,14 @@ export async function GET(request: NextRequest) {
         deskripsi_kegiatan: item.deskripsi_kegiatan,
         notes_verifikator: item.notes_verifikator,
         verified_at: item.verified_at,
+        verifikator_id: item.verifikator_id,
         created_at: item.created_at,
       };
     }).filter((item: any) => item !== null) || [];
 
-    console.log('📊 Processing summary:');
-    console.log('   - Total processed:', processedCount);
-    console.log('   - Skipped (no kategori match):', skippedNoKategori);
-    console.log('   - Skipped (wrong musyrif):', skippedNoMusyrif);
-    console.log('   - Included:', includedCount);
+    console.log('📊 Total Pelanggaran:', formattedData.length);
 
-    // 7. Search filter
-    if (searchQuery) {
-      const lowerSearch = searchQuery.toLowerCase();
-      formattedData = formattedData.filter((item: any) =>
-        item.mahasiswa?.nama?.toLowerCase().includes(lowerSearch) ||
-        item.mahasiswa?.nim?.toLowerCase().includes(lowerSearch) ||
-        item.kategori?.nama?.toLowerCase().includes(lowerSearch)
-      );
-    }
-
-    // 8. Calculate counts
+    // 7. Calculate counts
     const counts = {
       all: formattedData.length,
       pending: formattedData.filter((item: any) => item.status === 'pending').length,
@@ -208,7 +161,7 @@ export async function GET(request: NextRequest) {
       rejected: formattedData.filter((item: any) => item.status === 'rejected').length,
     };
 
-    console.log('📊 Final counts:', counts);
+    console.log('📊 Counts:', counts);
     console.log('✅ Returning', formattedData.length, 'items to frontend');
 
     return NextResponse.json({
@@ -217,11 +170,10 @@ export async function GET(request: NextRequest) {
       counts,
     });
   } catch (error: any) {
-    console.error('❌ Error in GET /api/musyrif/verifikasi:', error);
+    console.error('❌ Error in GET /api/musyrif/riwayat-pelanggaran:', error);
     return NextResponse.json(
       { success: false, error: 'Terjadi kesalahan server' },
       { status: 500 }
     );
   }
 }
-

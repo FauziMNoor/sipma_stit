@@ -86,7 +86,7 @@ export default function RekapPoinDosenPA() {
         >
           <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
         </button>
-        <h1 className="text-lg font-bold font-heading text-white">Rekap Poin Mahasiswa</h1>
+        <h1 className="text-lg font-bold font-heading text-white">Rekap Poin</h1>
         <div className="size-11" />
       </div>
 

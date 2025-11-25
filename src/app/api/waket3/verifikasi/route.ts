@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Format the data and filter only Dakwah, Sosial, Pelanggaran
+    // Note: Adab dihandle oleh Musyrif
     const formattedData = (pengajuanList || [])
       .filter((item: any) => {
         const kategoriUtama = item.kategori_poin?.kategori_utama;

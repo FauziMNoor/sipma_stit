@@ -91,6 +91,47 @@ export async function GET(
       }
     }
 
+    // 4. Get recent pending activities for Akademik category (last 10)
+    let recentActivities: any[] = [];
+    if (kategoriAkademikIds.length > 0) {
+      const { data: activities, error: activitiesError } = await supabaseAdmin
+        .from('poin_aktivitas')
+        .select(`
+          id,
+          deskripsi_kegiatan,
+          tanggal,
+          status,
+          created_at,
+          mahasiswa:mahasiswa_id (
+            id,
+            nama,
+            nim,
+            foto
+          ),
+          kategori_poin:kategori_id (
+            nama
+          )
+        `)
+        .in('kategori_id', kategoriAkademikIds)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+        .limit(10);
+
+      if (!activitiesError && activities) {
+        recentActivities = activities.map((activity: any) => ({
+          id: activity.id,
+          mahasiswa_nama: activity.mahasiswa?.nama || '',
+          mahasiswa_nim: activity.mahasiswa?.nim || '',
+          mahasiswa_foto: activity.mahasiswa?.foto || null,
+          deskripsi_kegiatan: activity.deskripsi_kegiatan || '',
+          kategori_nama: activity.kategori_poin?.nama || '',
+          tanggal: activity.tanggal,
+          status: activity.status,
+          created_at: activity.created_at,
+        }));
+      }
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -107,6 +148,7 @@ export async function GET(
           pending: pending,
           total_mahasiswa_bimbingan: totalMahasiswa || 0,
         },
+        recent_activities: recentActivities,
       },
     });
   } catch (error) {

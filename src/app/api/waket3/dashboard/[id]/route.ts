@@ -28,11 +28,25 @@ export async function GET(
       );
     }
 
-    // 2. Count pengajuan statistics (all mahasiswa)
+    // 2. Get kategori IDs for Dakwah, Sosial, and Pelanggaran (Waket3 handles these)
+    // Note: Adab dihandle oleh Musyrif
+    const { data: kategoriWaket3, error: kategoriError } = await supabaseAdmin
+      .from('kategori_poin')
+      .select('id')
+      .in('kategori_utama', ['Dakwah', 'Sosial', 'Pelanggaran']);
+
+    if (kategoriError) {
+      console.error('Error fetching kategori:', kategoriError);
+    }
+
+    const kategoriIds = kategoriWaket3?.map((k) => k.id) || [];
+
+    // Count pengajuan statistics (only Dakwah, Sosial, and Pelanggaran)
     // Total pengajuan
     const { count: totalPengajuan, error: totalError } = await supabaseAdmin
       .from('poin_aktivitas')
-      .select('*', { count: 'exact', head: true });
+      .select('*', { count: 'exact', head: true })
+      .in('kategori_id', kategoriIds);
 
     if (totalError) {
       console.error('Error counting total pengajuan:', totalError);
@@ -42,6 +56,7 @@ export async function GET(
     const { count: diverifikasi, error: approvedError } = await supabaseAdmin
       .from('poin_aktivitas')
       .select('*', { count: 'exact', head: true })
+      .in('kategori_id', kategoriIds)
       .eq('status', 'approved');
 
     if (approvedError) {
@@ -52,6 +67,7 @@ export async function GET(
     const { count: pending, error: pendingError } = await supabaseAdmin
       .from('poin_aktivitas')
       .select('*', { count: 'exact', head: true })
+      .in('kategori_id', kategoriIds)
       .eq('status', 'pending');
 
     if (pendingError) {
@@ -62,13 +78,14 @@ export async function GET(
     const { count: ditolak, error: rejectedError } = await supabaseAdmin
       .from('poin_aktivitas')
       .select('*', { count: 'exact', head: true })
+      .in('kategori_id', kategoriIds)
       .eq('status', 'rejected');
 
     if (rejectedError) {
       console.error('Error counting rejected:', rejectedError);
     }
 
-    // 3. Get recent pending activities (limit 5)
+    // 3. Get recent pending activities (limit 5, only Dakwah, Sosial, and Pelanggaran)
     const { data: recentActivities, error: activitiesError } = await supabaseAdmin
       .from('poin_aktivitas')
       .select(`
@@ -84,9 +101,11 @@ export async function GET(
         ),
         kategori_poin:kategori_id (
           nama,
-          bobot
+          bobot,
+          kategori_utama
         )
       `)
+      .in('kategori_id', kategoriIds)
       .eq('status', 'pending')
       .order('created_at', { ascending: false })
       .limit(5);

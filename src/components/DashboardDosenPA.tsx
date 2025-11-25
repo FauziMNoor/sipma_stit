@@ -19,12 +19,29 @@ interface DosenData {
   foto: string | null;
 }
 
+interface RecentActivity {
+  id: string;
+  mahasiswa_nama: string;
+  mahasiswa_nim: string;
+  mahasiswa_foto: string | null;
+  deskripsi_kegiatan: string;
+  kategori_nama: string;
+  tanggal: string;
+  status: string;
+  created_at: string;
+}
+
+interface DashboardData {
+  stats: DashboardStats;
+  dosen: DosenData;
+  recent_activities: RecentActivity[];
+}
+
 export default function DashboardDosenPA() {
   const router = useRouter();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [dosenData, setDosenData] = useState<DosenData | null>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   useEffect(() => {
@@ -45,14 +62,31 @@ export default function DashboardDosenPA() {
 
       if (response.ok) {
         const result = await response.json();
-        setStats(result.data.stats);
-        setDosenData(result.data.dosen);
+        setData(result.data);
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    if (diffHours < 1) return 'Baru saja';
+    if (diffHours < 24) return `${diffHours} jam lalu`;
+    if (diffDays === 1) return '1 hari lalu';
+    return `${diffDays} hari lalu`;
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
   const handleLogout = async () => {
@@ -74,7 +108,7 @@ export default function DashboardDosenPA() {
   };
 
   // Don't show loading here - it's handled by page level
-  if (!stats || !dosenData) {
+  if (!data) {
     return null;
   }
 
@@ -87,11 +121,11 @@ export default function DashboardDosenPA() {
             <div className="flex items-center gap-3">
               <img
                 alt="Dosen Profile"
-                src={dosenData.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(dosenData.nama)}`}
+                src={data.dosen.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.dosen.nama)}`}
                 className="size-11 sm:size-12 rounded-full border-2 border-white object-cover"
               />
               <div>
-                <p className="text-sm sm:text-base font-bold text-white">{dosenData.nama}</p>
+                <p className="text-sm sm:text-base font-bold text-white">{data.dosen.nama}</p>
                 <p className="text-[10px] sm:text-xs text-white/80">Dosen Pembimbing Akademik</p>
               </div>
             </div>
@@ -136,18 +170,6 @@ export default function DashboardDosenPA() {
               )}
             </div>
           </div>
-          <div className="bg-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center gap-2 sm:gap-3">
-              <div className="flex items-center justify-center size-9 sm:size-10 rounded-xl bg-white/20">
-                <Icon icon="solar:clock-circle-bold" className="size-4 sm:size-5 text-white" />
-              </div>
-              <div>
-                <p className="text-xs sm:text-sm font-semibold text-white">Pengajuan Pending</p>
-                <p className="text-[10px] sm:text-xs text-white/80">Memerlukan verifikasi</p>
-              </div>
-            </div>
-            <span className="text-xl sm:text-2xl font-bold text-white">{stats.pending}</span>
-          </div>
         </div>
       </div>
 
@@ -156,35 +178,35 @@ export default function DashboardDosenPA() {
         <div className="max-w-2xl mx-auto space-y-6">
           {/* Statistics */}
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4 font-heading">
-              Statistik Hari Ini
+            <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
+              Ringkasan Verifikasi
             </h3>
-            <div className="grid grid-cols-3 gap-2 sm:gap-3">
-              <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
-                <div className="flex flex-col items-center text-center space-y-1 sm:space-y-2">
-                  <div className="flex items-center justify-center size-10 sm:size-12 rounded-xl bg-primary/10">
-                    <Icon icon="solar:document-text-bold" className="size-5 sm:size-6 text-primary" />
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-accent/20">
+                    <Icon icon="solar:clock-circle-bold" className="size-6 text-accent-foreground" />
                   </div>
-                  <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.total_pengajuan}</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Total Pengajuan</p>
+                  <p className="text-2xl font-bold text-foreground">{data.stats.pending}</p>
+                  <p className="text-xs text-muted-foreground">Pending Verifikasi</p>
                 </div>
               </div>
-              <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
-                <div className="flex flex-col items-center text-center space-y-1 sm:space-y-2">
-                  <div className="flex items-center justify-center size-10 sm:size-12 rounded-xl bg-green-500/10">
-                    <Icon icon="solar:check-circle-bold" className="size-5 sm:size-6 text-green-600" />
+              <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-green-500/10">
+                    <Icon icon="solar:check-circle-bold" className="size-6 text-green-600" />
                   </div>
-                  <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.diverifikasi}</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Diverifikasi</p>
+                  <p className="text-2xl font-bold text-foreground">{data.stats.diverifikasi}</p>
+                  <p className="text-xs text-muted-foreground">Disetujui</p>
                 </div>
               </div>
-              <div className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border">
-                <div className="flex flex-col items-center text-center space-y-1 sm:space-y-2">
-                  <div className="flex items-center justify-center size-10 sm:size-12 rounded-xl bg-accent/20">
-                    <Icon icon="solar:clock-circle-bold" className="size-5 sm:size-6 text-accent-foreground" />
+              <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-primary/10">
+                    <Icon icon="solar:document-text-bold" className="size-6 text-primary" />
                   </div>
-                  <p className="text-xl sm:text-2xl font-bold text-foreground">{stats.pending}</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Pending</p>
+                  <p className="text-2xl font-bold text-foreground">{data.stats.total_pengajuan}</p>
+                  <p className="text-xs text-muted-foreground">Total Pengajuan</p>
                 </div>
               </div>
             </div>
@@ -192,121 +214,114 @@ export default function DashboardDosenPA() {
 
           {/* Menu Utama */}
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4 font-heading">Menu Utama</h3>
-            <div className="space-y-3">
+            <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Menu Utama</h3>
+            <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={() => router.push('/dosen-pa/verifikasi')}
-                className="w-full"
+                className="bg-linear-to-br from-primary to-secondary rounded-3xl p-5 shadow-lg hover:shadow-xl transition-shadow"
               >
-                <div
-                  className="rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg"
-                  style={{
-                    background: 'linear-gradient(to bottom right, #8b5cf6, #0ea5e9)'
-                  }}
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="flex items-center justify-center size-12 sm:size-14 rounded-xl sm:rounded-2xl bg-white/20">
-                        <Icon icon="solar:clipboard-check-bold" className="size-6 sm:size-7 text-white" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-sm sm:text-base font-bold text-white">Verifikasi Akademik</p>
-                        <p className="text-[10px] sm:text-xs text-white/80">Approve kegiatan akademik</p>
-                      </div>
-                    </div>
-                    <Icon icon="solar:alt-arrow-right-linear" className="size-5 sm:size-6 text-white" />
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-white/20">
+                    <Icon icon="solar:clipboard-check-bold" className="size-7 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">Verifikasi Akademik</p>
+                    <p className="text-xs text-white/80 mt-1">Approve kegiatan akademik</p>
                   </div>
                 </div>
               </button>
-
               <button
                 onClick={() => router.push('/dosen-pa/mahasiswa-bimbingan')}
-                className="w-full"
+                className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
               >
-                <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-sm border border-border">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="flex items-center justify-center size-11 sm:size-12 rounded-xl bg-secondary/10">
-                        <Icon icon="solar:users-group-rounded-bold" className="size-5 sm:size-6 text-secondary" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-xs sm:text-sm font-semibold text-foreground">
-                          Daftar Mahasiswa Bimbingan
-                        </p>
-                        <p className="text-[10px] sm:text-xs text-muted-foreground">{stats.total_mahasiswa_bimbingan} mahasiswa aktif</p>
-                      </div>
-                    </div>
-                    <Icon
-                      icon="solar:alt-arrow-right-linear"
-                      className="size-4 sm:size-5 text-muted-foreground"
-                    />
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-secondary/10">
+                    <Icon icon="solar:users-group-rounded-bold" className="size-7 text-secondary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Mahasiswa Bimbingan</p>
+                    <p className="text-xs text-muted-foreground mt-1">{data.stats.total_mahasiswa_bimbingan} mahasiswa aktif</p>
                   </div>
                 </div>
               </button>
-
               <button
                 onClick={() => router.push('/dosen-pa/rekap-poin')}
-                className="w-full"
+                className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
               >
-                <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-sm border border-border">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="flex items-center justify-center size-11 sm:size-12 rounded-xl bg-accent/20">
-                        <Icon icon="solar:chart-bold" className="size-5 sm:size-6 text-accent-foreground" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-xs sm:text-sm font-semibold text-foreground">Rekap Poin Mahasiswa</p>
-                        <p className="text-[10px] sm:text-xs text-muted-foreground">Lihat statistik poin mahasiswa</p>
-                      </div>
-                    </div>
-                    <Icon
-                      icon="solar:alt-arrow-right-linear"
-                      className="size-4 sm:size-5 text-muted-foreground"
-                    />
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-accent/20">
+                    <Icon icon="solar:chart-bold" className="size-7 text-accent-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Rekapitulasi Poin</p>
+                    <p className="text-xs text-muted-foreground mt-1">Statistik poin</p>
                   </div>
                 </div>
               </button>
-
               <button
                 onClick={() => router.push('/dosen-pa/riwayat-verifikasi')}
-                className="w-full"
+                className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
               >
-                <div className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-sm border border-border">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                      <div className="flex items-center justify-center size-11 sm:size-12 rounded-xl bg-primary/10">
-                        <Icon icon="solar:history-bold" className="size-5 sm:size-6 text-primary" />
-                      </div>
-                      <div className="text-left">
-                        <p className="text-xs sm:text-sm font-semibold text-foreground">Riwayat Verifikasi</p>
-                        <p className="text-[10px] sm:text-xs text-muted-foreground">Lihat riwayat verifikasi Anda</p>
-                      </div>
-                    </div>
-                    <Icon
-                      icon="solar:alt-arrow-right-linear"
-                      className="size-4 sm:size-5 text-muted-foreground"
-                    />
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-primary/10">
+                    <Icon icon="solar:history-bold" className="size-7 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Riwayat Verifikasi</p>
+                    <p className="text-xs text-muted-foreground mt-1">Lihat riwayat</p>
                   </div>
                 </div>
               </button>
             </div>
           </div>
 
-          {/* Tips */}
+          {/* Kegiatan Menunggu Verifikasi */}
           <div className="pb-6">
-            <div className="bg-gradient-to-r from-accent/20 to-accent/10 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-accent/30">
-              <div className="flex items-center gap-3 sm:gap-4">
-                <div className="flex items-center justify-center size-12 sm:size-14 rounded-xl bg-accent/30">
-                  <Icon icon="solar:info-circle-bold" className="size-6 sm:size-7 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-xs sm:text-sm font-semibold text-foreground">Tips Verifikasi</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">
-                    Pastikan bukti kegiatan sesuai dengan ketentuan sebelum memverifikasi
-                  </p>
-                </div>
+            <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
+              Kegiatan Menunggu Verifikasi
+            </h3>
+            {data.recent_activities.length === 0 ? (
+              <div className="bg-card rounded-2xl p-8 text-center">
+                <Icon icon="solar:inbox-line-bold" className="size-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">Tidak ada pengajuan pending</p>
               </div>
-            </div>
+            ) : (
+              <div className="space-y-3">
+                {data.recent_activities.map((activity) => (
+                  <button
+                    key={activity.id}
+                    onClick={() => router.push(`/dosen-pa/verifikasi/${activity.id}`)}
+                    className="w-full bg-card rounded-2xl p-5 shadow-sm border border-border hover:border-primary transition-colors text-left"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-accent/20 text-xs font-semibold text-accent-foreground">
+                        Pending
+                      </span>
+                      <span className="text-xs text-muted-foreground">{getTimeAgo(activity.created_at)}</span>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <img
+                        alt="Student"
+                        src={activity.mahasiswa_foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(activity.mahasiswa_nama)}
+                        className="size-12 rounded-full border-2 border-border object-cover"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-foreground">
+                          {activity.deskripsi_kegiatan}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {activity.mahasiswa_nama} - {activity.mahasiswa_nim}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Icon icon="solar:calendar-bold" className="size-4 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">{formatDate(activity.tanggal)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

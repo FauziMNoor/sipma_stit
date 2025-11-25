@@ -65,35 +65,80 @@ export async function GET(request: NextRequest) {
       .eq('musyrif_id', userId)
       .eq('is_active', true);
 
-    // Get pending verifications for Adab & Asrama categories
-    const { data: pendingData, count: pendingCount } = await supabaseAdmin
+    // Get kategori IDs for Adab only (dashboard shows only Adab for verification)
+    // Note: Pelanggaran will be shown in separate "Riwayat Pelanggaran" page
+    const { data: kategoriAdab, error: kategoriError } = await supabaseAdmin
+      .from('kategori_poin')
+      .select('id, nama, kategori_utama, jenis, bobot, kode')
+      .eq('kategori_utama', 'Adab');
+
+    if (kategoriError) {
+      console.error('Error fetching kategori:', kategoriError);
+    }
+
+    const kategoriIds = kategoriAdab?.map((k) => k.id) || [];
+    console.log('📋 Kategori IDs for Adab only (dashboard):', kategoriIds);
+
+    // Get pending verifications for Adab only (Pelanggaran shown in separate page)
+    const { data: pendingData } = await supabaseAdmin
       .from('poin_aktivitas')
       .select(`
-        *,
-        mahasiswa:mahasiswa_id (
-          id,
-          nim,
-          nama,
-          foto,
-          musyrif_id
-        ),
-        kategori_poin:kategori_id (
-          id,
-          kode,
-          nama,
-          jenis,
-          bobot,
-          kategori_utama
-        )
-      `, { count: 'exact' })
+        id,
+        tanggal,
+        status,
+        bukti,
+        deskripsi_kegiatan,
+        created_at,
+        mahasiswa_id,
+        kategori_id
+      `)
+      .in('kategori_id', kategoriIds)
       .eq('status', 'pending')
-      .in('kategori_poin.kategori_utama', ['Adab', 'Pelanggaran'])
       .order('created_at', { ascending: false });
 
-    // Filter only mahasiswa under this musyrif
-    const filteredPending = pendingData?.filter(
-      (item: any) => item.mahasiswa?.musyrif_id === userId
-    ) || [];
+    console.log('📝 Total pending data fetched:', pendingData?.length || 0);
+
+    // Get unique mahasiswa IDs from pending data
+    const pendingMahasiswaIds = [...new Set(pendingData?.map((a: any) => a.mahasiswa_id) || [])];
+    
+    // Fetch mahasiswa details for pending
+    const { data: pendingMahasiswaDetails } = await supabaseAdmin
+      .from('mahasiswa')
+      .select('id, nim, nama, foto, musyrif_id')
+      .in('id', pendingMahasiswaIds);
+
+    console.log('👥 Mahasiswa details fetched:', pendingMahasiswaDetails?.length || 0);
+
+    // Create maps
+    const kategoriMap = new Map(kategoriAdab?.map((k: any) => [k.id, k]) || []);
+    const mahasiswaMap = new Map(pendingMahasiswaDetails?.map((m: any) => [m.id, m]) || []);
+
+    // Map and filter pending data
+    // NOTE: Only show Adab in dashboard (Pelanggaran has separate riwayat page)
+    const filteredPending = pendingData?.map((item: any) => {
+      const mahasiswa = mahasiswaMap.get(item.mahasiswa_id);
+      const kategori = kategoriMap.get(item.kategori_id);
+
+      // Skip if mahasiswa not found
+      if (!mahasiswa) {
+        console.log('⏭️ Skipping - mahasiswa not found');
+        return null;
+      }
+
+      console.log('✅ Including pending activity:', {
+        mahasiswa: mahasiswa?.nama,
+        kategori: kategori?.nama,
+        status: item.status
+      });
+
+      return {
+        ...item,
+        mahasiswa,
+        kategori_poin: kategori
+      };
+    }).filter((item: any) => item !== null) || [];
+
+    console.log('✅ Filtered pending count:', filteredPending.length);
 
     // Get approved activities this month
     const startOfMonth = new Date();
@@ -112,7 +157,7 @@ export async function GET(request: NextRequest) {
       .eq('mahasiswa.musyrif_id', userId)
       .gte('verified_at', startOfMonth.toISOString());
 
-    // Get recent activities (last 10)
+    // Get recent activities (last 50, then filter to 10)
     const { data: recentActivities } = await supabaseAdmin
       .from('poin_aktivitas')
       .select(`
@@ -121,29 +166,47 @@ export async function GET(request: NextRequest) {
         status,
         deskripsi_kegiatan,
         created_at,
-        mahasiswa:mahasiswa_id (
-          id,
-          nim,
-          nama,
-          foto,
-          musyrif_id
-        ),
-        kategori_poin:kategori_id (
-          id,
-          nama,
-          jenis,
-          bobot,
-          kategori_utama
-        )
+        mahasiswa_id,
+        kategori_id
       `)
-      .in('kategori_poin.kategori_utama', ['Adab', 'Pelanggaran'])
+      .in('kategori_id', kategoriIds)
       .order('created_at', { ascending: false })
-      .limit(20);
+      .limit(50);
+
+    console.log('📝 Total recent activities fetched:', recentActivities?.length || 0);
+
+    // Get unique mahasiswa IDs from recent activities
+    const recentMahasiswaIds = [...new Set(recentActivities?.map((a: any) => a.mahasiswa_id) || [])];
+    
+    // Fetch mahasiswa details for recent
+    const { data: recentMahasiswaDetails } = await supabaseAdmin
+      .from('mahasiswa')
+      .select('id, nim, nama, foto, musyrif_id')
+      .in('id', recentMahasiswaIds);
+
+    // Create mahasiswa map for recent
+    const recentMahasiswaMap = new Map(recentMahasiswaDetails?.map((m: any) => [m.id, m]) || []);
 
     // Filter and limit to 10
+    // NOTE: Show activities from ALL mahasiswa (no musyrif_id filter)
     const filteredRecent = recentActivities
-      ?.filter((item: any) => item.mahasiswa?.musyrif_id === userId)
+      ?.map((item: any) => {
+        const mahasiswa = recentMahasiswaMap.get(item.mahasiswa_id);
+        const kategori = kategoriMap.get(item.kategori_id);
+
+        // Skip if mahasiswa not found
+        if (!mahasiswa) return null;
+
+        return {
+          ...item,
+          mahasiswa,
+          kategori_poin: kategori
+        };
+      })
+      .filter((item: any) => item !== null)
       .slice(0, 10) || [];
+
+    console.log('✅ Filtered recent count:', filteredRecent.length);
 
     return NextResponse.json({
       success: true,

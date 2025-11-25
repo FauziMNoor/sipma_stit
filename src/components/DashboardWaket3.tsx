@@ -100,7 +100,6 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
     }
   };
 
-  // Show loading state first
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
@@ -112,7 +111,6 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
     );
   }
 
-  // Show error only after loading is complete
   if (error || !data) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
@@ -127,215 +125,218 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary border-b border-border">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img
-              alt="Wakil Ketua III Profile"
-              src={data.waket3.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(data.waket3.nama)}
-              className="size-12 rounded-full border-2 border-accent object-cover"
-            />
-            <h1 className="text-xl font-bold text-white font-heading">Dashboard Wakil Ketua III</h1>
-          </div>
-          <div className="relative">
-            <button
-              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-              className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
-              title="Settings"
-            >
-              <Icon icon="solar:settings-bold" className="size-6 text-white" />
-            </button>
-            
-            {showSettingsMenu && (
-              <>
-                <div 
-                  className="fixed inset-0 z-40" 
-                  onClick={() => setShowSettingsMenu(false)}
-                />
-                <div className="absolute right-0 mt-2 w-48 bg-card rounded-xl shadow-lg border border-border z-50 overflow-hidden">
-                  <button
-                    onClick={() => {
-                      setShowSettingsMenu(false);
-                      router.push('/waket3/profil');
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
-                  >
-                    <Icon icon="solar:user-bold" className="size-5 text-primary" />
-                    <span className="text-sm font-medium text-foreground">Profil Saya</span>
-                  </button>
-                  <div className="border-t border-border" />
-                  <button
-                    onClick={() => {
-                      setShowSettingsMenu(false);
-                      handleLogout();
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
-                  >
-                    <Icon icon="solar:logout-2-bold" className="size-5 text-destructive" />
-                    <span className="text-sm font-medium text-destructive">Logout</span>
-                  </button>
-                </div>
-              </>
-            )}
+      <div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <img
+                alt="Wakil Ketua III Profile"
+                src={data.waket3.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.waket3.nama)}`}
+                className="size-11 sm:size-12 rounded-full border-2 border-white object-cover"
+              />
+              <div>
+                <p className="text-sm sm:text-base font-bold text-white">{data.waket3.nama}</p>
+                <p className="text-[10px] sm:text-xs text-white/80">Wakil Ketua III</p>
+              </div>
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                <Icon icon="solar:settings-bold" className="size-5 sm:size-6 text-white" />
+              </button>
+              
+              {showSettingsMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowSettingsMenu(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-48 bg-card rounded-xl shadow-lg border border-border z-50 overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setShowSettingsMenu(false);
+                        router.push('/waket3/profil');
+                      }}
+                      className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                    >
+                      <Icon icon="solar:user-bold" className="size-5 text-primary" />
+                      <span className="text-sm font-medium text-foreground">Profil Saya</span>
+                    </button>
+                    <div className="border-t border-border" />
+                    <button
+                      onClick={() => {
+                        setShowSettingsMenu(false);
+                        handleLogout();
+                      }}
+                      className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                    >
+                      <Icon icon="solar:logout-2-bold" className="size-5 text-destructive" />
+                      <span className="text-sm font-medium text-destructive">Logout</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="max-w-3xl mx-auto space-y-6">
-        {/* Stats */}
-        <div>
-          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
-            Ringkasan Verifikasi
-          </h3>
-          <div className="grid grid-cols-3 gap-3">
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="flex items-center justify-center size-12 rounded-xl bg-accent/20">
-                  <Icon icon="solar:clock-circle-bold" className="size-6 text-accent-foreground" />
-                </div>
-                <p className="text-2xl font-bold text-foreground">{data.stats.pending}</p>
-                <p className="text-xs text-muted-foreground">Pending Verifikasi</p>
-              </div>
-            </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="flex items-center justify-center size-12 rounded-xl bg-green-500/10">
-                  <Icon icon="solar:check-circle-bold" className="size-6 text-green-600" />
-                </div>
-                <p className="text-2xl font-bold text-foreground">{data.stats.diverifikasi}</p>
-                <p className="text-xs text-muted-foreground">Disetujui</p>
-              </div>
-            </div>
-            <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
-              <div className="flex flex-col items-center text-center space-y-2">
-                <div className="flex items-center justify-center size-12 rounded-xl bg-destructive/10">
-                  <Icon icon="solar:close-circle-bold" className="size-6 text-destructive" />
-                </div>
-                <p className="text-2xl font-bold text-foreground">{data.stats.ditolak}</p>
-                <p className="text-xs text-muted-foreground">Ditolak</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Menu Utama */}
-        <div>
-          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Menu Utama</h3>
-          <div className="grid grid-cols-2 gap-3">
-            <button
-              onClick={() => router.push('/waket3/verifikasi')}
-              className="bg-linear-to-br from-primary to-secondary rounded-3xl p-5 shadow-lg hover:shadow-xl transition-shadow"
-            >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-14 rounded-2xl bg-white/20">
-                  <Icon icon="solar:clipboard-check-bold" className="size-7 text-white" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-white">Verifikasi Dakwah, Sosial & Pelanggaran</p>
-                  <p className="text-xs text-white/80 mt-1">Approve kegiatan kemahasiswaan</p>
-                </div>
-              </div>
-            </button>
-            <button
-              onClick={() => router.push('/waket3/verifikasi')}
-              className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
-            >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-14 rounded-2xl bg-secondary/10">
-                  <Icon icon="solar:hand-heart-bold" className="size-7 text-secondary" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-foreground">
-                    Kegiatan Sosial & Kepemimpinan
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">Tinjau kegiatan</p>
-                </div>
-              </div>
-            </button>
-            <button
-              onClick={() => router.push('/waket3/rekapitulasi')}
-              className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
-            >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-14 rounded-2xl bg-accent/20">
-                  <Icon icon="solar:chart-bold" className="size-7 text-accent-foreground" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-foreground">Rekapitulasi Poin</p>
-                  <p className="text-xs text-muted-foreground mt-1">Statistik poin</p>
-                </div>
-              </div>
-            </button>
-            <button
-              onClick={() => router.push('/waket3/riwayat')}
-              className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
-            >
-              <div className="flex flex-col items-center text-center space-y-3">
-                <div className="flex items-center justify-center size-14 rounded-2xl bg-primary/10">
-                  <Icon icon="solar:history-bold" className="size-7 text-primary" />
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-foreground">Riwayat Verifikasi</p>
-                  <p className="text-xs text-muted-foreground mt-1">Lihat riwayat</p>
-                </div>
-              </div>
-            </button>
-          </div>
-        </div>
-
-        {/* Recent Activities */}
-        <div className="pb-6">
-          <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
-            Kegiatan Menunggu Verifikasi
-          </h3>
-          {data.recent_activities.length === 0 ? (
-            <div className="bg-card rounded-2xl p-8 text-center">
-              <Icon icon="solar:inbox-line-bold" className="size-12 text-muted-foreground mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground">Tidak ada pengajuan pending</p>
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {data.recent_activities.map((activity) => (
-                <button
-                  key={activity.id}
-                  onClick={() => router.push(`/waket3/verifikasi/${activity.id}`)}
-                  className="w-full bg-card rounded-2xl p-5 shadow-sm border border-border hover:border-primary transition-colors text-left"
-                >
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="inline-flex items-center px-3 py-1 rounded-full bg-accent/20 text-xs font-semibold text-accent-foreground">
-                      Pending
-                    </span>
-                    <span className="text-xs text-muted-foreground">{getTimeAgo(activity.created_at)}</span>
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <div className="max-w-2xl mx-auto space-y-6">
+          {/* Stats */}
+          <div>
+            <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
+              Ringkasan Verifikasi
+            </h3>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-accent/20">
+                    <Icon icon="solar:clock-circle-bold" className="size-6 text-accent-foreground" />
                   </div>
-                  <div className="flex items-start gap-4">
-                    <img
-                      alt="Student"
-                      src={activity.mahasiswa_foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(activity.mahasiswa_nama)}
-                      className="size-12 rounded-full border-2 border-border object-cover"
-                    />
-                    <div className="flex-1">
-                      <p className="text-sm font-semibold text-foreground">
-                        {activity.deskripsi_kegiatan}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {activity.mahasiswa_nama} - {activity.mahasiswa_nim}
-                      </p>
-                      <div className="flex items-center gap-2 mt-2">
-                        <Icon icon="solar:calendar-bold" className="size-4 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground">{formatDate(activity.tanggal)}</span>
+                  <p className="text-2xl font-bold text-foreground">{data.stats.pending}</p>
+                  <p className="text-xs text-muted-foreground">Pending Verifikasi</p>
+                </div>
+              </div>
+              <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-green-500/10">
+                    <Icon icon="solar:check-circle-bold" className="size-6 text-green-600" />
+                  </div>
+                  <p className="text-2xl font-bold text-foreground">{data.stats.diverifikasi}</p>
+                  <p className="text-xs text-muted-foreground">Disetujui</p>
+                </div>
+              </div>
+              <div className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex flex-col items-center text-center space-y-2">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-destructive/10">
+                    <Icon icon="solar:close-circle-bold" className="size-6 text-destructive" />
+                  </div>
+                  <p className="text-2xl font-bold text-foreground">{data.stats.ditolak}</p>
+                  <p className="text-xs text-muted-foreground">Ditolak</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Menu Utama */}
+          <div>
+            <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Menu Utama</h3>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => router.push('/waket3/verifikasi')}
+                className="bg-linear-to-br from-primary to-secondary rounded-3xl p-5 shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-white/20">
+                    <Icon icon="solar:clipboard-check-bold" className="size-7 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-white">Verifikasi Dakwah, Sosial & Pelanggaran</p>
+                    <p className="text-xs text-white/80 mt-1">Approve kegiatan kemahasiswaan</p>
+                  </div>
+                </div>
+              </button>
+              <button
+                onClick={() => router.push('/waket3/verifikasi')}
+                className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+              >
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-secondary/10">
+                    <Icon icon="solar:hand-heart-bold" className="size-7 text-secondary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">
+                      Kegiatan Sosial & Kepemimpinan
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">Tinjau kegiatan</p>
+                  </div>
+                </div>
+              </button>
+              <button
+                onClick={() => router.push('/waket3/rekapitulasi')}
+                className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+              >
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-accent/20">
+                    <Icon icon="solar:chart-bold" className="size-7 text-accent-foreground" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Rekapitulasi Poin</p>
+                    <p className="text-xs text-muted-foreground mt-1">Statistik poin</p>
+                  </div>
+                </div>
+              </button>
+              <button
+                onClick={() => router.push('/waket3/riwayat')}
+                className="bg-card rounded-3xl p-5 shadow-sm border border-border hover:shadow-md transition-shadow"
+              >
+                <div className="flex flex-col items-center text-center space-y-3">
+                  <div className="flex items-center justify-center size-14 rounded-2xl bg-primary/10">
+                    <Icon icon="solar:history-bold" className="size-7 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Riwayat Verifikasi</p>
+                    <p className="text-xs text-muted-foreground mt-1">Lihat riwayat</p>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Recent Activities */}
+          <div className="pb-6">
+            <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
+              Kegiatan Menunggu Verifikasi
+            </h3>
+            {data.recent_activities.length === 0 ? (
+              <div className="bg-card rounded-2xl p-8 text-center">
+                <Icon icon="solar:inbox-line-bold" className="size-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">Tidak ada pengajuan pending</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {data.recent_activities.map((activity) => (
+                  <button
+                    key={activity.id}
+                    onClick={() => router.push(`/waket3/verifikasi/${activity.id}`)}
+                    className="w-full bg-card rounded-2xl p-5 shadow-sm border border-border hover:border-primary transition-colors text-left"
+                  >
+                    <div className="flex items-center justify-between mb-3">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full bg-accent/20 text-xs font-semibold text-accent-foreground">
+                        Pending
+                      </span>
+                      <span className="text-xs text-muted-foreground">{getTimeAgo(activity.created_at)}</span>
+                    </div>
+                    <div className="flex items-start gap-4">
+                      <img
+                        alt="Student"
+                        src={activity.mahasiswa_foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(activity.mahasiswa_nama)}
+                        className="size-12 rounded-full border-2 border-border object-cover"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-foreground">
+                          {activity.deskripsi_kegiatan}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {activity.mahasiswa_nama} - {activity.mahasiswa_nim}
+                        </p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <Icon icon="solar:calendar-bold" className="size-4 text-muted-foreground" />
+                          <span className="text-xs text-muted-foreground">{formatDate(activity.tanggal)}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 }
-
