@@ -47,7 +47,6 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
 
   const fetchDashboardData = async () => {
     try {
-      setLoading(true);
       const response = await fetch(`/api/waket3/dashboard/${userId}`);
       const result = await response.json();
 
@@ -82,17 +81,7 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
     return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat dashboard...</p>
-        </div>
-      </div>
-    );
-  }
-
+  // Don't show loading here - it's handled by page level
   if (error || !data) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
@@ -177,8 +166,8 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
                   <Icon icon="solar:clipboard-check-bold" className="size-7 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-white">Verifikasi Kegiatan Kemahasiswaan</p>
-                  <p className="text-xs text-white/80 mt-1">Tinjau pengajuan</p>
+                  <p className="text-sm font-bold text-white">Verifikasi Dakwah, Sosial & Pelanggaran</p>
+                  <p className="text-xs text-white/80 mt-1">Approve kegiatan kemahasiswaan</p>
                 </div>
               </div>
             </button>

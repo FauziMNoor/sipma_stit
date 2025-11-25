@@ -96,7 +96,7 @@ export default function KegiatanMahasiswa() {
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
       <div className="px-6 py-5 bg-card border-b border-border">
-        <div className="flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <button 
             onClick={() => router.push('/mahasiswa/dashboard')}
             className="flex items-center justify-center size-11"
@@ -110,7 +110,7 @@ export default function KegiatanMahasiswa() {
 
       {/* Filter Tabs */}
       <div className="px-6 py-4 bg-card border-b border-border">
-        <div className="flex gap-3 overflow-x-auto">
+        <div className="max-w-3xl mx-auto flex gap-3 overflow-x-auto">
           <button
             onClick={() => setStatusFilter('all')}
             className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap ${
@@ -155,7 +155,8 @@ export default function KegiatanMahasiswa() {
       </div>
 
       {/* Kegiatan List */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 pb-24">
+      <div className="flex-1 overflow-y-auto px-6 py-6 pb-24">
+        <div className="max-w-3xl mx-auto space-y-4">
         {loading ? (
           <div className="flex items-center justify-center py-12">
             <Icon icon="solar:loading-bold" className="size-8 text-primary animate-spin" />
@@ -205,11 +206,12 @@ export default function KegiatanMahasiswa() {
             </div>
           ))
         )}
+        </div>
       </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
-        <div className="flex items-center justify-around py-3 px-6">
+        <div className="max-w-3xl mx-auto flex items-center justify-around py-3 px-6">
           <button
             onClick={() => router.push('/mahasiswa/dashboard')}
             className="flex flex-col items-center gap-1 py-2 px-4"

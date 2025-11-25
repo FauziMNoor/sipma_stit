@@ -219,7 +219,7 @@ export default function LaporanStatistik() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -244,7 +244,7 @@ export default function LaporanStatistik() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="max-w-3xl mx-auto space-y-6">
         {/* Filter Section */}
         <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="space-y-4">

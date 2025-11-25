@@ -298,7 +298,7 @@ export function PengaturanSistem() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between">
             <button
               onClick={() => router.back()}
@@ -315,7 +315,7 @@ export function PengaturanSistem() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-7xl mx-auto space-y-4">
+        <div className="max-w-3xl mx-auto space-y-4">
           {/* Tahun Ajaran Aktif */}
           <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-start gap-4">

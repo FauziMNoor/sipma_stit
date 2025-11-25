@@ -54,59 +54,61 @@ export function Onboarding({ onComplete }: OnboardingProps) {
 
   return (
     <div className="flex flex-col h-screen bg-white">
-      {/* Header with indicators */}
-      <div className="flex items-center justify-between px-4 py-3">
-        <div className="w-16" />
-        <div className="flex gap-2">
-          {slides.map((_, index) => (
-            <div
-              key={index}
-              className={`h-1.5 rounded-full transition-all ${
-                index === currentSlide
-                  ? 'w-8 bg-primary-500'
-                  : 'w-1.5 bg-neutral-300'
-              }`}
-            />
-          ))}
+      <div className="flex flex-col h-screen max-w-md mx-auto w-full">
+        {/* Header with indicators */}
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="w-16" />
+          <div className="flex gap-2">
+            {slides.map((_, index) => (
+              <div
+                key={index}
+                className={`h-1.5 rounded-full transition-all ${
+                  index === currentSlide
+                    ? 'w-8 bg-primary-500'
+                    : 'w-1.5 bg-neutral-300'
+                }`}
+              />
+            ))}
+          </div>
+          <button
+            onClick={handleSkip}
+            className="px-3 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-neutral-500 hover:text-neutral-700 transition"
+          >
+            Skip
+          </button>
         </div>
-        <button
-          onClick={handleSkip}
-          className="px-4 py-2 text-sm font-semibold text-neutral-500 hover:text-neutral-700 transition"
-        >
-          Skip
-        </button>
-      </div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col items-center justify-center px-8 py-12">
-        <div className="w-full max-w-sm mb-12">
-          <div className="relative aspect-square w-full flex items-center justify-center">
-            <div className={`absolute inset-0 bg-gradient-to-br ${slide.bgColor} rounded-3xl`} />
-            <div className="relative z-10 flex flex-col items-center gap-6 p-8">
-              <div className={`w-32 h-32 rounded-2xl ${slide.iconBg} flex items-center justify-center`}>
-                <Icon className={`w-16 h-16 ${slide.iconColor}`} />
+        {/* Content */}
+        <div className="flex-1 flex flex-col items-center justify-center px-6 sm:px-8 py-8 sm:py-12">
+          <div className="w-full max-w-xs sm:max-w-sm mb-8 sm:mb-12">
+            <div className="relative aspect-square w-full flex items-center justify-center">
+              <div className={`absolute inset-0 bg-gradient-to-br ${slide.bgColor} rounded-2xl sm:rounded-3xl`} />
+              <div className="relative z-10 flex flex-col items-center gap-4 sm:gap-6 p-6 sm:p-8">
+                <div className={`w-24 h-24 sm:w-32 sm:h-32 rounded-xl sm:rounded-2xl ${slide.iconBg} flex items-center justify-center`}>
+                  <Icon className={`w-12 h-12 sm:w-16 sm:h-16 ${slide.iconColor}`} />
+                </div>
               </div>
             </div>
           </div>
+          <div className="text-center space-y-3 sm:space-y-4 mb-6 sm:mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-neutral-900 leading-tight px-2">
+              {slide.title}
+            </h2>
+            <p className="text-sm sm:text-base text-neutral-600 leading-relaxed px-4">
+              {slide.description}
+            </p>
+          </div>
         </div>
-        <div className="text-center space-y-4 mb-8">
-          <h2 className="text-2xl font-bold text-neutral-900 leading-tight">
-            {slide.title}
-          </h2>
-          <p className="text-base text-neutral-600 leading-relaxed px-4">
-            {slide.description}
-          </p>
-        </div>
-      </div>
 
-      {/* Button */}
-      <div className="px-6 pb-8 space-y-6">
-        <button
-          onClick={handleNext}
-          className="w-full py-4 px-6 rounded-2xl font-semibold text-lg shadow-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 transition"
-        >
-          {currentSlide < slides.length - 1 ? 'Next' : 'Get Started'}
-        </button>
+        {/* Button */}
+        <div className="px-6 pb-6 sm:pb-8 space-y-6">
+          <button
+            onClick={handleNext}
+            className="w-full py-3 sm:py-4 px-6 rounded-xl sm:rounded-2xl font-semibold text-base sm:text-lg shadow-lg bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 transition"
+          >
+            {currentSlide < slides.length - 1 ? 'Next' : 'Get Started'}
+          </button>
+        </div>
       </div>
     </div>
   );

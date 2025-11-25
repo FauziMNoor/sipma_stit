@@ -186,13 +186,13 @@ export default function VerifikasiAdabAsrama() {
           >
             <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
           </button>
-          <h1 className="text-lg font-bold text-white font-heading">Verifikasi Adab & Asrama</h1>
+          <h1 className="text-lg font-bold text-white font-heading">Verifikasi Adab & Pelanggaran</h1>
           <button className="flex items-center justify-center size-11" type="button">
             <Icon icon="solar:filter-bold" className="size-6 text-white" />
           </button>
         </div>
         <p className="text-sm text-white/80 text-center">
-          Verifikasi kegiatan adab, akhlak & asrama
+          Approve Adab • Input Pelanggaran (validasi Waket3)
         </p>
       </div>
 
@@ -344,22 +344,30 @@ export default function VerifikasiAdabAsrama() {
                       {item.bukti ? 'Dokumentasi Kegiatan' : 'Tidak ada bukti'}
                     </p>
                     {isPending ? (
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => handleAction(item, 'approve')}
-                          className="flex-1 py-2.5 px-3 rounded-xl bg-green-600 text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-green-700 transition-colors"
-                        >
-                          <Icon icon="solar:check-circle-bold" className="size-4" />
-                          Setujui
-                        </button>
-                        <button
-                          onClick={() => handleAction(item, 'reject')}
-                          className="flex-1 py-2.5 px-3 rounded-xl bg-destructive text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-destructive/90 transition-colors"
-                        >
-                          <Icon icon="solar:close-circle-bold" className="size-4" />
-                          Tolak
-                        </button>
-                      </div>
+                      // Musyrif hanya bisa approve Adab, tidak bisa approve Pelanggaran
+                      item.kategori.kategori_utama === 'Pelanggaran' ? (
+                        <div className="py-2.5 px-3 rounded-xl bg-orange-100 border border-orange-300 text-orange-800 text-xs font-medium text-center">
+                          <Icon icon="solar:info-circle-bold" className="size-4 inline mr-1" />
+                          Menunggu validasi Wakil Ketua III
+                        </div>
+                      ) : (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleAction(item, 'approve')}
+                            className="flex-1 py-2.5 px-3 rounded-xl bg-green-600 text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-green-700 transition-colors"
+                          >
+                            <Icon icon="solar:check-circle-bold" className="size-4" />
+                            Setujui
+                          </button>
+                          <button
+                            onClick={() => handleAction(item, 'reject')}
+                            className="flex-1 py-2.5 px-3 rounded-xl bg-destructive text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-destructive/90 transition-colors"
+                          >
+                            <Icon icon="solar:close-circle-bold" className="size-4" />
+                            Tolak
+                          </button>
+                        </div>
+                      )
                     ) : (
                       <button className="flex-1 py-2 px-3 rounded-xl bg-primary text-primary-foreground text-xs font-semibold w-full">
                         Lihat Detail

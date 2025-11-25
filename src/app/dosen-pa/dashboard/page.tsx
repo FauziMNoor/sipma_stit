@@ -18,7 +18,8 @@ export default function DosenPADashboardPage() {
     }
   }, [user, isLoading, router]);
 
-  if (isLoading) {
+  // Show loading or redirect - let component handle its own loading
+  if (isLoading || !user || user.role !== 'dosen_pa') {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center">
@@ -27,10 +28,6 @@ export default function DosenPADashboardPage() {
         </div>
       </div>
     );
-  }
-
-  if (!user || user.role !== 'dosen_pa') {
-    return null;
   }
 
   return <DashboardDosenPA />;

@@ -90,7 +90,7 @@ export default function MahasiswaBimbinganDosenPA() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-primary">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <button
               onClick={() => router.back()}
@@ -119,7 +119,7 @@ export default function MahasiswaBimbinganDosenPA() {
 
       {/* List */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="mb-4">
             <p className="text-xs sm:text-sm text-muted-foreground">
               Total <span className="font-semibold text-foreground">{mahasiswaList.length} Mahasiswa</span> Bimbingan

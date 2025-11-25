@@ -4,22 +4,22 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Icon } from '@iconify/react';
-import DashboardWaket3 from '@/components/DashboardWaket3';
+import RiwayatVerifikasiDosenPA from '@/components/RiwayatVerifikasiDosenPA';
 
-export default function Waket3DashboardPage() {
+export default function RiwayatVerifikasiPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
-    } else if (!isLoading && user && user.role !== 'waket3') {
+    } else if (!isLoading && user && user.role !== 'dosen_pa') {
       router.push('/login');
     }
   }, [user, isLoading, router]);
 
   // Show loading or redirect - let component handle its own loading
-  if (isLoading || !user || user.role !== 'waket3') {
+  if (isLoading || !user || user.role !== 'dosen_pa') {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center">
@@ -30,6 +30,6 @@ export default function Waket3DashboardPage() {
     );
   }
 
-  return <DashboardWaket3 userId={user.id} />;
+  return <RiwayatVerifikasiDosenPA />;
 }
 

@@ -13,11 +13,22 @@ export async function GET(request: NextRequest) {
     const kategoriFilter = searchParams.get('kategori');
     const prodiFilter = searchParams.get('prodi');
 
-    // Build query with joins
+    console.log('🔍 [Admin Verifikasi] Fetching pengajuan with filters:', { statusFilter, kategoriFilter, prodiFilter });
+
+    // Build query with joins - ALWAYS get ALL data for accurate counts
     let query = supabase
       .from('poin_aktivitas')
       .select(`
-        *,
+        id,
+        tanggal,
+        deskripsi_kegiatan,
+        bukti,
+        status,
+        notes_verifikator,
+        created_at,
+        updated_at,
+        mahasiswa_id,
+        kategori_id,
         mahasiswa:mahasiswa_id (
           id,
           nim,
@@ -26,7 +37,7 @@ export async function GET(request: NextRequest) {
           prodi,
           semester
         ),
-        kategori_poin:kategori_poin_id (
+        kategori_poin:kategori_id (
           id,
           kode,
           nama,
@@ -37,21 +48,19 @@ export async function GET(request: NextRequest) {
       `)
       .order('created_at', { ascending: false });
 
-    // Filter by status
-    if (statusFilter !== 'all') {
-      query = query.eq('status', statusFilter);
-    }
-
-    // Filter by kategori
-    if (kategoriFilter && kategoriFilter !== 'all') {
-      // We need to filter by kategori_utama from kategori_poin
-      // This requires a subquery or post-processing
-    }
+    // DO NOT filter by status in query - we need all data for accurate counts
+    // Filter will be applied in post-processing
 
     const { data, error } = await query;
 
+    console.log('📊 [Admin Verifikasi] Query result:', { 
+      success: !error, 
+      count: data?.length, 
+      sampleData: data?.[0] 
+    });
+
     if (error) {
-      console.error('Error fetching pengajuan:', error);
+      console.error('❌ [Admin Verifikasi] Error fetching pengajuan:', error);
       return NextResponse.json(
         { success: false, error: error.message },
         { status: 500 }
@@ -60,6 +69,13 @@ export async function GET(request: NextRequest) {
 
     // Post-process filtering
     let filteredData = data || [];
+
+    // Filter by status (moved from query to post-processing)
+    if (statusFilter !== 'all') {
+      filteredData = filteredData.filter(
+        (item: any) => item.status === statusFilter
+      );
+    }
 
     // Filter by kategori_utama
     if (kategoriFilter && kategoriFilter !== 'all') {
@@ -75,13 +91,20 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Calculate counts
+    // Calculate counts from ALL data (before filtering)
+    // This ensures counts are always accurate regardless of active filter
     const counts = {
       all: data?.length || 0,
       pending: data?.filter((item: any) => item.status === 'pending').length || 0,
       approved: data?.filter((item: any) => item.status === 'approved').length || 0,
       rejected: data?.filter((item: any) => item.status === 'rejected').length || 0,
     };
+
+    console.log('✅ [Admin Verifikasi] Returning data:', { 
+      filteredCount: filteredData.length, 
+      counts,
+      sampleFilteredData: filteredData[0]
+    });
 
     return NextResponse.json({
       success: true,

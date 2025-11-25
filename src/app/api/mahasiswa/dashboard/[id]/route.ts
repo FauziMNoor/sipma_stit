@@ -26,15 +26,21 @@ export async function GET(
       );
     }
 
-    // 2. Fetch poin summary
-    const { data: poinSummary, error: poinError } = await supabase
-      .from('poin_summary')
-      .select('*')
+    // 2. Calculate poin summary from approved activities
+    const { data: approvedActivities, error: activitiesError } = await supabase
+      .from('poin_aktivitas')
+      .select(`
+        kategori:kategori_id (
+          kategori_utama,
+          jenis,
+          bobot
+        )
+      `)
       .eq('mahasiswa_id', id)
-      .single();
+      .eq('status', 'approved');
 
-    // If no summary exists, create default
-    const summary = poinSummary || {
+    // Initialize summary
+    let summary = {
       mahasiswa_id: id,
       total_poin: 0,
       total_poin_positif: 0,
@@ -45,6 +51,40 @@ export async function GET(
       total_adab: 0,
       total_pelanggaran: 0,
     };
+
+    // Calculate totals from approved activities
+    if (approvedActivities && approvedActivities.length > 0) {
+      approvedActivities.forEach((activity: any) => {
+        const kategori = activity.kategori;
+        if (!kategori) return;
+
+        const bobot = kategori.bobot || 0;
+        const jenis = kategori.jenis;
+        const kategoriUtama = kategori.kategori_utama;
+
+        // Add to total poin
+        if (jenis === 'positif') {
+          summary.total_poin_positif += bobot;
+          summary.total_poin += bobot;
+        } else if (jenis === 'negatif') {
+          summary.total_poin_negatif += bobot;
+          summary.total_poin -= bobot;
+        }
+
+        // Add to category totals
+        if (kategoriUtama === 'Akademik') {
+          summary.total_akademik += bobot;
+        } else if (kategoriUtama === 'Dakwah') {
+          summary.total_dakwah += bobot;
+        } else if (kategoriUtama === 'Sosial') {
+          summary.total_sosial += bobot;
+        } else if (kategoriUtama === 'Adab') {
+          summary.total_adab += bobot;
+        } else if (kategoriUtama === 'Pelanggaran') {
+          summary.total_pelanggaran += bobot;
+        }
+      });
+    }
 
     // 3. Calculate status kelulusan
     let statusKelulusan = {
@@ -88,7 +128,7 @@ export async function GET(
     }
 
     // 4. Fetch all activities (for riwayat page)
-    const { data: allActivities, error: activitiesError } = await supabase
+    const { data: allActivities, error: allActivitiesError } = await supabase
       .from('poin_aktivitas')
       .select(`
         id,

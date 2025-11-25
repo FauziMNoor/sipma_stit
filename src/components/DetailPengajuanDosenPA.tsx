@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 interface DetailAktivitas {
   id: string;
@@ -32,6 +33,7 @@ interface DetailPengajuanDosenPAProps {
 
 export default function DetailPengajuanDosenPA({ aktivitasId }: DetailPengajuanDosenPAProps) {
   const router = useRouter();
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [aktivitas, setAktivitas] = useState<DetailAktivitas | null>(null);
@@ -90,6 +92,7 @@ export default function DetailPengajuanDosenPA({ aktivitasId }: DetailPengajuanD
         body: JSON.stringify({
           action,
           notes: notes.trim() || null,
+          dosenId: user?.id,
         }),
       });
 

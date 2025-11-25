@@ -27,6 +27,37 @@ export async function PATCH(
       );
     }
 
+    // 1. Get pengajuan with kategori info
+    const { data: pengajuan, error: fetchError } = await supabaseAdmin
+      .from('poin_aktivitas')
+      .select(`
+        *,
+        kategori_poin:kategori_id (
+          kategori_utama
+        )
+      `)
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !pengajuan) {
+      return NextResponse.json(
+        { success: false, error: 'Pengajuan tidak ditemukan' },
+        { status: 404 }
+      );
+    }
+
+    // 2. Verify kategori is Dakwah, Sosial, or Pelanggaran
+    const kategoriUtama = pengajuan.kategori_poin?.kategori_utama;
+    if (!['Dakwah', 'Sosial', 'Pelanggaran'].includes(kategoriUtama)) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Wakil Ketua III hanya bisa memverifikasi kategori Dakwah, Sosial, dan Pelanggaran'
+        },
+        { status: 403 }
+      );
+    }
+
     // Update the pengajuan
     const updateData: any = {
       status: action === 'approve' ? 'approved' : 'rejected',

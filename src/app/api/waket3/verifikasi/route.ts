@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
+    // Waket3 hanya bisa melihat kategori: Dakwah, Sosial, dan Pelanggaran
     // Fetch all pengajuan with mahasiswa and kategori data
     const { data: pengajuanList, error: pengajuanError } = await supabaseAdmin
       .from('poin_aktivitas')
@@ -22,7 +23,8 @@ export async function GET(request: NextRequest) {
         ),
         kategori_poin:kategori_id (
           nama,
-          bobot
+          bobot,
+          kategori_utama
         )
       `)
       .order('created_at', { ascending: false });
@@ -35,22 +37,28 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Format the data
-    const formattedData = (pengajuanList || []).map((item: any) => ({
-      id: item.id,
-      mahasiswa_id: item.mahasiswa_id,
-      mahasiswa_nama: item.mahasiswa?.nama || 'Unknown',
-      mahasiswa_nim: item.mahasiswa?.nim || 'Unknown',
-      mahasiswa_foto: item.mahasiswa?.foto || null,
-      kategori_id: item.kategori_id,
-      kategori_nama: item.kategori_poin?.nama || 'Unknown',
-      kategori_poin: item.kategori_poin?.bobot || 0,
-      deskripsi_kegiatan: item.deskripsi_kegiatan,
-      tanggal: item.tanggal,
-      bukti: item.bukti,
-      status: item.status,
-      created_at: item.created_at,
-    }));
+    // Format the data and filter only Dakwah, Sosial, Pelanggaran
+    const formattedData = (pengajuanList || [])
+      .filter((item: any) => {
+        const kategoriUtama = item.kategori_poin?.kategori_utama;
+        return ['Dakwah', 'Sosial', 'Pelanggaran'].includes(kategoriUtama);
+      })
+      .map((item: any) => ({
+        id: item.id,
+        mahasiswa_id: item.mahasiswa_id,
+        mahasiswa_nama: item.mahasiswa?.nama || 'Unknown',
+        mahasiswa_nim: item.mahasiswa?.nim || 'Unknown',
+        mahasiswa_foto: item.mahasiswa?.foto || null,
+        kategori_id: item.kategori_id,
+        kategori_nama: item.kategori_poin?.nama || 'Unknown',
+        kategori_poin: item.kategori_poin?.bobot || 0,
+        kategori_utama: item.kategori_poin?.kategori_utama || 'Unknown',
+        deskripsi_kegiatan: item.deskripsi_kegiatan,
+        tanggal: item.tanggal,
+        bukti: item.bukti,
+        status: item.status,
+        created_at: item.created_at,
+      }));
 
     return NextResponse.json({
       success: true,

@@ -343,7 +343,7 @@ m.nim.toLowerCase().includes(searchQuery.toLowerCase())
 return (
 <div className="flex flex-col h-full bg-background">
 <div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
-<div className="max-w-7xl mx-auto flex items-center justify-between">
+<div className="max-w-3xl mx-auto flex items-center justify-between">
 <div className="flex items-center gap-2 sm:gap-3">
 <button onClick={() => router.back()} className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors">
 <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-primary-foreground" />
@@ -361,7 +361,7 @@ return (
 </div>
 </div>
 <div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
-<div className="max-w-7xl mx-auto">
+<div className="max-w-3xl mx-auto">
 <div className="relative">
 <Icon icon="solar:magnifer-linear" className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
 <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-12 pr-4 py-3 rounded-xl border border-border bg-input text-foreground" placeholder="Cari mahasiswa..." />
@@ -369,7 +369,7 @@ return (
 </div>
 </div>
 <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
-<div className="max-w-7xl mx-auto space-y-4">
+<div className="max-w-3xl mx-auto space-y-4">
 {loading ? (
 <div className="flex items-center justify-center py-12">
 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>

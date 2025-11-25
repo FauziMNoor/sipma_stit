@@ -34,27 +34,27 @@ export async function GET(
       console.error('Error counting mahasiswa:', mahasiswaError);
     }
 
-    // 3. Get mahasiswa IDs
-    const { data: mahasiswaList, error: mahasiswaListError } = await supabaseAdmin
-      .from('mahasiswa')
-      .select('id')
-      .eq('dosen_pa_id', id)
-      .eq('is_active', true);
-
-    if (mahasiswaListError) {
-      console.error('Error fetching mahasiswa list:', mahasiswaListError);
-    }
-
-    const mahasiswaIds = mahasiswaList?.map((m) => m.id) || [];
-
-    // 4. Count total verifikasi (approved aktivitas)
+    // 3. Count total verifikasi (approved aktivitas kategori Akademik dari SEMUA mahasiswa)
+    // NOTE: Dosen PA bisa approve kategori Akademik dari SEMUA mahasiswa
     let totalVerifikasi = 0;
 
-    if (mahasiswaIds.length > 0) {
+    // Get all kategori IDs for Akademik
+    const { data: kategoriAkademik, error: kategoriError } = await supabaseAdmin
+      .from('kategori_poin')
+      .select('id')
+      .eq('kategori_utama', 'Akademik');
+
+    if (kategoriError) {
+      console.error('Error fetching kategori akademik:', kategoriError);
+    }
+
+    const kategoriAkademikIds = kategoriAkademik?.map((k) => k.id) || [];
+
+    if (kategoriAkademikIds.length > 0) {
       const { count: verifikasiCount, error: verifikasiError } = await supabaseAdmin
         .from('poin_aktivitas')
         .select('*', { count: 'exact', head: true })
-        .in('mahasiswa_id', mahasiswaIds)
+        .in('kategori_id', kategoriAkademikIds)
         .eq('status', 'approved');
 
       if (!verifikasiError) {

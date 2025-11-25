@@ -25,13 +25,14 @@ interface KategoriPoin {
 interface PengajuanItem {
   id: string;
   mahasiswa_id: string;
-  kategori_poin_id: string;
-  tanggal_aktivitas: string;
-  deskripsi: string | null;
-  bukti_foto: string | null;
+  kategori_id: string;
+  tanggal: string;
+  deskripsi_kegiatan: string | null;
+  bukti: string | null;
   status: 'pending' | 'approved' | 'rejected';
   notes_verifikator: string | null;
   created_at: string;
+  updated_at: string;
   mahasiswa: Mahasiswa;
   kategori_poin: KategoriPoin;
 }
@@ -73,9 +74,13 @@ export default function VerifikasiSemuaPengajuan() {
       });
       const result = await response.json();
 
+      console.log('📊 Verifikasi Pengajuan Response:', result);
+      console.log('📊 Data count:', result.data?.length);
+      console.log('📊 Sample data:', result.data?.[0]);
+
       if (result.success) {
-        setPengajuan(result.data);
-        setCounts(result.counts);
+        setPengajuan(result.data || []);
+        setCounts(result.counts || { all: 0, pending: 0, approved: 0, rejected: 0 });
       } else {
         console.error('Error fetching pengajuan:', result.error);
       }
@@ -184,33 +189,33 @@ export default function VerifikasiSemuaPengajuan() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-primary">
-        <div className="max-w-7xl mx-auto">
-        <div className="flex items-center justify-between mb-1">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center size-10 sm:size-11"
-            type="button"
-          >
-            <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
-          </button>
-          <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Semua Pengajuan</h1>
-          <button
-            onClick={() => setShowFilterModal(true)}
-            className="flex items-center justify-center size-10 sm:size-11"
-            type="button"
-          >
-            <Icon icon="solar:filter-bold" className="size-5 sm:size-6 text-white" />
-          </button>
-        </div>
-        <p className="text-xs sm:text-sm text-white/80 text-center">
-          Kelola semua pengajuan kegiatan mahasiswa
-        </p>
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-1">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center size-10 sm:size-11"
+              type="button"
+            >
+              <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
+            </button>
+            <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Semua Pengajuan</h1>
+            <button
+              onClick={() => setShowFilterModal(true)}
+              className="flex items-center justify-center size-10 sm:size-11"
+              type="button"
+            >
+              <Icon icon="solar:filter-bold" className="size-5 sm:size-6 text-white" />
+            </button>
+          </div>
+          <p className="text-xs sm:text-sm text-white/80 text-center">
+            Kelola semua pengajuan kegiatan mahasiswa
+          </p>
         </div>
       </div>
 
       {/* Status Tabs */}
       <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-2xl mx-auto">
         <div className="flex gap-2 overflow-x-auto">
           <button
             onClick={() => setStatusFilter('all')}
@@ -300,7 +305,7 @@ export default function VerifikasiSemuaPengajuan() {
 
       {/* Pengajuan List */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
-        <div className="max-w-7xl mx-auto space-y-4">
+        <div className="max-w-2xl mx-auto space-y-4">
         {pengajuan.length === 0 ? (
           <div className="text-center py-12">
             <Icon icon="solar:inbox-line-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
@@ -339,21 +344,21 @@ export default function VerifikasiSemuaPengajuan() {
                     {item.kategori_poin.kategori_utama}
                   </span>
                   <span className="text-xs text-muted-foreground">•</span>
-                  <span className="text-xs text-muted-foreground">{formatDate(item.tanggal_aktivitas)}</span>
+                  <span className="text-xs text-muted-foreground">{formatDate(item.tanggal)}</span>
                 </div>
-                {item.deskripsi && (
-                  <p className="text-xs text-muted-foreground mt-2">{item.deskripsi}</p>
+                {item.deskripsi_kegiatan && (
+                  <p className="text-xs text-muted-foreground mt-2">{item.deskripsi_kegiatan}</p>
                 )}
               </div>
 
               {/* Bukti & Actions */}
               <div className="flex items-center gap-3">
-                {item.bukti_foto ? (
+                {item.bukti ? (
                   <img
                     alt="Bukti"
-                    src={item.bukti_foto}
+                    src={item.bukti}
                     className="size-20 rounded-xl object-cover border border-border cursor-pointer hover:opacity-80 transition-opacity"
-                    onClick={() => window.open(item.bukti_foto!, '_blank')}
+                    onClick={() => window.open(item.bukti!, '_blank')}
                   />
                 ) : (
                   <div className="size-20 rounded-xl bg-muted flex items-center justify-center border border-border">
@@ -363,7 +368,7 @@ export default function VerifikasiSemuaPengajuan() {
 
                 <div className="flex-1 space-y-2">
                   <p className="text-xs text-muted-foreground">
-                    {item.bukti_foto ? 'Bukti Kegiatan' : 'Tidak ada bukti'}
+                    {item.bukti ? 'Bukti Kegiatan' : 'Tidak ada bukti'}
                   </p>
 
                   {item.status === 'pending' ? (

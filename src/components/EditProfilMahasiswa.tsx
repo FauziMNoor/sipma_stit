@@ -145,6 +145,7 @@ export default function EditProfilMahasiswa() {
       <div className="flex-1 overflow-y-auto pb-24">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-border bg-card">
+          <div className="max-w-3xl mx-auto w-full flex items-center justify-between">
           <button
             onClick={() => router.push('/mahasiswa/profil')}
             className="flex items-center justify-center size-11"
@@ -153,10 +154,12 @@ export default function EditProfilMahasiswa() {
           </button>
           <h1 className="text-lg font-semibold font-heading text-foreground">Edit Profil</h1>
           <div className="size-11" />
+          </div>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="px-6 py-6">
+          <div className="max-w-3xl mx-auto">
           <div className="bg-card rounded-3xl p-6 border border-border shadow-sm">
             {/* Photo Upload */}
             <div className="flex flex-col items-center mb-6">
@@ -295,12 +298,13 @@ export default function EditProfilMahasiswa() {
               )}
             </button>
           </div>
+          </div>
         </form>
       </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
-        <div className="flex items-center justify-around py-3 px-6">
+        <div className="max-w-3xl mx-auto flex items-center justify-around py-3 px-6">
           <button
             onClick={() => router.push('/mahasiswa/dashboard')}
             className="flex flex-col items-center gap-1.5 flex-1"

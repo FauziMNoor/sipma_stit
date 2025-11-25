@@ -26,7 +26,6 @@ export function DashboardAdmin() {
   }, []);
 
   const fetchStats = async () => {
-    setIsLoading(true);
     try {
       const response = await fetch('/api/dashboard/stats', {
         credentials: 'include',
@@ -68,7 +67,7 @@ export function DashboardAdmin() {
   return (
     <div className="flex flex-col h-screen bg-background">
       <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <h1 className="text-lg sm:text-xl font-bold text-foreground font-heading">Admin Dashboard</h1>
           <button
             onClick={handleLogout}
@@ -80,7 +79,7 @@ export function DashboardAdmin() {
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="max-w-3xl mx-auto space-y-6">
         {/* Statistics Cards */}
         {isLoading ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

@@ -425,7 +425,7 @@ export default function KelolaPengguna() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-primary">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-1">
           <button
             onClick={() => router.back()}
@@ -454,7 +454,7 @@ export default function KelolaPengguna() {
 
       {/* Search Bar */}
       <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         <div className="relative">
           <Icon icon="solar:magnifer-linear" className="absolute left-4 top-1/2 -translate-y-1/2 size-5 text-muted-foreground" />
           <input
@@ -470,7 +470,7 @@ export default function KelolaPengguna() {
 
       {/* Role Filter Tabs */}
       <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         <div className="flex gap-2 overflow-x-auto">
           <button
             onClick={() => setRoleFilter('all')}
@@ -532,7 +532,7 @@ export default function KelolaPengguna() {
 
       {/* Users List */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
-        <div className="max-w-7xl mx-auto space-y-4">
+        <div className="max-w-3xl mx-auto space-y-4">
         {users.length === 0 ? (
           <div className="text-center py-12">
             <Icon icon="solar:user-cross-rounded-bold" className="size-16 text-muted-foreground mx-auto mb-4" />

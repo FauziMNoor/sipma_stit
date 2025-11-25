@@ -217,7 +217,7 @@ export default function KelolaKegiatan() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2 sm:gap-3">
             <button
@@ -243,7 +243,7 @@ export default function KelolaKegiatan() {
 
       {/* Search */}
       <div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         <div className="relative">
           <input
             type="text"
@@ -262,7 +262,7 @@ export default function KelolaKegiatan() {
 
       {/* Filter Kategori */}
       <div className="bg-card border-b border-border overflow-x-auto">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-3xl mx-auto">
         <div className="flex px-4 sm:px-6 gap-3 sm:gap-4 py-4">
           {KATEGORI_UTAMA.map((kategori) => (
             <button
@@ -283,7 +283,7 @@ export default function KelolaKegiatan() {
 
       {/* List Kegiatan */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-7xl mx-auto space-y-4">
+        <div className="max-w-3xl mx-auto space-y-4">
         {isLoading ? (
           <div className="flex items-center justify-center py-12">
             <Icon icon="svg-spinners:ring-resize" className="size-8 text-primary" />

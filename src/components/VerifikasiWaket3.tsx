@@ -13,6 +13,7 @@ interface PengajuanItem {
   kategori_id: string;
   kategori_nama: string;
   kategori_poin: number;
+  kategori_utama: string;
   deskripsi_kegiatan: string;
   tanggal: string;
   bukti: string | null;
@@ -168,7 +169,10 @@ export default function VerifikasiWaket3({ userId }: VerifikasiWaket3Props) {
             >
               <Icon icon="solar:arrow-left-linear" className="size-6 text-primary-foreground" />
             </button>
-            <h1 className="text-xl font-bold text-primary-foreground font-heading">Verifikasi Kegiatan</h1>
+            <div>
+              <h1 className="text-xl font-bold text-primary-foreground font-heading">Verifikasi Kegiatan</h1>
+              <p className="text-xs text-primary-foreground/80 mt-0.5">Dakwah • Sosial • Pelanggaran</p>
+            </div>
           </div>
         </div>
       </div>
@@ -287,7 +291,7 @@ export default function VerifikasiWaket3({ userId }: VerifikasiWaket3Props) {
               <div className="space-y-2 mb-3">
                 <p className="text-sm font-semibold text-foreground">{item.deskripsi_kegiatan}</p>
                 <div className="flex items-center gap-2">
-                  {getCategoryBadge(item.kategori_nama)}
+                  {getCategoryBadge(item.kategori_utama)}
                   <span className="text-xs text-muted-foreground">•</span>
                   <span className="text-xs text-muted-foreground">{formatDate(item.tanggal)}</span>
                 </div>

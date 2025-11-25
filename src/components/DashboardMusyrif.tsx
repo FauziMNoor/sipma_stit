@@ -54,7 +54,6 @@ export default function DashboardMusyrif() {
   }, []);
 
   const fetchDashboardData = async () => {
-    setIsLoading(true);
     try {
       const response = await fetch('/api/musyrif/dashboard', {
         credentials: 'include',
@@ -109,41 +108,14 @@ export default function DashboardMusyrif() {
     return `${Math.floor(diffInMinutes / 1440)} hari yang lalu`;
   };
 
-  if (isLoading) {
+  // Show loading state
+  if (isLoading || !data) {
     return (
-      <div className="flex flex-col h-full bg-background">
-        <div className="px-6 py-5 bg-card border-b border-border">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="size-12 rounded-full bg-muted animate-pulse" />
-              <div>
-                <div className="h-4 w-40 bg-muted rounded animate-pulse mb-2" />
-                <div className="h-3 w-32 bg-muted rounded animate-pulse" />
-              </div>
-            </div>
-          </div>
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="text-center">
+          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">Memuat...</p>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">Memuat data...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <div className="flex flex-col h-full bg-background items-center justify-center">
-        <Icon icon="solar:danger-circle-bold" className="size-16 text-destructive mb-4" />
-        <p className="text-foreground font-semibold">Gagal memuat data</p>
-        <button
-          onClick={fetchDashboardData}
-          className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-xl"
-        >
-          Coba Lagi
-        </button>
       </div>
     );
   }
@@ -220,9 +192,9 @@ export default function DashboardMusyrif() {
                 </div>
                 <div>
                   <p className="text-base font-bold text-accent-foreground">
-                    Verifikasi Adab & Akhlak
+                    Verifikasi Adab
                   </p>
-                  <p className="text-xs text-accent-foreground/80">Penilaian perilaku</p>
+                  <p className="text-xs text-accent-foreground/80">Approve Adab, Input Pelanggaran</p>
                 </div>
               </div>
             </button>

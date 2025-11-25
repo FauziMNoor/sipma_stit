@@ -98,6 +98,7 @@ export default function KategoriPoinMahasiswa({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className={`flex items-center justify-between px-4 py-3 bg-card border-b border-border`}>
+        <div className="max-w-3xl mx-auto w-full flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className="flex items-center justify-center size-11"
@@ -107,11 +108,12 @@ export default function KategoriPoinMahasiswa({
         </button>
         <h1 className={`text-lg font-semibold font-heading ${color}`}>{title}</h1>
         <div className="size-11" />
+        </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-4 py-4 space-y-4">
+        <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
           {/* Search */}
           <div className="relative">
             <input

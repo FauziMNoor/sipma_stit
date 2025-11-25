@@ -34,7 +34,6 @@ export default function DashboardDosenPA() {
 
   const fetchDashboardData = async () => {
     try {
-      setIsLoading(true);
       const token = localStorage.getItem('auth-token');
       const response = await fetch(`/api/dosen-pa/dashboard/${user?.id}`, {
         headers: {
@@ -73,22 +72,16 @@ export default function DashboardDosenPA() {
     }
   };
 
-  if (isLoading || !stats || !dosenData) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat dashboard...</p>
-        </div>
-      </div>
-    );
+  // Don't show loading here - it's handled by page level
+  if (!stats || !dosenData) {
+    return null;
   }
 
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <img
@@ -125,7 +118,7 @@ export default function DashboardDosenPA() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-        <div className="max-w-7xl mx-auto space-y-6">
+        <div className="max-w-2xl mx-auto space-y-6">
           {/* Statistics */}
           <div>
             <h3 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4 font-heading">
@@ -182,8 +175,8 @@ export default function DashboardDosenPA() {
                         <Icon icon="solar:clipboard-check-bold" className="size-6 sm:size-7 text-white" />
                       </div>
                       <div className="text-left">
-                        <p className="text-sm sm:text-base font-bold text-white">Verifikasi Kegiatan</p>
-                        <p className="text-[10px] sm:text-xs text-white/80">Verifikasi pengajuan mahasiswa</p>
+                        <p className="text-sm sm:text-base font-bold text-white">Verifikasi Akademik</p>
+                        <p className="text-[10px] sm:text-xs text-white/80">Approve kegiatan akademik</p>
                       </div>
                     </div>
                     <Icon icon="solar:alt-arrow-right-linear" className="size-5 sm:size-6 text-white" />

@@ -63,7 +63,6 @@ export default function DashboardMahasiswa() {
 
   const fetchDashboardData = async (mahasiswaId: string) => {
     try {
-      setIsLoading(true);
       const token = localStorage.getItem('auth-token');
       const response = await fetch(`/api/mahasiswa/dashboard/${mahasiswaId}`, {
         headers: {
@@ -108,7 +107,7 @@ export default function DashboardMahasiswa() {
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center">
           <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat dashboard...</p>
+          <p className="text-sm text-muted-foreground">Memuat...</p>
         </div>
       </div>
     );
@@ -120,7 +119,7 @@ export default function DashboardMahasiswa() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-6 py-5 bg-card border-b border-border">
-        <div className="flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
               alt="Profile"
@@ -143,6 +142,7 @@ export default function DashboardMahasiswa() {
 
       {/* Content */}
       <div className="overflow-y-auto space-y-6 p-6 pb-24">
+        <div className="max-w-3xl mx-auto space-y-6">
         {/* Poin Card */}
         <div
           style={{ background: 'linear-gradient(135deg, #0059A8 0%, #009EE3 100%)' }}
@@ -291,11 +291,12 @@ export default function DashboardMahasiswa() {
             <span>+ Input Kegiatan</span>
           </button>
         </div>
+        </div>
       </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-6 py-3">
-        <div className="flex items-center justify-around">
+        <div className="max-w-3xl mx-auto flex items-center justify-around">
           <button className="flex flex-col items-center gap-1 py-2 px-4">
             <Icon icon="solar:home-2-bold" className="size-6 text-accent" />
             <span className="text-xs font-semibold text-accent">Home</span>

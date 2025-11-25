@@ -123,7 +123,7 @@ export default function VerifikasiKegiatanDosenPA() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-4 sm:px-6 py-5 bg-primary">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-1">
             <button
               onClick={() => router.back()}
@@ -131,16 +131,16 @@ export default function VerifikasiKegiatanDosenPA() {
             >
               <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
             </button>
-            <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Kegiatan</h1>
+            <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Akademik</h1>
             <div className="size-10 sm:size-11" />
           </div>
-          <p className="text-xs sm:text-sm text-white/80 text-center">Pengajuan kegiatan mahasiswa bimbingan</p>
+          <p className="text-xs sm:text-sm text-white/80 text-center">Approve kegiatan akademik mahasiswa</p>
         </div>
       </div>
 
       {/* Filter Tabs */}
       <div className="bg-card border-b border-border px-4 sm:px-6 py-4">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-2xl mx-auto">
           <div className="flex gap-2 overflow-x-auto">
           <button
             onClick={() => setFilter('all')}
@@ -202,7 +202,7 @@ export default function VerifikasiKegiatanDosenPA() {
 
       {/* List */}
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
-        <div className="max-w-7xl mx-auto space-y-4">
+        <div className="max-w-2xl mx-auto space-y-4">
         {filteredAktivitas.length === 0 ? (
           <div className="text-center py-12">
             <Icon icon="solar:document-text-bold" className="size-16 text-muted-foreground mx-auto mb-4" />

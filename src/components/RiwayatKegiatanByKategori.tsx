@@ -11,7 +11,7 @@ interface KegiatanItem {
   tanggal: string;
   deskripsi_kegiatan: string;
   status: 'pending' | 'approved' | 'rejected';
-  kategori: {
+  kategori_poin: {
     nama: string;
     kategori_utama: string;
     bobot: number;
@@ -67,12 +67,19 @@ export default function RiwayatKegiatanByKategori({
       const response = await fetch(`/api/mahasiswa/kegiatan?mahasiswa_id=${user?.id}`);
       const result = await response.json();
 
+      console.log('📊 Raw data from API:', result.data);
+
       if (result.success && result.data) {
+        // Log unique kategori_utama values
+        const uniqueKategori = [...new Set(result.data.map((item: KegiatanItem) => item.kategori_poin?.kategori_utama))];
+        console.log('📋 Unique kategori_utama:', uniqueKategori);
+        console.log('🔍 Filtering for:', kategoriUtama);
+
         // Filter by kategori_utama
         const filtered = result.data.filter((item: KegiatanItem) =>
-          item.kategori.kategori_utama === kategoriUtama
+          item.kategori_poin?.kategori_utama === kategoriUtama
         );
-        console.log('✅ Kegiatan filtered:', { count: filtered.length, data: filtered });
+        console.log('✅ Kegiatan filtered:', { count: filtered.length, kategoriUtama, sampleData: filtered[0] });
         setKegiatanList(filtered);
       } else {
         console.error('❌ Error fetching kegiatan:', result.error);
@@ -161,6 +168,7 @@ export default function RiwayatKegiatanByKategori({
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className={`flex items-center justify-between px-4 py-3 bg-card border-b border-border`}>
+        <div className="max-w-3xl mx-auto w-full flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className="flex items-center justify-center size-11"
@@ -170,11 +178,12 @@ export default function RiwayatKegiatanByKategori({
         </button>
         <h1 className={`text-lg font-semibold font-heading ${color}`}>{title}</h1>
         <div className="size-11" />
+        </div>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-4 py-4 space-y-4">
+        <div className="max-w-3xl mx-auto px-4 py-4 space-y-4">
           {/* Toggle Mode */}
           <div className="flex items-center gap-2 bg-input rounded-xl p-1">
             <button
@@ -274,11 +283,11 @@ export default function RiwayatKegiatanByKategori({
                     >
                       <div className="flex items-start gap-3">
                         <div className="flex items-center justify-center size-12 rounded-full bg-secondary shrink-0">
-                          <span className="text-2xl">{getEmojiByKategori(item.kategori.kategori_utama)}</span>
+                          <span className="text-2xl">{getEmojiByKategori(item.kategori_poin?.kategori_utama || '')}</span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between gap-2 mb-2">
-                            <h3 className="text-sm font-bold text-foreground">{item.kategori.nama}</h3>
+                            <h3 className="text-sm font-bold text-foreground">{item.kategori_poin?.nama || 'Tidak ada kategori'}</h3>
                             {getStatusBadge(item.status)}
                           </div>
                           <p className="text-xs text-muted-foreground mb-2">
@@ -288,8 +297,8 @@ export default function RiwayatKegiatanByKategori({
                             <span className="text-xs text-muted-foreground">
                               {formatDate(item.tanggal)}
                             </span>
-                            <span className={`text-xs font-bold ${item.kategori.jenis === 'negatif' ? 'text-destructive' : 'text-green-600'}`}>
-                              {item.kategori.jenis === 'negatif' ? '-' : '+'}{item.kategori.bobot} poin
+                            <span className={`text-xs font-bold ${item.kategori_poin?.jenis === 'negatif' ? 'text-destructive' : 'text-green-600'}`}>
+                              {item.kategori_poin?.jenis === 'negatif' ? '-' : '+'}{item.kategori_poin?.bobot || 0} poin
                             </span>
                           </div>
                         </div>

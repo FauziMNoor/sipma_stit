@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
-// GET - Fetch all aktivitas from mahasiswa bimbingan
+// GET - Fetch all aktivitas kategori Akademik dari SEMUA mahasiswa
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
@@ -9,31 +9,10 @@ export async function GET(
   try {
     const { id: dosenId } = await context.params;
 
-    // 1. Get mahasiswa IDs for this dosen
-    const { data: mahasiswaList, error: mahasiswaError } = await supabaseAdmin
-      .from('mahasiswa')
-      .select('id')
-      .eq('dosen_pa_id', dosenId)
-      .eq('is_active', true);
+    // NOTE: Dosen PA bisa melihat dan approve kategori Akademik dari SEMUA mahasiswa
+    // Karena belum ada sistem pembagian mahasiswa bimbingan per dosen
 
-    if (mahasiswaError) {
-      console.error('Error fetching mahasiswa:', mahasiswaError);
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch mahasiswa' },
-        { status: 500 }
-      );
-    }
-
-    const mahasiswaIds = mahasiswaList?.map((m) => m.id) || [];
-
-    if (mahasiswaIds.length === 0) {
-      return NextResponse.json({
-        success: true,
-        data: [],
-      });
-    }
-
-    // 2. Fetch all aktivitas from mahasiswa bimbingan
+    // 1. Fetch all aktivitas (akan difilter berdasarkan kategori Akademik nanti)
     const { data: aktivitas, error: aktivitasError } = await supabaseAdmin
       .from('poin_aktivitas')
       .select(`
@@ -46,7 +25,6 @@ export async function GET(
         mahasiswa_id,
         kategori_id
       `)
-      .in('mahasiswa_id', mahasiswaIds)
       .order('created_at', { ascending: false });
 
     if (aktivitasError) {
@@ -56,6 +34,10 @@ export async function GET(
         { status: 500 }
       );
     }
+
+    // 2. Get unique mahasiswa IDs and kategori IDs from aktivitas
+    const mahasiswaIds = [...new Set(aktivitas?.map((a: any) => a.mahasiswa_id) || [])];
+    const kategoriIds = [...new Set(aktivitas?.map((a: any) => a.kategori_id) || [])];
 
     // 3. Fetch mahasiswa details
     const { data: mahasiswaDetails, error: mahasiswaDetailsError } = await supabaseAdmin
@@ -68,7 +50,6 @@ export async function GET(
     }
 
     // 4. Fetch kategori details
-    const kategoriIds = [...new Set(aktivitas?.map((a: any) => a.kategori_id) || [])];
     const { data: kategoriDetails, error: kategoriError } = await supabaseAdmin
       .from('kategori_poin')
       .select('id, nama, kategori_utama, bobot, jenis')
@@ -78,7 +59,7 @@ export async function GET(
       console.error('Error fetching kategori:', kategoriError);
     }
 
-    // 5. Map data
+    // 5. Map data and filter only Akademik category
     const mahasiswaMap = new Map(mahasiswaDetails?.map((m: any) => [m.id, m]) || []);
     const kategoriMap = new Map(kategoriDetails?.map((k: any) => [k.id, k]) || []);
 
@@ -106,7 +87,9 @@ export async function GET(
           jenis: kategori?.jenis || 'positif',
         },
       };
-    }) || [];
+    })
+    // Filter hanya kategori Akademik
+    .filter((item: any) => item.kategori.kategori_utama === 'Akademik') || [];
 
     return NextResponse.json({
       success: true,
@@ -129,7 +112,7 @@ export async function PATCH(
   try {
     const { id: aktivitasId } = await context.params;
     const body = await request.json();
-    const { action, notes } = body;
+    const { action, notes, dosenId } = body;
 
     if (!action || !['approve', 'reject'].includes(action)) {
       return NextResponse.json(
@@ -138,12 +121,38 @@ export async function PATCH(
       );
     }
 
-    // Get user ID from request (you might want to add auth middleware)
-    const authHeader = request.headers.get('authorization');
-    const token = authHeader?.replace('Bearer ', '');
-    
-    // For now, we'll get verifikator_id from the request body or use a default
-    // In production, you should verify the JWT token and get the user ID from it
+    // 1. Get aktivitas with kategori info
+    const { data: aktivitas, error: fetchError } = await supabaseAdmin
+      .from('poin_aktivitas')
+      .select(`
+        *,
+        kategori_poin:kategori_id (
+          kategori_utama
+        )
+      `)
+      .eq('id', aktivitasId)
+      .single();
+
+    if (fetchError || !aktivitas) {
+      return NextResponse.json(
+        { success: false, error: 'Aktivitas tidak ditemukan' },
+        { status: 404 }
+      );
+    }
+
+    // 2. Verify kategori is Akademik
+    // NOTE: Dosen PA bisa approve untuk SEMUA mahasiswa (belum ada sistem bimbingan per dosen)
+
+    // 3. Verify kategori is Akademik
+    if (aktivitas.kategori_poin?.kategori_utama !== 'Akademik') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Dosen PA hanya bisa memverifikasi kategori Akademik'
+        },
+        { status: 403 }
+      );
+    }
 
     const status = action === 'approve' ? 'approved' : 'rejected';
     const now = new Date().toISOString();
@@ -154,7 +163,7 @@ export async function PATCH(
         status,
         notes_verifikator: notes,
         verified_at: now,
-        // verifikator_id: userId, // Add this when you have proper auth
+        verifikator_id: dosenId || null,
       })
       .eq('id', aktivitasId)
       .select()

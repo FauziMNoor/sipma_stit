@@ -82,7 +82,7 @@ export default function ProfilMahasiswa() {
       <div className="flex-1 overflow-y-auto pb-24">
         {/* Profile Header */}
         <div className="bg-card px-6 pt-8 pb-6 border-b border-border">
-          <div className="flex flex-col items-center text-center space-y-4">
+          <div className="max-w-3xl mx-auto flex flex-col items-center text-center space-y-4">
             <img
               alt="Student Profile"
               src={mahasiswa?.mahasiswa?.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(mahasiswa?.mahasiswa?.nama || 'User')}
@@ -103,6 +103,7 @@ export default function ProfilMahasiswa() {
 
         {/* Total Poin Card */}
         <div className="px-6 py-6 space-y-6">
+          <div className="max-w-3xl mx-auto space-y-6">
           <div
             className="rounded-3xl p-6 shadow-lg"
             style={{ background: 'linear-gradient(135deg, #0059a8 0%, #009ee3 100%)' }}
@@ -230,12 +231,13 @@ export default function ProfilMahasiswa() {
               <span>Keluar dari Akun</span>
             </button>
           </div>
+          </div>
         </div>
       </div>
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
-        <div className="flex items-center justify-around py-3 px-6">
+        <div className="max-w-3xl mx-auto flex items-center justify-around py-3 px-6">
           <button
             onClick={() => router.push('/mahasiswa/dashboard')}
             className="flex flex-col items-center gap-1.5 flex-1"

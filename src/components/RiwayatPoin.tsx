@@ -104,6 +104,7 @@ export default function RiwayatPoin({ userId }: RiwayatPoinProps) {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-border">
+        <div className="max-w-3xl mx-auto w-full flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className="flex items-center justify-center size-11"
@@ -112,10 +113,11 @@ export default function RiwayatPoin({ userId }: RiwayatPoinProps) {
         </button>
         <h1 className="text-lg font-semibold font-heading text-foreground">Riwayat Poin</h1>
         <div className="size-11" />
+        </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        <div className="px-6 py-6 space-y-6">
+        <div className="max-w-3xl mx-auto px-6 py-6 space-y-6">
           {/* Summary Card */}
           <div
             className="rounded-3xl p-6 shadow-lg"

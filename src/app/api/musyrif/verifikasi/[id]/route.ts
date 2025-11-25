@@ -78,7 +78,46 @@ export async function PUT(
       );
     }
 
-    // Update status
+    // Get kategori_utama from pengajuan
+    const { data: kategoriData, error: kategoriError } = await supabaseAdmin
+      .from('kategori_poin')
+      .select('kategori_utama')
+      .eq('id', pengajuan.kategori_id)
+      .single();
+
+    if (kategoriError || !kategoriData) {
+      return NextResponse.json(
+        { success: false, error: 'Kategori tidak ditemukan' },
+        { status: 404 }
+      );
+    }
+
+    const kategoriUtama = kategoriData.kategori_utama;
+
+    // ATURAN APPROVAL MUSYRIF:
+    // - Adab: Bisa approve/reject
+    // - Pelanggaran: TIDAK bisa approve, hanya bisa input (tetap pending untuk Waket3)
+    if (kategoriUtama === 'Pelanggaran') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Pelanggaran harus divalidasi oleh Wakil Ketua III. Musyrif hanya bisa menginput data pelanggaran.'
+        },
+        { status: 403 }
+      );
+    }
+
+    if (kategoriUtama !== 'Adab') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Musyrif hanya bisa memverifikasi kategori Adab'
+        },
+        { status: 403 }
+      );
+    }
+
+    // Update status (hanya untuk Adab)
     const newStatus = action === 'approve' ? 'approved' : 'rejected';
     const { data, error } = await supabaseAdmin
       .from('poin_aktivitas')

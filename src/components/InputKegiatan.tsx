@@ -188,6 +188,7 @@ export default function InputKegiatan() {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-5 bg-card border-b border-border">
+        <div className="max-w-3xl mx-auto w-full flex items-center justify-between">
         <button
           onClick={() => router.back()}
           className="flex items-center justify-center size-11"
@@ -197,11 +198,12 @@ export default function InputKegiatan() {
         </button>
         <h1 className="text-lg font-semibold font-heading text-foreground">Input Kegiatan</h1>
         <div className="size-11" />
+        </div>
       </div>
 
       {/* Form */}
       <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="space-y-5">
+        <div className="max-w-3xl mx-auto space-y-5">
           {/* Kategori Utama */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
@@ -320,6 +322,7 @@ export default function InputKegiatan() {
 
       {/* Submit Button */}
       <div className="px-6 py-6 bg-card border-t border-border">
+        <div className="max-w-3xl mx-auto">
         <button
           onClick={handleSubmit}
           disabled={isSubmitting}
@@ -335,6 +338,7 @@ export default function InputKegiatan() {
             <span>Kirim untuk Verifikasi</span>
           )}
         </button>
+        </div>
       </div>
     </div>
   );
