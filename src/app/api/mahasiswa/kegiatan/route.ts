@@ -135,13 +135,27 @@ export async function POST(request: NextRequest) {
 
     console.log('📊 Kategori found:', kategori);
 
-    // Determine semester_type based on tanggal
-    const tanggalObj = new Date(tanggal);
-    const month = tanggalObj.getMonth() + 1; // 1-12
-    const semester_type = (month >= 2 && month <= 7) ? 'genap' : 'ganjil';
+    // Get tahun ajaran and semester aktif from settings
+    const { data: settings, error: settingsError } = await supabaseAdmin
+      .from('system_settings')
+      .select('setting_key, setting_value')
+      .in('setting_key', ['tahun_ajaran_aktif', 'semester_aktif']);
 
-    // Get current tahun ajaran (you can make this dynamic later)
-    const tahun_ajaran = '2024/2025';
+    if (settingsError) {
+      console.error('Error fetching settings:', settingsError);
+      return NextResponse.json(
+        { success: false, error: 'Gagal mengambil pengaturan sistem' },
+        { status: 500 }
+      );
+    }
+
+    const tahunAjaranSetting = settings?.find(s => s.setting_key === 'tahun_ajaran_aktif');
+    const semesterSetting = settings?.find(s => s.setting_key === 'semester_aktif');
+
+    const tahun_ajaran = tahunAjaranSetting?.setting_value || '2024/2025';
+    const semester_type = semesterSetting?.setting_value || 'ganjil';
+
+    console.log('📅 Tahun ajaran aktif:', tahun_ajaran, '- Semester:', semester_type);
 
     // Insert poin_aktivitas
     // Note: Column name is 'kategori_id' not 'kategori_poin_id'

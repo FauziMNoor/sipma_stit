@@ -1,167 +1,148 @@
-# 📦 SUPABASE STORAGE SETUP - SIPMA
+# Setup Supabase Storage Bucket untuk Upload Foto
 
-## 🎯 Tujuan
-Membuat bucket storage di Supabase untuk menyimpan foto profil mahasiswa dan pengguna.
+## Bucket yang Diperlukan
 
----
+Aplikasi SIPMA memerlukan bucket storage untuk upload foto:
+- **Nama Bucket**: `mahasiswa-photos`
+- **Tipe**: Public (untuk akses foto profil dan bukti kegiatan)
 
-## 📋 Langkah-langkah Setup
+## Langkah-Langkah Setup
 
-### **1. Buka Supabase Dashboard**
+### 1. Buka Supabase Dashboard
 
-1. Login ke [Supabase Dashboard](https://supabase.com/dashboard)
-2. Pilih project SIPMA Anda
+1. Login ke [Supabase Dashboard](https://app.supabase.com)
+2. Pilih project Anda
 3. Klik menu **Storage** di sidebar kiri
 
----
-
-### **2. Buat Bucket "photos"**
+### 2. Create Bucket
 
 1. Klik tombol **"New bucket"**
-2. Isi form:
-   - **Name**: `photos`
-   - **Public bucket**: ✅ **CENTANG** (agar foto bisa diakses publik)
-   - **File size limit**: `2 MB` (opsional)
-   - **Allowed MIME types**: `image/jpeg, image/png, image/jpg` (opsional)
-
+2. Isi form dengan data berikut:
+   - **Name**: `mahasiswa-photos`
+   - **Public bucket**: ✅ Centang (Enable)
+   - **File size limit**: 2MB (2097152 bytes)
+   - **Allowed MIME types**: `image/jpeg, image/jpg, image/png, image/webp`
 3. Klik **"Create bucket"**
 
----
+### 3. Setup Bucket Policies
 
-### **3. Setup Storage Policy (RLS)**
+Setelah bucket dibuat, set policies untuk keamanan:
 
-Setelah bucket dibuat, kita perlu setup policy agar:
-- ✅ **Semua orang bisa READ** (lihat foto)
-- ✅ **Hanya authenticated user bisa UPLOAD/UPDATE/DELETE**
-
-#### **A. Policy untuk SELECT (Read)**
-
-1. Klik bucket **"photos"**
-2. Klik tab **"Policies"**
-3. Klik **"New Policy"**
-4. Pilih **"For full customization"**
-5. Isi form:
-   - **Policy name**: `Public Read Access`
-   - **Allowed operation**: `SELECT`
-   - **Target roles**: `public`
-   - **USING expression**: `true`
-
-6. Klik **"Review"** → **"Save policy"**
-
-#### **B. Policy untuk INSERT (Upload)**
-
-1. Klik **"New Policy"** lagi
-2. Pilih **"For full customization"**
-3. Isi form:
-   - **Policy name**: `Authenticated Upload`
-   - **Allowed operation**: `INSERT`
-   - **Target roles**: `authenticated`
-   - **WITH CHECK expression**: `true`
-
-4. Klik **"Review"** → **"Save policy"**
-
-#### **C. Policy untuk UPDATE**
-
-1. Klik **"New Policy"** lagi
-2. Pilih **"For full customization"**
-3. Isi form:
-   - **Policy name**: `Authenticated Update`
-   - **Allowed operation**: `UPDATE`
-   - **Target roles**: `authenticated`
-   - **USING expression**: `true`
-   - **WITH CHECK expression**: `true`
-
-4. Klik **"Review"** → **"Save policy"**
-
-#### **D. Policy untuk DELETE**
-
-1. Klik **"New Policy"** lagi
-2. Pilih **"For full customization"**
-3. Isi form:
-   - **Policy name**: `Authenticated Delete`
-   - **Allowed operation**: `DELETE`
-   - **Target roles**: `authenticated`
-   - **USING expression**: `true`
-
-4. Klik **"Review"** → **"Save policy"**
-
----
-
-### **4. Alternatif: Setup via SQL**
-
-Jika lebih suka menggunakan SQL, jalankan query ini di **SQL Editor**:
-
+#### Policy 1: Allow Public Read
 ```sql
--- Create bucket (jika belum ada)
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('photos', 'photos', true)
-ON CONFLICT (id) DO NOTHING;
-
--- Policy: Public Read
-CREATE POLICY "Public Read Access"
+-- Allow anyone to read files
+CREATE POLICY "Public Access"
 ON storage.objects FOR SELECT
-TO public
-USING (bucket_id = 'photos');
-
--- Policy: Authenticated Upload
-CREATE POLICY "Authenticated Upload"
-ON storage.objects FOR INSERT
-TO authenticated
-WITH CHECK (bucket_id = 'photos');
-
--- Policy: Authenticated Update
-CREATE POLICY "Authenticated Update"
-ON storage.objects FOR UPDATE
-TO authenticated
-USING (bucket_id = 'photos')
-WITH CHECK (bucket_id = 'photos');
-
--- Policy: Authenticated Delete
-CREATE POLICY "Authenticated Delete"
-ON storage.objects FOR DELETE
-TO authenticated
-USING (bucket_id = 'photos');
+USING ( bucket_id = 'mahasiswa-photos' );
 ```
 
----
+#### Policy 2: Allow Authenticated Upload
+```sql
+-- Allow authenticated users to upload
+CREATE POLICY "Authenticated users can upload"
+ON storage.objects FOR INSERT
+WITH CHECK (
+  bucket_id = 'mahasiswa-photos' 
+  AND auth.role() = 'authenticated'
+);
+```
 
-### **5. Verifikasi Setup**
+#### Policy 3: Allow Owner to Delete
+```sql
+-- Allow users to delete their own uploads
+CREATE POLICY "Users can delete their own uploads"
+ON storage.objects FOR DELETE
+USING ( 
+  bucket_id = 'mahasiswa-photos'
+  AND auth.role() = 'authenticated'
+);
+```
 
-1. Kembali ke tab **Storage** → **photos**
-2. Coba upload file test:
-   - Klik **"Upload file"**
-   - Pilih gambar
-   - Klik **"Upload"**
+### 4. Verifikasi Setup
 
-3. Jika berhasil, file akan muncul di list
-4. Klik file → **"Get URL"** → Copy URL
-5. Buka URL di browser baru
-6. Jika gambar muncul, berarti setup **BERHASIL!** ✅
+Setelah setup, verifikasi dengan:
 
----
+1. **Test Upload**:
+   - Buka halaman input kegiatan mahasiswa
+   - Upload foto bukti
+   - Pastikan foto berhasil diupload dan tampil
 
-## 🎉 Selesai!
+2. **Test Input Pelanggaran**:
+   - Login sebagai Musyrif
+   - Buka halaman Input Pelanggaran
+   - Upload foto bukti
+   - Pastikan foto berhasil diupload
 
-Bucket **"photos"** sudah siap digunakan untuk:
-- ✅ Foto profil mahasiswa (`photos/mahasiswa/`)
-- ✅ Foto profil pengguna (`photos/users/`)
-- ✅ Bukti kegiatan (`photos/bukti/`)
+3. **Check Storage Dashboard**:
+   - Buka Storage > mahasiswa-photos
+   - Pastikan file berhasil diupload dan bisa diakses
 
----
+## Struktur Folder (Opsional)
 
-## 🔧 Troubleshooting
+Jika ingin mengorganisir file dalam folder:
 
-### **Error: "new row violates row-level security policy"**
-- **Penyebab**: Policy belum dibuat atau salah konfigurasi
-- **Solusi**: Pastikan policy untuk INSERT sudah dibuat dengan target `authenticated`
+```
+mahasiswa-photos/
+├── kegiatan/          # Foto bukti kegiatan mahasiswa
+├── pelanggaran/       # Foto bukti pelanggaran
+└── profile/           # Foto profil user
+```
 
-### **Error: "Bucket not found"**
-- **Penyebab**: Bucket belum dibuat
-- **Solusi**: Buat bucket dengan nama `photos` dan centang "Public bucket"
+Untuk implementasi folder, update kode upload di `/api/upload/route.ts`:
 
-### **Foto tidak bisa diakses (403 Forbidden)**
-- **Penyebab**: Policy SELECT belum dibuat atau bucket tidak public
-- **Solusi**: 
-  1. Pastikan bucket di-set sebagai **public**
-  2. Pastikan policy SELECT untuk `public` sudah dibuat
+```typescript
+const folder = formData.get('folder') as string || '';
+const filename = folder ? `${folder}/${timestamp}-${randomString}.${extension}` : `${timestamp}-${randomString}.${extension}`;
+```
 
+## Security Best Practices
+
+1. ✅ **File Size Limit**: Max 2MB untuk mencegah abuse
+2. ✅ **MIME Type Validation**: Hanya terima image files
+3. ✅ **Authentication Required**: Upload harus authenticated
+4. ✅ **Unique Filenames**: Gunakan timestamp + random string
+5. ⚠️ **Content Scanning**: Consider menambahkan virus scanning untuk production
+
+## Troubleshooting
+
+### Error: "Bucket not found"
+- Pastikan bucket sudah dibuat dengan nama exact: `mahasiswa-photos`
+- Check spelling dan case sensitivity
+
+### Error: "Permission denied"
+- Pastikan policies sudah disetup dengan benar
+- Pastikan user sudah authenticated saat upload
+
+### Error: "File too large"
+- Pastikan file < 2MB
+- Check bucket settings untuk file size limit
+
+### Foto tidak tampil / 404
+- Pastikan bucket di-set sebagai Public
+- Check public URL format: `https://[project-id].supabase.co/storage/v1/object/public/mahasiswa-photos/[filename]`
+
+## Monitoring
+
+Pantau penggunaan storage melalui:
+1. **Storage Dashboard**: Lihat jumlah file dan total size
+2. **Storage Quotas**: Check limits pada project settings
+3. **Logs**: Monitor upload activities di project logs
+
+## Migration dari Link ke Upload
+
+Jika sebelumnya menggunakan external link:
+1. Backup data existing di database
+2. Update semua references dari link ke uploaded file
+3. Clean up unused external links
+
+## Related Files
+
+- `/src/app/api/upload/route.ts` - Upload API endpoint
+- `/src/components/InputPelanggaranMusyrif.tsx` - Musyrif input pelanggaran dengan upload
+- `/src/app/api/musyrif/pelanggaran/route.ts` - API endpoint pelanggaran
+
+## Support
+
+Untuk bantuan lebih lanjut:
+- [Supabase Storage Documentation](https://supabase.com/docs/guides/storage)
+- [Supabase Storage Policies](https://supabase.com/docs/guides/storage/security/access-control)

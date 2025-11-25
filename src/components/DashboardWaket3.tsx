@@ -40,6 +40,7 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -81,7 +82,37 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
     return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   };
 
-  // Don't show loading here - it's handled by page level
+  const handleLogout = async () => {
+    if (!confirm('Apakah Anda yakin ingin logout?')) return;
+
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('auth-token');
+        router.push('/login');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
+  // Show loading state first
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-background">
+        <div className="text-center">
+          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
+          <p className="text-sm text-muted-foreground">Memuat dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error only after loading is complete
   if (error || !data) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
@@ -104,14 +135,49 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
               src={data.waket3.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(data.waket3.nama)}
               className="size-12 rounded-full border-2 border-accent object-cover"
             />
-            <h1 className="text-xl font-bold text-primary-foreground font-heading">Dashboard Wakil Ketua III</h1>
+            <h1 className="text-xl font-bold text-white font-heading">Dashboard Wakil Ketua III</h1>
           </div>
-          <button
-            onClick={() => router.push('/waket3/profil')}
-            className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
-          >
-            <Icon icon="solar:bell-bold" className="size-6 text-primary-foreground" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+              className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+              title="Settings"
+            >
+              <Icon icon="solar:settings-bold" className="size-6 text-white" />
+            </button>
+            
+            {showSettingsMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowSettingsMenu(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 bg-card rounded-xl shadow-lg border border-border z-50 overflow-hidden">
+                  <button
+                    onClick={() => {
+                      setShowSettingsMenu(false);
+                      router.push('/waket3/profil');
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                  >
+                    <Icon icon="solar:user-bold" className="size-5 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Profil Saya</span>
+                  </button>
+                  <div className="border-t border-border" />
+                  <button
+                    onClick={() => {
+                      setShowSettingsMenu(false);
+                      handleLogout();
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                  >
+                    <Icon icon="solar:logout-2-bold" className="size-5 text-destructive" />
+                    <span className="text-sm font-medium text-destructive">Logout</span>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 

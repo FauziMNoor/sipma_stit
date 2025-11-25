@@ -61,6 +61,12 @@ export function PengaturanSistem() {
     password: '',
   });
 
+  // Campus info form data
+  const [showEditCampusInfoModal, setShowEditCampusInfoModal] = useState(false);
+  const [campusName, setCampusName] = useState('STIT Riyadhussholihiin');
+  const [campusAddress, setCampusAddress] = useState('');
+  const [campusOperationalHours, setCampusOperationalHours] = useState('');
+
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -94,6 +100,15 @@ export function PengaturanSistem() {
         if (semester) setSemesterAktif(semester.setting_value as 'ganjil' | 'genap');
         if (tglMulai) setTanggalMulai(tglMulai.setting_value);
         if (tglAkhir) setTanggalAkhir(tglAkhir.setting_value);
+
+        // Campus info settings
+        const campusNameSetting = result.data.find((s: SystemSetting) => s.setting_key === 'campus_name');
+        const campusAddressSetting = result.data.find((s: SystemSetting) => s.setting_key === 'campus_address');
+        const campusOperationalHoursSetting = result.data.find((s: SystemSetting) => s.setting_key === 'campus_operational_hours');
+
+        if (campusNameSetting) setCampusName(campusNameSetting.setting_value);
+        if (campusAddressSetting) setCampusAddress(campusAddressSetting.setting_value);
+        if (campusOperationalHoursSetting) setCampusOperationalHours(campusOperationalHoursSetting.setting_value);
       }
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -169,6 +184,24 @@ export function PengaturanSistem() {
     } catch (error) {
       console.error('Error updating tahun ajaran:', error);
       alert('Terjadi kesalahan saat mengupdate tahun ajaran');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSaveCampusInfo = async () => {
+    setIsSubmitting(true);
+    try {
+      // Update campus info settings
+      await updateSetting('campus_name', campusName);
+      await updateSetting('campus_address', campusAddress);
+      await updateSetting('campus_operational_hours', campusOperationalHours);
+
+      setShowEditCampusInfoModal(false);
+      alert('Informasi kampus berhasil diupdate!');
+    } catch (error) {
+      console.error('Error updating campus info:', error);
+      alert('Terjadi kesalahan saat mengupdate informasi kampus');
     } finally {
       setIsSubmitting(false);
     }
@@ -352,6 +385,53 @@ export function PengaturanSistem() {
                     <span className="text-sm text-foreground font-medium">Periode</span>
                     <p className="text-xs text-muted-foreground">{tanggalMulai} s/d {tanggalAkhir}</p>
                   </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          {/* Informasi Kampus */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+          <div className="flex items-start gap-4">
+            <div className="flex items-center justify-center size-12 rounded-xl bg-green-500/10 shrink-0">
+              <Icon icon="solar:buildings-2-bold" className="size-6 text-green-600" />
+            </div>
+            <div className="flex-1 space-y-3">
+              <div>
+                <h3 className="text-base font-bold text-foreground font-heading">
+                  Informasi Kampus
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Kelola informasi umum kampus (Kontak admin diambil otomatis dari data user admin)
+                </p>
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <span className="text-sm text-foreground font-medium">Nama Kampus</span>
+                    <p className="text-xs text-muted-foreground">{campusName}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <span className="text-sm text-foreground font-medium">Alamat</span>
+                    <p className="text-xs text-muted-foreground">{campusAddress || 'Belum diatur'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between py-2">
+                  <div>
+                    <span className="text-sm text-foreground font-medium">Jam Operasional</span>
+                    <p className="text-xs text-muted-foreground">{campusOperationalHours || 'Belum diatur'}</p>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center pt-2">
+                  <button 
+                    onClick={() => setShowEditCampusInfoModal(true)} 
+                    className="px-4 py-2 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary/90 transition-colors"
+                  >
+                    Edit Informasi Kampus
+                  </button>
                 </div>
               </div>
             </div>
@@ -925,6 +1005,67 @@ export function PengaturanSistem() {
                   ) : (
                     'Tambah'
                   )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit Campus Info */}
+      {showEditCampusInfoModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <h2 className="text-xl font-bold mb-4">Edit Informasi Kampus</h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              <Icon icon="solar:info-circle-bold" className="inline size-4 mr-1" />
+              Kontak admin dikelola di menu Kelola Pengguna
+            </p>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Nama Kampus</label>
+                <input
+                  type="text"
+                  value={campusName}
+                  onChange={(e) => setCampusName(e.target.value)}
+                  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+                  placeholder="STIT Riyadhussholihiin"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Alamat Lengkap</label>
+                <textarea
+                  value={campusAddress}
+                  onChange={(e) => setCampusAddress(e.target.value)}
+                  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+                  rows={3}
+                  placeholder="Jl. Pendidikan No. 123, Kota, Provinsi"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Jam Operasional</label>
+                <input
+                  type="text"
+                  value={campusOperationalHours}
+                  onChange={(e) => setCampusOperationalHours(e.target.value)}
+                  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+                  placeholder="Senin - Jumat: 08.00 - 16.00 WIB"
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <button
+                  onClick={() => setShowEditCampusInfoModal(false)}
+                  className="flex-1 px-4 py-2 rounded-xl bg-muted text-foreground font-semibold"
+                  disabled={isSubmitting}
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSaveCampusInfo}
+                  className="flex-1 px-4 py-2 rounded-xl bg-primary text-white font-semibold disabled:opacity-50"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
                 </button>
               </div>
             </div>

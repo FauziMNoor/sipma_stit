@@ -108,11 +108,11 @@ export default function RiwayatVerifikasiWaket3({ userId }: RiwayatVerifikasiWak
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
-              className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
+              className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
             >
-              <Icon icon="solar:arrow-left-linear" className="size-6 text-primary-foreground" />
+              <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
             </button>
-            <h1 className="text-xl font-bold text-primary-foreground font-heading">Riwayat Verifikasi</h1>
+            <h1 className="text-xl font-bold text-white font-heading">Riwayat Verifikasi</h1>
           </div>
         </div>
       </div>

@@ -25,6 +25,7 @@ export default function DashboardDosenPA() {
   const [isLoading, setIsLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [dosenData, setDosenData] = useState<DosenData | null>(null);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   useEffect(() => {
     if (user?.id) {
@@ -80,38 +81,72 @@ export default function DashboardDosenPA() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
+      <div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <img
                 alt="Dosen Profile"
                 src={dosenData.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(dosenData.nama)}`}
-                className="size-11 sm:size-12 rounded-full border-2 border-primary object-cover"
+                className="size-11 sm:size-12 rounded-full border-2 border-white object-cover"
               />
               <div>
-                <p className="text-sm sm:text-base font-bold text-foreground">{dosenData.nama}</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Dosen Pembimbing Akademik</p>
+                <p className="text-sm sm:text-base font-bold text-white">{dosenData.nama}</p>
+                <p className="text-[10px] sm:text-xs text-white/80">Dosen Pembimbing Akademik</p>
               </div>
             </div>
-            <button
-              onClick={handleLogout}
-              className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
-            >
-              <Icon icon="solar:logout-2-bold" className="size-5 sm:size-6 text-destructive" />
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                <Icon icon="solar:settings-bold" className="size-5 sm:size-6 text-white" />
+              </button>
+              
+              {showSettingsMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowSettingsMenu(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-48 bg-card rounded-xl shadow-lg border border-border z-50 overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setShowSettingsMenu(false);
+                        router.push('/dosen-pa/profil');
+                      }}
+                      className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                    >
+                      <Icon icon="solar:user-bold" className="size-5 text-primary" />
+                      <span className="text-sm font-medium text-foreground">Profil Saya</span>
+                    </button>
+                    <div className="border-t border-border" />
+                    <button
+                      onClick={() => {
+                        setShowSettingsMenu(false);
+                        handleLogout();
+                      }}
+                      className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                    >
+                      <Icon icon="solar:logout-2-bold" className="size-5 text-destructive" />
+                      <span className="text-sm font-medium text-destructive">Logout</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
-          <div className="bg-destructive/10 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-3 flex items-center justify-between">
+          <div className="bg-white/10 rounded-xl sm:rounded-2xl px-3 sm:px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-2 sm:gap-3">
-              <div className="flex items-center justify-center size-9 sm:size-10 rounded-xl bg-destructive/20">
-                <Icon icon="solar:clock-circle-bold" className="size-4 sm:size-5 text-destructive" />
+              <div className="flex items-center justify-center size-9 sm:size-10 rounded-xl bg-white/20">
+                <Icon icon="solar:clock-circle-bold" className="size-4 sm:size-5 text-white" />
               </div>
               <div>
-                <p className="text-xs sm:text-sm font-semibold text-foreground">Pengajuan Pending</p>
-                <p className="text-[10px] sm:text-xs text-muted-foreground">Memerlukan verifikasi</p>
+                <p className="text-xs sm:text-sm font-semibold text-white">Pengajuan Pending</p>
+                <p className="text-[10px] sm:text-xs text-white/80">Memerlukan verifikasi</p>
               </div>
             </div>
-            <span className="text-xl sm:text-2xl font-bold text-destructive">{stats.pending}</span>
+            <span className="text-xl sm:text-2xl font-bold text-white">{stats.pending}</span>
           </div>
         </div>
       </div>

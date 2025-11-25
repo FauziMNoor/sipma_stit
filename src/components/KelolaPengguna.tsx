@@ -12,6 +12,7 @@ interface User {
   email: string;
   nama: string;
   nip: string | null;
+  no_hp: string | null;
   role: UserRole;
   foto: string | null;
   is_active: boolean;
@@ -60,6 +61,7 @@ export default function KelolaPengguna() {
     email: '',
     nama: '',
     nip: '',
+    no_hp: '',
     role: 'dosen' as UserRole,
     password: '',
     is_active: true,
@@ -337,6 +339,7 @@ export default function KelolaPengguna() {
       email: '',
       nama: '',
       nip: '',
+      no_hp: '',
       role: 'dosen',
       password: '',
       is_active: true,
@@ -351,6 +354,7 @@ export default function KelolaPengguna() {
       email: user.email,
       nama: user.nama,
       nip: user.nip || '',
+      no_hp: user.no_hp || '',
       role: user.role,
       password: '',
       is_active: user.is_active,
@@ -663,6 +667,20 @@ export default function KelolaPengguna() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
+                  No HP/WhatsApp
+                </label>
+                <input
+                  type="tel"
+                  value={formData.no_hp}
+                  onChange={(e) => setFormData({ ...formData, no_hp: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  placeholder="+628xxxxxxxxxx"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Format: +62... (Opsional)</p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Email <span className="text-destructive">*</span>
                 </label>
                 <input
@@ -841,6 +859,20 @@ export default function KelolaPengguna() {
                   className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
                   placeholder="Opsional"
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  No HP/WhatsApp
+                </label>
+                <input
+                  type="tel"
+                  value={formData.no_hp}
+                  onChange={(e) => setFormData({ ...formData, no_hp: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  placeholder="+628xxxxxxxxxx"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Format: +62... (Opsional)</p>
               </div>
 
               <div>

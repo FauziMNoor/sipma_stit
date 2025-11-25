@@ -155,13 +155,15 @@ export default function VerifikasiAdabAsrama() {
   if (isLoading) {
     return (
       <div className="flex flex-col h-full bg-background">
-        <div className="px-6 py-5 bg-primary">
+        <div className="px-4 sm:px-6 py-5 bg-primary">
+          <div className="max-w-3xl mx-auto">
           <div className="flex items-center justify-between mb-1">
-            <button className="flex items-center justify-center size-11">
-              <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
+            <button className="flex items-center justify-center size-10 sm:size-11">
+              <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
             </button>
-            <h1 className="text-lg font-bold text-white font-heading">Verifikasi Adab & Asrama</h1>
-            <div className="size-11" />
+            <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Adab</h1>
+            <div className="size-10 sm:size-11" />
+          </div>
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
@@ -177,27 +179,30 @@ export default function VerifikasiAdabAsrama() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
+      <div className="px-4 sm:px-6 py-5 bg-primary">
+        <div className="max-w-3xl mx-auto">
         <div className="flex items-center justify-between mb-1">
           <button
             onClick={() => router.back()}
-            className="flex items-center justify-center size-11"
+            className="flex items-center justify-center size-10 sm:size-11"
             type="button"
           >
-            <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
+            <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
           </button>
-          <h1 className="text-lg font-bold text-white font-heading">Verifikasi Adab & Pelanggaran</h1>
-          <button className="flex items-center justify-center size-11" type="button">
-            <Icon icon="solar:filter-bold" className="size-6 text-white" />
+          <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Adab</h1>
+          <button className="flex items-center justify-center size-10 sm:size-11" type="button">
+            <Icon icon="solar:filter-bold" className="size-5 sm:size-6 text-white" />
           </button>
         </div>
-        <p className="text-sm text-white/80 text-center">
-          Approve Adab • Input Pelanggaran (validasi Waket3)
+        <p className="text-xs sm:text-sm text-white/80 text-center">
+          Verifikasi Kegiatan Adab Mahasiswa Asrama
         </p>
+        </div>
       </div>
 
       {/* Search & Filter */}
-      <div className="bg-card px-6 py-4">
+      <div className="bg-card px-4 sm:px-6 py-4">
+        <div className="max-w-3xl mx-auto">
         <div className="relative mb-4">
           <input
             type="text"
@@ -267,10 +272,12 @@ export default function VerifikasiAdabAsrama() {
             </span>
           </button>
         </div>
+        </div>
       </div>
 
       {/* Pengajuan List */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+        <div className="max-w-3xl mx-auto space-y-4">
         {pengajuan.length === 0 ? (
           <div className="text-center py-12">
             <Icon icon="solar:inbox-line-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
@@ -286,15 +293,6 @@ export default function VerifikasiAdabAsrama() {
 
             return (
               <div key={item.id} className={`rounded-2xl p-4 shadow-sm border ${bgColor}`}>
-                {item.kategori.jenis === 'negatif' && (
-                  <div className="flex items-start gap-2 mb-3 p-2 bg-destructive/10 rounded-lg">
-                    <Icon
-                      icon="solar:danger-triangle-bold"
-                      className="size-5 text-destructive shrink-0 mt-0.5"
-                    />
-                    <p className="text-xs font-semibold text-destructive">Pelanggaran - Poin Negatif</p>
-                  </div>
-                )}
                 <div className="flex gap-3 mb-3">
                   <img
                     alt="Mahasiswa"
@@ -344,30 +342,22 @@ export default function VerifikasiAdabAsrama() {
                       {item.bukti ? 'Dokumentasi Kegiatan' : 'Tidak ada bukti'}
                     </p>
                     {isPending ? (
-                      // Musyrif hanya bisa approve Adab, tidak bisa approve Pelanggaran
-                      item.kategori.kategori_utama === 'Pelanggaran' ? (
-                        <div className="py-2.5 px-3 rounded-xl bg-orange-100 border border-orange-300 text-orange-800 text-xs font-medium text-center">
-                          <Icon icon="solar:info-circle-bold" className="size-4 inline mr-1" />
-                          Menunggu validasi Wakil Ketua III
-                        </div>
-                      ) : (
-                        <div className="flex gap-2">
-                          <button
-                            onClick={() => handleAction(item, 'approve')}
-                            className="flex-1 py-2.5 px-3 rounded-xl bg-green-600 text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-green-700 transition-colors"
-                          >
-                            <Icon icon="solar:check-circle-bold" className="size-4" />
-                            Setujui
-                          </button>
-                          <button
-                            onClick={() => handleAction(item, 'reject')}
-                            className="flex-1 py-2.5 px-3 rounded-xl bg-destructive text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-destructive/90 transition-colors"
-                          >
-                            <Icon icon="solar:close-circle-bold" className="size-4" />
-                            Tolak
-                          </button>
-                        </div>
-                      )
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleAction(item, 'approve')}
+                          className="flex-1 py-2.5 px-3 rounded-xl bg-green-600 text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-green-700 transition-colors"
+                        >
+                          <Icon icon="solar:check-circle-bold" className="size-4" />
+                          Setujui
+                        </button>
+                        <button
+                          onClick={() => handleAction(item, 'reject')}
+                          className="flex-1 py-2.5 px-3 rounded-xl bg-destructive text-white text-xs font-semibold flex items-center justify-center gap-1 hover:bg-destructive/90 transition-colors"
+                        >
+                          <Icon icon="solar:close-circle-bold" className="size-4" />
+                          Tolak
+                        </button>
+                      </div>
                     ) : (
                       <button className="flex-1 py-2 px-3 rounded-xl bg-primary text-primary-foreground text-xs font-semibold w-full">
                         Lihat Detail
@@ -379,6 +369,7 @@ export default function VerifikasiAdabAsrama() {
             );
           })
         )}
+        </div>
       </div>
 
       {/* Action Modal */}

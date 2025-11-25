@@ -48,6 +48,7 @@ export default function DashboardMusyrif() {
   const router = useRouter();
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   useEffect(() => {
     fetchDashboardData();
@@ -108,6 +109,24 @@ export default function DashboardMusyrif() {
     return `${Math.floor(diffInMinutes / 1440)} hari yang lalu`;
   };
 
+  const handleLogout = async () => {
+    if (!confirm('Apakah Anda yakin ingin logout?')) return;
+
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('auth-token');
+        router.push('/login');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+    }
+  };
+
   // Show loading state
   if (isLoading || !data) {
     return (
@@ -123,27 +142,67 @@ export default function DashboardMusyrif() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-card border-b border-border">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <img
-              alt="Musyrif Profile"
-              src={data.musyrif.foto || 'https://randomuser.me/api/portraits/men/32.jpg'}
-              className="size-12 rounded-full border-2 border-primary object-cover"
-            />
-            <div>
-              <p className="text-base font-bold text-foreground">Dashboard Musyrif/LPM</p>
-              <p className="text-xs text-muted-foreground">Verifikasi & Monitoring Asrama</p>
+      <div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <img
+                alt="Musyrif Profile"
+                src={data.musyrif.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.musyrif.nama)}`}
+                className="size-11 sm:size-12 rounded-full border-2 border-white object-cover"
+              />
+              <div>
+                <p className="text-sm sm:text-base font-bold text-white">{data.musyrif.nama}</p>
+                <p className="text-[10px] sm:text-xs text-white/80">Musyrif / LPM Asrama</p>
+              </div>
+            </div>
+            <div className="relative">
+              <button
+                onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                <Icon icon="solar:settings-bold" className="size-5 sm:size-6 text-white" />
+              </button>
+              
+              {showSettingsMenu && (
+                <>
+                  <div 
+                    className="fixed inset-0 z-40" 
+                    onClick={() => setShowSettingsMenu(false)}
+                  />
+                  <div className="absolute right-0 mt-2 w-48 bg-card rounded-xl shadow-lg border border-border z-50 overflow-hidden">
+                    <button
+                      onClick={() => {
+                        setShowSettingsMenu(false);
+                        router.push('/musyrif/profil');
+                      }}
+                      className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                    >
+                      <Icon icon="solar:user-bold" className="size-5 text-primary" />
+                      <span className="text-sm font-medium text-foreground">Profil Saya</span>
+                    </button>
+                    <div className="border-t border-border" />
+                    <button
+                      onClick={() => {
+                        setShowSettingsMenu(false);
+                        handleLogout();
+                      }}
+                      className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                    >
+                      <Icon icon="solar:logout-2-bold" className="size-5 text-destructive" />
+                      <span className="text-sm font-medium text-destructive">Logout</span>
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
-          <button className="flex items-center justify-center size-11 rounded-xl bg-muted">
-            <Icon icon="solar:bell-bold" className="size-6 text-accent" />
-          </button>
         </div>
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+        <div className="max-w-2xl mx-auto space-y-6">
         {/* Ringkasan */}
         <div>
           <h3 className="text-lg font-bold text-foreground mb-4 font-heading">Ringkasan</h3>
@@ -194,7 +253,7 @@ export default function DashboardMusyrif() {
                   <p className="text-base font-bold text-accent-foreground">
                     Verifikasi Adab
                   </p>
-                  <p className="text-xs text-accent-foreground/80">Approve Adab, Input Pelanggaran</p>
+                  <p className="text-xs text-accent-foreground/80">Approve kegiatan adab</p>
                 </div>
               </div>
             </button>
@@ -221,8 +280,8 @@ export default function DashboardMusyrif() {
                   <Icon icon="solar:danger-triangle-bold" className="size-7 text-destructive" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-foreground">Laporan Pelanggaran</p>
-                  <p className="text-xs text-muted-foreground">Catat pelanggaran</p>
+                  <p className="text-sm font-semibold text-foreground">Input Pelanggaran</p>
+                  <p className="text-xs text-muted-foreground">Catat pelanggaran mahasiswa</p>
                 </div>
               </div>
             </button>
@@ -297,6 +356,7 @@ export default function DashboardMusyrif() {
               </div>
             </div>
           </div>
+        </div>
         </div>
       </div>
     </div>

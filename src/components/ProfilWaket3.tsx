@@ -25,56 +25,183 @@ export default function ProfilWaket3({ userId }: ProfilWaket3Props) {
   const router = useRouter();
   const [data, setData] = useState<ProfilData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [selectedPhoto, setSelectedPhoto] = useState<File | null>(null);
+  const [formData, setFormData] = useState({
+    nama: '',
+    nip: '',
+    email: '',
+    no_hp: '',
+  });
 
   useEffect(() => {
-    fetchProfile();
+    fetchProfilData();
   }, [userId]);
 
-  const fetchProfile = async () => {
+  const fetchProfilData = async () => {
     try {
-      setLoading(true);
-      const response = await fetch(`/api/waket3/profile/${userId}`);
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/waket3/profile/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+      });
       const result = await response.json();
 
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Failed to fetch profile');
+      if (response.ok && result.success) {
+        setData(result.data);
       }
-
-      setData(result.data);
-    } catch (err) {
-      console.error('Error fetching profile:', err);
-      setError(err instanceof Error ? err.message : 'An error occurred');
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleLogout = () => {
-    if (confirm('Apakah Anda yakin ingin keluar?')) {
-      localStorage.removeItem('token');
-      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-      router.push('/login');
+  const handleLogout = async () => {
+    if (!confirm('Apakah Anda yakin ingin logout?')) return;
+
+    try {
+      const response = await fetch('/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        localStorage.removeItem('auth-token');
+        router.push('/login');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
     }
   };
 
-  if (loading) {
+  const openEditModal = async () => {
+    if (data && userId) {
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/users/${userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        credentials: 'include',
+      });
+      
+      let no_hp = '';
+      if (response.ok) {
+        const result = await response.json();
+        no_hp = result.data?.no_hp || '';
+      }
+
+      setFormData({
+        nama: data.nama,
+        nip: data.nip || '',
+        email: data.email,
+        no_hp,
+      });
+      setPhotoPreview(data.foto);
+      setShowEditModal(true);
+    }
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Ukuran foto maksimal 2MB');
+        return;
+      }
+      setSelectedPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const uploadPhoto = async (): Promise<string | null> => {
+    if (!selectedPhoto) return null;
+
+    try {
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', selectedPhoto);
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formDataUpload,
+        credentials: 'include',
+      });
+
+      const result = await response.json();
+      if (result.success && result.url) {
+        return result.url;
+      } else {
+        alert('Gagal mengupload foto');
+        return null;
+      }
+    } catch (error) {
+      console.error('Error uploading photo:', error);
+      alert('Terjadi kesalahan saat mengupload foto');
+      return null;
+    }
+  };
+
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!userId) return;
+
+    setIsSubmitting(true);
+    try {
+      let fotoUrl = data?.foto;
+
+      if (selectedPhoto) {
+        const uploadedUrl = await uploadPhoto();
+        if (uploadedUrl) {
+          fotoUrl = uploadedUrl;
+        }
+      }
+
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/waket3/profile/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          nama: formData.nama,
+          nip: formData.nip,
+          email: formData.email,
+          no_hp: formData.no_hp,
+          foto: fotoUrl,
+        }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert('Profil berhasil diupdate!');
+        setShowEditModal(false);
+        setSelectedPhoto(null);
+        fetchProfilData();
+      } else {
+        alert('Gagal mengupdate profil: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Terjadi kesalahan saat mengupdate profil');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center">
           <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat profil...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error || !data) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="solar:danger-circle-bold" className="size-12 text-destructive mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">{error || 'Data tidak ditemukan'}</p>
+          <p className="text-sm text-muted-foreground">Memuat...</p>
         </div>
       </div>
     );
@@ -83,17 +210,19 @@ export default function ProfilWaket3({ userId }: ProfilWaket3Props) {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary border-b border-border">
-        <div className="max-w-3xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => router.back()}
-              className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
-            >
-              <Icon icon="solar:arrow-left-linear" className="size-6 text-primary-foreground" />
-            </button>
-            <h1 className="text-xl font-bold text-primary-foreground font-heading">Profil Saya</h1>
-          </div>
+      <div className="px-6 py-5 bg-primary">
+        <div className="max-w-3xl mx-auto">
+        <div className="flex items-center justify-between mb-1">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+          >
+            <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
+          </button>
+          <h1 className="text-lg font-bold text-white font-heading">Profil Saya</h1>
+          <div className="size-11" />
+        </div>
+        <p className="text-sm text-white/80 text-center">Informasi akun Wakil Ketua III</p>
         </div>
       </div>
 
@@ -135,36 +264,199 @@ export default function ProfilWaket3({ userId }: ProfilWaket3Props) {
         {/* Menu */}
         <div className="space-y-3">
           <button
-            onClick={() => router.push('/waket3/dashboard')}
-            className="w-full bg-card rounded-2xl p-4 shadow-sm border border-border hover:border-primary transition-colors flex items-center gap-4"
+            onClick={openEditModal}
+            className="w-full"
           >
-            <div className="flex items-center justify-center size-12 rounded-xl bg-primary/10">
-              <Icon icon="solar:home-2-bold" className="size-6 text-primary" />
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-primary/10">
+                    <Icon icon="solar:user-bold" className="size-6 text-primary" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-foreground">Edit Profil</p>
+                    <p className="text-xs text-muted-foreground">Ubah informasi profil Anda</p>
+                  </div>
+                </div>
+                <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-muted-foreground" />
+              </div>
             </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-foreground">Dashboard</p>
-              <p className="text-xs text-muted-foreground">Kembali ke dashboard</p>
-            </div>
-            <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-muted-foreground" />
           </button>
 
           <button
             onClick={handleLogout}
-            className="w-full bg-card rounded-2xl p-4 shadow-sm border border-destructive/20 hover:border-destructive transition-colors flex items-center gap-4"
+            className="w-full"
           >
-            <div className="flex items-center justify-center size-12 rounded-xl bg-destructive/10">
-              <Icon icon="solar:logout-2-bold" className="size-6 text-destructive" />
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-destructive/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center justify-center size-12 rounded-xl bg-destructive/10">
+                    <Icon icon="solar:logout-2-bold" className="size-6 text-destructive" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-destructive">Logout</p>
+                    <p className="text-xs text-muted-foreground">Keluar dari akun Anda</p>
+                  </div>
+                </div>
+                <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-destructive" />
+              </div>
             </div>
-            <div className="flex-1 text-left">
-              <p className="text-sm font-semibold text-destructive">Keluar</p>
-              <p className="text-xs text-muted-foreground">Logout dari aplikasi</p>
-            </div>
-            <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-muted-foreground" />
           </button>
+        </div>
+
+        {/* Info */}
+        <div className="bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl p-5 border border-primary/20">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center size-14 rounded-xl bg-primary/20">
+              <Icon icon="solar:shield-check-bold" className="size-7 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-foreground">Keamanan Akun</p>
+              <p className="text-xs text-muted-foreground">
+                Pastikan password Anda aman dan tidak dibagikan kepada siapapun
+              </p>
+            </div>
+          </div>
         </div>
         </div>
       </div>
+
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-6">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-md shadow-xl max-h-[90vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-foreground font-heading">Edit Profil</h3>
+              <button
+                onClick={() => {
+                  setShowEditModal(false);
+                  setSelectedPhoto(null);
+                  setPhotoPreview(null);
+                }}
+                className="flex items-center justify-center size-8 rounded-lg hover:bg-muted transition-colors"
+                type="button"
+              >
+                <Icon icon="solar:close-circle-bold" className="size-6 text-muted-foreground" />
+              </button>
+            </div>
+
+            <form onSubmit={handleEditSubmit} className="space-y-4">
+              {/* Photo Upload */}
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">Foto Profil</label>
+                <div className="flex items-center gap-4">
+                  <div className="relative size-20 rounded-xl overflow-hidden bg-muted border border-border">
+                    {photoPreview ? (
+                      <img
+                        src={photoPreview}
+                        alt="Preview"
+                        className="size-full object-cover"
+                      />
+                    ) : (
+                      <div className="size-full flex items-center justify-center">
+                        <Icon icon="solar:user-bold" className="size-10 text-muted-foreground" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      className="hidden"
+                      id="edit-photo-upload"
+                    />
+                    <label
+                      htmlFor="edit-photo-upload"
+                      className="inline-block px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold cursor-pointer hover:bg-primary/90 transition-colors"
+                    >
+                      Pilih Foto
+                    </label>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Format: JPG, PNG (Max 2MB)
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Nama Lengkap <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.nama}
+                  onChange={(e) => setFormData({ ...formData, nama: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  NIP
+                </label>
+                <input
+                  type="text"
+                  value={formData.nip}
+                  onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  placeholder="NIP (Opsional)"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  Email <span className="text-destructive">*</span>
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-2">
+                  No HP/WhatsApp
+                </label>
+                <input
+                  type="tel"
+                  value={formData.no_hp}
+                  onChange={(e) => setFormData({ ...formData, no_hp: e.target.value })}
+                  className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
+                  placeholder="+628xxxxxxxxxx"
+                />
+                <p className="text-xs text-muted-foreground mt-1">Format: +62... (Opsional)</p>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowEditModal(false);
+                    setSelectedPhoto(null);
+                    setPhotoPreview(null);
+                  }}
+                  className="flex-1 py-3 px-4 rounded-xl bg-muted text-foreground font-semibold hover:bg-muted/80 transition-colors"
+                  disabled={isSubmitting}
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1 py-3 px-4 rounded-xl bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Menyimpan...' : 'Simpan'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-

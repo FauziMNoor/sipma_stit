@@ -135,7 +135,7 @@ export default function RiwayatVerifikasiDosenPA() {
           <div className="flex items-center justify-between mb-1">
             <button
               onClick={() => router.back()}
-              className="flex items-center justify-center size-10 sm:size-11"
+              className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
             >
               <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
             </button>

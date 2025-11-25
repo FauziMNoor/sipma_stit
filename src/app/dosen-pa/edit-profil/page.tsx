@@ -4,16 +4,16 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Icon } from '@iconify/react';
-import ProfilWaket3 from '@/components/ProfilWaket3';
+import EditProfilDosenPA from '@/components/EditProfilDosenPA';
 
-export default function Waket3ProfilPage() {
+export default function EditProfilDosenPAPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
-    } else if (!isLoading && user && user.role !== 'waket3') {
+    } else if (!isLoading && user && user.role !== 'dosen_pa') {
       router.push('/login');
     }
   }, [user, isLoading, router]);
@@ -29,9 +29,9 @@ export default function Waket3ProfilPage() {
     );
   }
 
-  if (!user || user.role !== 'waket3') {
+  if (!user || user.role !== 'dosen_pa') {
     return null;
   }
 
-  return <ProfilWaket3 userId={user.id} />;
+  return <EditProfilDosenPA />;
 }

@@ -10,6 +10,7 @@ export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
+    const bucket = (formData.get('bucket') as string) || 'mahasiswa-photos'; // Default bucket
 
     if (!file) {
       return NextResponse.json(
@@ -17,6 +18,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+
+    console.log('📤 Upload request - Bucket:', bucket, 'File:', file.name);
 
     // Validate file type
     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -46,8 +49,10 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(arrayBuffer);
 
     // Upload to Supabase Storage
+    console.log('📤 Uploading to bucket:', bucket, '| File:', filename, '| Size:', buffer.length, 'bytes');
+    
     const { data, error } = await supabase.storage
-      .from('mahasiswa-photos')
+      .from(bucket)
       .upload(filename, buffer, {
         contentType: file.type,
         upsert: false,
@@ -55,22 +60,41 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('❌ Error uploading to Supabase:', error);
+      console.error('Bucket:', bucket, '| Error details:', JSON.stringify(error, null, 2));
+      
+      // Check if bucket doesn't exist
+      if (error.message?.includes('Bucket not found') || error.message?.includes('bucket')) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: `Bucket "${bucket}" belum dibuat. Silakan setup Supabase Storage terlebih dahulu.`,
+            details: `Run SQL script: supabase/setup-${bucket === 'pelanggaran-mahasiswa' ? 'pelanggaran' : 'storage'}-bucket.sql`
+          },
+          { status: 500 }
+        );
+      }
+      
       return NextResponse.json(
-        { success: false, error: 'Gagal mengupload foto' },
+        { success: false, error: `Gagal mengupload foto: ${error.message}` },
         { status: 500 }
       );
     }
 
+    console.log('✅ Upload successful to bucket:', bucket, '| Data:', data);
+
     // Get public URL
     const { data: { publicUrl } } = supabase.storage
-      .from('mahasiswa-photos')
+      .from(bucket)
       .getPublicUrl(filename);
+
+    console.log('🔗 Public URL:', publicUrl);
 
     return NextResponse.json({
       success: true,
       data: {
         filename,
         url: publicUrl,
+        bucket,
       },
     });
   } catch (error: any) {
@@ -86,6 +110,7 @@ export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const filename = searchParams.get('filename');
+    const bucket = searchParams.get('bucket') || 'mahasiswa-photos'; // Default bucket
 
     if (!filename) {
       return NextResponse.json(
@@ -94,8 +119,10 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    console.log('🗑️ Deleting file:', filename, 'from bucket:', bucket);
+
     const { error } = await supabase.storage
-      .from('mahasiswa-photos')
+      .from(bucket)
       .remove([filename]);
 
     if (error) {
@@ -106,6 +133,7 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
+    console.log('✅ File deleted successfully');
     return NextResponse.json({ success: true });
   } catch (error: any) {
     console.error('❌ Error in DELETE /api/upload:', error);

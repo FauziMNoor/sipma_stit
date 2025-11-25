@@ -22,10 +22,29 @@ export function DashboardAdmin() {
     totalPoin: 0,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [showSettingsMenu, setShowSettingsMenu] = useState(false);
+  const [tahunAjaranAktif, setTahunAjaranAktif] = useState('2024/2025');
+  const [semesterAktif, setSemesterAktif] = useState<'ganjil' | 'genap'>('ganjil');
 
   useEffect(() => {
     fetchStats();
+    fetchTahunAjaran();
   }, []);
+
+  const fetchTahunAjaran = async () => {
+    try {
+      const response = await fetch('/api/settings?category=general');
+      const result = await response.json();
+      if (result.success && result.data) {
+        const tahunAjaran = result.data.find((s: any) => s.setting_key === 'tahun_ajaran_aktif');
+        const semester = result.data.find((s: any) => s.setting_key === 'semester_aktif');
+        if (tahunAjaran) setTahunAjaranAktif(tahunAjaran.setting_value);
+        if (semester) setSemesterAktif(semester.setting_value);
+      }
+    } catch (error) {
+      console.error('Error fetching tahun ajaran:', error);
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -71,13 +90,46 @@ export function DashboardAdmin() {
       <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <h1 className="text-lg sm:text-xl font-bold text-foreground font-heading">Admin Dashboard</h1>
-          <button
-            onClick={handleLogout}
-            className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-muted hover:bg-destructive/10 transition-colors"
-            title="Logout"
-          >
-            <Icon icon="solar:logout-2-bold" className="size-5 sm:size-6 text-destructive" />
-          </button>
+          <div className="relative">
+            <button
+              onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+              className="flex items-center justify-center size-10 sm:size-11 rounded-xl bg-muted hover:bg-primary/10 transition-colors"
+            >
+              <Icon icon="solar:settings-bold" className="size-5 sm:size-6 text-primary" />
+            </button>
+            
+            {showSettingsMenu && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowSettingsMenu(false)}
+                />
+                <div className="absolute right-0 mt-2 w-48 bg-card rounded-xl shadow-lg border border-border z-50 overflow-hidden">
+                  <button
+                    onClick={() => {
+                      setShowSettingsMenu(false);
+                      router.push('/admin/profil');
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                  >
+                    <Icon icon="solar:user-bold" className="size-5 text-primary" />
+                    <span className="text-sm font-medium text-foreground">Profil Saya</span>
+                  </button>
+                  <div className="border-t border-border" />
+                  <button
+                    onClick={() => {
+                      setShowSettingsMenu(false);
+                      handleLogout();
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-muted transition-colors flex items-center gap-3"
+                  >
+                    <Icon icon="solar:logout-2-bold" className="size-5 text-destructive" />
+                    <span className="text-sm font-medium text-destructive">Logout</span>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
@@ -115,7 +167,7 @@ export function DashboardAdmin() {
               </div>
               <div className="text-left">
                 <p className="text-white font-semibold text-xs sm:text-sm">STIT Riyadhussholihiin</p>
-                <p className="text-white/80 text-[10px] sm:text-xs">TA 2024/2025</p>
+                <p className="text-white/80 text-[10px] sm:text-xs">TA {tahunAjaranAktif} - {semesterAktif === 'ganjil' ? 'Ganjil' : 'Genap'}</p>
               </div>
             </div>
           </div>

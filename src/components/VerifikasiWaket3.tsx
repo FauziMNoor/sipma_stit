@@ -165,13 +165,13 @@ export default function VerifikasiWaket3({ userId }: VerifikasiWaket3Props) {
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
-              className="flex items-center justify-center size-11 rounded-xl bg-primary-foreground/10 hover:bg-primary-foreground/20 transition-colors"
+              className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
             >
-              <Icon icon="solar:arrow-left-linear" className="size-6 text-primary-foreground" />
+              <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
             </button>
             <div>
-              <h1 className="text-xl font-bold text-primary-foreground font-heading">Verifikasi Kegiatan</h1>
-              <p className="text-xs text-primary-foreground/80 mt-0.5">Dakwah • Sosial • Pelanggaran</p>
+              <h1 className="text-xl font-bold text-white font-heading">Verifikasi Kegiatan</h1>
+              <p className="text-xs text-white/80 mt-0.5">Dakwah • Sosial • Pelanggaran</p>
             </div>
           </div>
         </div>

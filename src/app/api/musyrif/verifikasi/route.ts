@@ -47,6 +47,8 @@ export async function GET(request: NextRequest) {
     const searchQuery = searchParams.get('search') || '';
 
     // Build query
+    // Musyrif only handles 'Adab' kategori
+    // 'Pelanggaran' is handled by Waket3
     let query = supabaseAdmin
       .from('poin_aktivitas')
       .select(`
@@ -74,7 +76,7 @@ export async function GET(request: NextRequest) {
           kategori_utama
         )
       `)
-      .in('kategori_poin.kategori_utama', ['Adab', 'Pelanggaran'])
+      .eq('kategori_poin.kategori_utama', 'Adab')
       .order('created_at', { ascending: false });
 
     // Filter by status

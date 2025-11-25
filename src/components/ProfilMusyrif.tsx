@@ -3,23 +3,29 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
 
-interface DosenProfile {
+interface ProfilData {
   id: string;
-  nip: string;
   nama: string;
+  nip: string | null;
   email: string;
   foto: string | null;
-  total_mahasiswa_bimbingan: number;
-  total_verifikasi: number;
+  stats: {
+    total_verified: number;
+    total_approved: number;
+    total_rejected: number;
+    total_mahasiswa: number;
+  };
 }
 
-export default function ProfilDosenPA() {
+interface ProfilMusyrifProps {
+  userId: string;
+}
+
+export default function ProfilMusyrif({ userId }: ProfilMusyrifProps) {
   const router = useRouter();
-  const { user } = useAuth();
-  const [isLoading, setIsLoading] = useState(true);
-  const [profile, setProfile] = useState<DosenProfile | null>(null);
+  const [data, setData] = useState<ProfilData | null>(null);
+  const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -32,30 +38,27 @@ export default function ProfilDosenPA() {
   });
 
   useEffect(() => {
-    if (user?.id) {
-      fetchProfile();
-    }
-  }, [user]);
+    fetchProfilData();
+  }, [userId]);
 
-  const fetchProfile = async () => {
+  const fetchProfilData = async () => {
     try {
-      setIsLoading(true);
       const token = localStorage.getItem('auth-token');
-      const response = await fetch(`/api/dosen-pa/profile/${user?.id}`, {
+      const response = await fetch(`/api/musyrif/profile/${userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
         credentials: 'include',
       });
+      const result = await response.json();
 
-      if (response.ok) {
-        const result = await response.json();
-        setProfile(result.data);
+      if (response.ok && result.success) {
+        setData(result.data);
       }
     } catch (error) {
-      console.error('Error fetching profile:', error);
+      console.error('Error fetching profile data:', error);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
@@ -78,9 +81,9 @@ export default function ProfilDosenPA() {
   };
 
   const openEditModal = async () => {
-    if (profile && user?.id) {
+    if (data && userId) {
       const token = localStorage.getItem('auth-token');
-      const response = await fetch(`/api/users/${user.id}`, {
+      const response = await fetch(`/api/users/${userId}`, {
         headers: { Authorization: `Bearer ${token}` },
         credentials: 'include',
       });
@@ -92,12 +95,12 @@ export default function ProfilDosenPA() {
       }
 
       setFormData({
-        nama: profile.nama,
-        nip: profile.nip,
-        email: profile.email,
+        nama: data.nama,
+        nip: data.nip || '',
+        email: data.email,
         no_hp,
       });
-      setPhotoPreview(profile.foto);
+      setPhotoPreview(data.foto);
       setShowEditModal(true);
     }
   };
@@ -147,11 +150,11 @@ export default function ProfilDosenPA() {
 
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user?.id) return;
+    if (!userId) return;
 
     setIsSubmitting(true);
     try {
-      let fotoUrl = profile?.foto;
+      let fotoUrl = data?.foto;
 
       if (selectedPhoto) {
         const uploadedUrl = await uploadPhoto();
@@ -161,7 +164,7 @@ export default function ProfilDosenPA() {
       }
 
       const token = localStorage.getItem('auth-token');
-      const response = await fetch(`/api/dosen-pa/profile/${user.id}`, {
+      const response = await fetch(`/api/musyrif/profile/${userId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -182,7 +185,7 @@ export default function ProfilDosenPA() {
         alert('Profil berhasil diupdate!');
         setShowEditModal(false);
         setSelectedPhoto(null);
-        fetchProfile();
+        fetchProfilData();
       } else {
         alert('Gagal mengupdate profil: ' + result.error);
       }
@@ -194,7 +197,7 @@ export default function ProfilDosenPA() {
     }
   };
 
-  if (isLoading || !profile) {
+  if (loading || !data) {
     return (
       <div className="flex items-center justify-center h-screen bg-background">
         <div className="text-center">
@@ -220,7 +223,7 @@ export default function ProfilDosenPA() {
           <h1 className="text-lg font-bold text-white font-heading">Profil Saya</h1>
           <div className="size-11" />
         </div>
-        <p className="text-sm text-white/80 text-center">Informasi akun dosen pembimbing akademik</p>
+        <p className="text-sm text-white/80 text-center">Informasi akun musyrif</p>
         </div>
       </div>
 
@@ -231,19 +234,19 @@ export default function ProfilDosenPA() {
         <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
           <div className="flex flex-col items-center text-center mb-6">
             <img
-              alt={profile.nama}
+              alt={data.nama}
               src={
-                profile.foto ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.nama)}&size=128`
+                data.foto ||
+                `https://ui-avatars.com/api/?name=${encodeURIComponent(data.nama)}&size=128`
               }
               className="size-24 rounded-full border-4 border-primary object-cover mb-4"
             />
-            <h2 className="text-xl font-bold text-foreground mb-1">{profile.nama}</h2>
-            <p className="text-sm text-muted-foreground mb-1">NIP: {profile.nip}</p>
-            <p className="text-sm text-muted-foreground">{profile.email}</p>
+            <h2 className="text-xl font-bold text-foreground mb-1">{data.nama}</h2>
+            {data.nip && <p className="text-sm text-muted-foreground mb-1">NIP: {data.nip}</p>}
+            <p className="text-sm text-muted-foreground">{data.email}</p>
             <div className="mt-4 px-4 py-2 rounded-lg bg-primary/10">
               <p className="text-xs text-muted-foreground">Jabatan</p>
-              <p className="text-sm font-semibold text-primary">Dosen Pembimbing Akademik</p>
+              <p className="text-sm font-semibold text-primary">Musyrif</p>
             </div>
           </div>
 
@@ -251,13 +254,23 @@ export default function ProfilDosenPA() {
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-muted rounded-xl p-4 text-center">
               <Icon icon="solar:users-group-rounded-bold" className="size-8 text-primary mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{profile.total_mahasiswa_bimbingan}</p>
-              <p className="text-xs text-muted-foreground">Mahasiswa Bimbingan</p>
+              <p className="text-2xl font-bold text-foreground">{data.stats.total_mahasiswa}</p>
+              <p className="text-xs text-muted-foreground">Total Mahasiswa</p>
             </div>
             <div className="bg-muted rounded-xl p-4 text-center">
               <Icon icon="solar:clipboard-check-bold" className="size-8 text-green-600 mx-auto mb-2" />
-              <p className="text-2xl font-bold text-foreground">{profile.total_verifikasi}</p>
+              <p className="text-2xl font-bold text-foreground">{data.stats.total_verified}</p>
               <p className="text-xs text-muted-foreground">Total Verifikasi</p>
+            </div>
+            <div className="bg-muted rounded-xl p-4 text-center">
+              <Icon icon="solar:check-circle-bold" className="size-8 text-green-600 mx-auto mb-2" />
+              <p className="text-2xl font-bold text-foreground">{data.stats.total_approved}</p>
+              <p className="text-xs text-muted-foreground">Disetujui</p>
+            </div>
+            <div className="bg-muted rounded-xl p-4 text-center">
+              <Icon icon="solar:close-circle-bold" className="size-8 text-destructive mx-auto mb-2" />
+              <p className="text-2xl font-bold text-foreground">{data.stats.total_rejected}</p>
+              <p className="text-xs text-muted-foreground">Ditolak</p>
             </div>
           </div>
         </div>
@@ -277,26 +290,6 @@ export default function ProfilDosenPA() {
                   <div className="text-left">
                     <p className="text-sm font-semibold text-foreground">Edit Profil</p>
                     <p className="text-xs text-muted-foreground">Ubah informasi profil Anda</p>
-                  </div>
-                </div>
-                <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-muted-foreground" />
-              </div>
-            </div>
-          </button>
-
-          <button
-            onClick={() => router.push('/dosen-pa/bantuan')}
-            className="w-full"
-          >
-            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center size-12 rounded-xl bg-secondary/10">
-                    <Icon icon="solar:info-circle-bold" className="size-6 text-secondary" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-foreground">Bantuan</p>
-                    <p className="text-xs text-muted-foreground">Panduan penggunaan sistem</p>
                   </div>
                 </div>
                 <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-muted-foreground" />
@@ -415,14 +408,14 @@ export default function ProfilDosenPA() {
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-2">
-                  NIP <span className="text-destructive">*</span>
+                  NIP
                 </label>
                 <input
                   type="text"
                   value={formData.nip}
                   onChange={(e) => setFormData({ ...formData, nip: e.target.value })}
                   className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
-                  required
+                  placeholder="NIP (Opsional)"
                 />
               </div>
 
@@ -481,4 +474,3 @@ export default function ProfilDosenPA() {
     </div>
   );
 }
-

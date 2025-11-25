@@ -4,16 +4,16 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { Icon } from '@iconify/react';
-import ProfilWaket3 from '@/components/ProfilWaket3';
+import InputPelanggaranMusyrif from '@/components/InputPelanggaranMusyrif';
 
-export default function Waket3ProfilPage() {
+export default function MusyrifPelanggaranPage() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
     if (!isLoading && !user) {
       router.push('/login');
-    } else if (!isLoading && user && user.role !== 'waket3') {
+    } else if (!isLoading && user && user.role !== 'musyrif') {
       router.push('/login');
     }
   }, [user, isLoading, router]);
@@ -29,9 +29,9 @@ export default function Waket3ProfilPage() {
     );
   }
 
-  if (!user || user.role !== 'waket3') {
+  if (!user || user.role !== 'musyrif') {
     return null;
   }
 
-  return <ProfilWaket3 userId={user.id} />;
+  return <InputPelanggaranMusyrif />;
 }

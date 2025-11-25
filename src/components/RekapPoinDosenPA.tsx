@@ -79,14 +79,14 @@ export default function RekapPoinDosenPA() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-4 bg-card border-b border-border">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 bg-primary border-b border-border">
         <button
           onClick={() => router.back()}
-          className="flex items-center justify-center size-11 rounded-xl bg-muted hover:bg-muted/80 transition-colors"
+          className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
         >
-          <Icon icon="solar:arrow-left-linear" className="size-6 text-foreground" />
+          <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
         </button>
-        <h1 className="text-lg font-bold font-heading text-foreground">Rekap Poin Mahasiswa</h1>
+        <h1 className="text-lg font-bold font-heading text-white">Rekap Poin Mahasiswa</h1>
         <div className="size-11" />
       </div>
 
