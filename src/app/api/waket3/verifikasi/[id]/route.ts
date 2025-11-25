@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 // This route is for updating specific pengajuan (PATCH only)
 // For listing all pengajuan, use /api/waket3/verifikasi route (without [id])
 

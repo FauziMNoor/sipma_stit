@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 export async function GET(request: NextRequest) {
   try {
     // Waket3 hanya bisa melihat kategori: Dakwah, Sosial, dan Pelanggaran

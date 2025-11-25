@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabase } from '@/lib/supabase';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 /**
  * GET /api/mahasiswa/dashboard/[id]
  * Get dashboard data for mahasiswa (poin summary, status kelulusan, recent activities)

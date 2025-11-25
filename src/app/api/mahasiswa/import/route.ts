@@ -3,6 +3,11 @@ import { supabase } from '@/lib/supabase';
 import bcrypt from 'bcryptjs';
 import * as XLSX from 'xlsx';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();

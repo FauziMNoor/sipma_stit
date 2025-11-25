@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
 import { verifyJWT } from '@/lib/auth';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 /**
  * PUT /api/musyrif/verifikasi/[id]
  * Approve or reject pengajuan

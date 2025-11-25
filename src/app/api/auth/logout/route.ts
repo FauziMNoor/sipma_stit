@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import { removeAuthCookie } from '@/lib/session';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 export async function POST() {
   try {
     await removeAuthCookie();

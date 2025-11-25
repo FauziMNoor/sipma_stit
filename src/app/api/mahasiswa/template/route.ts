@@ -1,6 +1,11 @@
 import { NextResponse } from 'next/server';
 import * as XLSX from 'xlsx';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 export async function GET() {
   try {
     // Create Excel workbook

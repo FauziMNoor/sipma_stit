@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   
-  // Vercel deployment optimization
+  // Vercel/Netlify deployment optimization
   output: 'standalone',
   
   // Image optimization

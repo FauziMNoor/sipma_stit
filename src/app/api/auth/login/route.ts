@@ -3,6 +3,11 @@ import { supabase } from '@/lib/supabase';
 import { verifyPassword, generateJWT } from '@/lib/auth';
 import { loginSchema } from '@/lib/validation';
 
+// Force dynamic rendering to prevent build-time data collection
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
