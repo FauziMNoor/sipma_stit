@@ -3,6 +3,7 @@
 import { Icon } from "@iconify/react";
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface DashboardStats {
   totalMahasiswa: number;
@@ -13,6 +14,7 @@ interface DashboardStats {
 
 export function DashboardAdmin() {
   const router = useRouter();
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats>({
     totalMahasiswa: 0,
     totalKegiatan: 0,
@@ -80,6 +82,45 @@ export function DashboardAdmin() {
       </div>
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
         <div className="max-w-3xl mx-auto space-y-6">
+        
+        {/* Admin Profile Header */}
+        <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl sm:rounded-3xl px-4 sm:px-6 py-4 sm:py-6 shadow-lg">
+          <div className="flex items-center justify-between gap-3 sm:gap-4 flex-wrap sm:flex-nowrap">
+            {/* Admin Profile */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="size-12 sm:size-14 rounded-full border-2 border-white overflow-hidden bg-white">
+                <img
+                  src={user?.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.nama || 'Admin')}&background=0059a8&color=fff`}
+                  alt={user?.nama || 'Admin'}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-white font-bold text-sm sm:text-base">{user?.nama || 'Administrator'}</p>
+                <p className="text-white/80 text-xs sm:text-sm">
+                  {user?.role === 'admin' ? 'Administrator' : user?.role === 'dosen_pa' ? 'Dosen PA' : 'Sistem Poin Mahasiswa'}
+                </p>
+              </div>
+            </div>
+            
+            {/* School Info with Logo */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {/* Logo Kampus */}
+              <div className="flex items-center justify-center size-12 sm:size-14 rounded-xl bg-white/20 backdrop-blur-sm p-2">
+                <img 
+                  src="/logo.png" 
+                  alt="Logo STIT" 
+                  className="w-full h-full object-contain"
+                />
+              </div>
+              <div className="text-left">
+                <p className="text-white font-semibold text-xs sm:text-sm">STIT Riyadhussholihiin</p>
+                <p className="text-white/80 text-[10px] sm:text-xs">TA 2024/2025</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Statistics Cards */}
         {isLoading ? (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
