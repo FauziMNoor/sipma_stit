@@ -1,0 +1,15 @@
+{
+  "buildCommand": "npm run build",
+  "framework": "nextjs",
+  "installCommand": "npm install",
+  "regions": ["sin1"],
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "@supabase_url",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "JWT_SECRET": "@jwt_secret",
+    "NEXT_PUBLIC_APP_URL": "@app_url",
+    "NEXT_PUBLIC_APP_NAME": "SIPMA STIT",
+    "NEXT_PUBLIC_MAX_FILE_SIZE": "5242880",
+    "NEXT_PUBLIC_ALLOWED_FILE_TYPES": "image/jpeg,image/png,image/jpg,application/pdf"
+  }
+}
