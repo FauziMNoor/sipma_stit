@@ -1,15 +1,23 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
 const supabaseServiceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
+// Check if environment variables are set (but only warn during build, don't block)
+const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
+if (!isBuildTime && (!supabaseUrl || !supabaseAnonKey)) {
+  console.error('❌ Missing Supabase environment variables!');
+  console.error('Please set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY in your environment.');
   throw new Error('Missing Supabase environment variables');
 }
 
+// Use dummy values during build time if env vars not set
+const finalUrl = supabaseUrl || 'https://placeholder.supabase.co';
+const finalAnonKey = supabaseAnonKey || 'placeholder-anon-key';
+
 // Client-side Supabase client (with RLS)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+export const supabase = createClient(finalUrl, finalAnonKey, {
   auth: {
     persistSession: false, // We use JWT cookies instead
     autoRefreshToken: false,
@@ -19,7 +27,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 // Server-side Supabase client (bypasses RLS)
 // Only use this in API routes where you need to bypass RLS
 export const supabaseAdmin = supabaseServiceRoleKey
-  ? createClient(supabaseUrl, supabaseServiceRoleKey, {
+  ? createClient(finalUrl, supabaseServiceRoleKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
