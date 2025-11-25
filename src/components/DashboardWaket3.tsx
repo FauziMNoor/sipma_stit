@@ -97,7 +97,7 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-6 py-5 bg-primary border-b border-border">
-        <div className="flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
               alt="Wakil Ketua III Profile"
@@ -116,7 +116,8 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="max-w-3xl mx-auto space-y-6">
         {/* Stats */}
         <div>
           <h3 className="text-lg font-bold text-foreground mb-4 font-heading">
@@ -265,6 +266,7 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
               ))}
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

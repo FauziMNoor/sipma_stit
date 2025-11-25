@@ -104,7 +104,7 @@ export default function RiwayatVerifikasiWaket3({ userId }: RiwayatVerifikasiWak
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-6 py-5 bg-primary border-b border-border">
-        <div className="flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
@@ -119,6 +119,7 @@ export default function RiwayatVerifikasiWaket3({ userId }: RiwayatVerifikasiWak
 
       {/* Search & Filter */}
       <div className="px-6 py-4 bg-card border-b border-border">
+        <div className="max-w-3xl mx-auto">
         <div className="relative mb-4">
           <input
             type="text"
@@ -164,10 +165,12 @@ export default function RiwayatVerifikasiWaket3({ userId }: RiwayatVerifikasiWak
             Ditolak
           </button>
         </div>
+        </div>
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4">
+      <div className="flex-1 overflow-y-auto px-6 py-5">
+        <div className="max-w-3xl mx-auto space-y-4">
         {filteredList.length === 0 ? (
           <div className="bg-card rounded-2xl p-8 text-center">
             <Icon icon="solar:inbox-line-bold" className="size-12 text-muted-foreground mx-auto mb-3" />
@@ -221,6 +224,7 @@ export default function RiwayatVerifikasiWaket3({ userId }: RiwayatVerifikasiWak
             </div>
           ))
         )}
+        </div>
       </div>
     </div>
   );

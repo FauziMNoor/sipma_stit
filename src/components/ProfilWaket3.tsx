@@ -84,7 +84,7 @@ export default function ProfilWaket3({ userId }: ProfilWaket3Props) {
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-6 py-5 bg-primary border-b border-border">
-        <div className="flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.back()}
@@ -98,7 +98,8 @@ export default function ProfilWaket3({ userId }: ProfilWaket3Props) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="max-w-3xl mx-auto space-y-6">
         {/* Profile Card */}
         <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
           <div className="flex flex-col items-center text-center mb-6">
@@ -160,6 +161,7 @@ export default function ProfilWaket3({ userId }: ProfilWaket3Props) {
             </div>
             <Icon icon="solar:alt-arrow-right-linear" className="size-5 text-muted-foreground" />
           </button>
+        </div>
         </div>
       </div>
     </div>

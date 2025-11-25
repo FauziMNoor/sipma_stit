@@ -181,7 +181,7 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
       <div className="px-6 py-5 bg-primary">
-        <div className="flex items-center justify-between">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
           <button
             onClick={() => router.back()}
             className="flex items-center justify-center size-11"
@@ -194,7 +194,8 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="max-w-3xl mx-auto space-y-6">
         {/* Mahasiswa Info */}
         <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
           <div className="flex items-center gap-4 mb-4">
@@ -300,6 +301,7 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
             </button>
           </div>
         )}
+        </div>
       </div>
 
       {/* Reject Modal */}
