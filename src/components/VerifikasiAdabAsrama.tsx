@@ -60,11 +60,15 @@ export default function VerifikasiAdabAsrama() {
   const fetchPengajuan = async () => {
     setIsLoading(true);
     try {
+      const token = localStorage.getItem('auth-token');
       const params = new URLSearchParams();
       params.append('status', statusFilter);
       if (searchQuery) params.append('search', searchQuery);
 
       const response = await fetch(`/api/musyrif/verifikasi?${params.toString()}`, {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
       });
       const result = await response.json();
@@ -94,9 +98,13 @@ export default function VerifikasiAdabAsrama() {
 
     setIsSubmitting(true);
     try {
+      const token = localStorage.getItem('auth-token');
       const response = await fetch(`/api/musyrif/verifikasi/${selectedPengajuan.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
         body: JSON.stringify({
           action: actionType,

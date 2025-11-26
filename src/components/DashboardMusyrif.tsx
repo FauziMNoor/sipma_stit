@@ -56,7 +56,11 @@ export default function DashboardMusyrif() {
 
   const fetchDashboardData = async () => {
     try {
+      const token = localStorage.getItem('auth-token');
       const response = await fetch('/api/musyrif/dashboard', {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
       });
       const result = await response.json();

@@ -64,12 +64,16 @@ export default function VerifikasiSemuaPengajuan() {
   const fetchPengajuan = async () => {
     setIsLoading(true);
     try {
+      const token = localStorage.getItem('auth-token');
       const params = new URLSearchParams();
       params.append('status', statusFilter);
       if (kategoriFilter !== 'all') params.append('kategori', kategoriFilter);
       if (prodiFilter !== 'all') params.append('prodi', prodiFilter);
 
       const response = await fetch(`/api/verifikasi/pengajuan?${params.toString()}`, {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
       });
       const result = await response.json();
@@ -94,9 +98,13 @@ export default function VerifikasiSemuaPengajuan() {
   const handleVerifikasi = async (id: string, status: 'approved' | 'rejected', notes?: string) => {
     setIsSubmitting(true);
     try {
+      const token = localStorage.getItem('auth-token');
       const response = await fetch('/api/verifikasi/pengajuan', {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
         body: JSON.stringify({ id, status, notes }),
       });

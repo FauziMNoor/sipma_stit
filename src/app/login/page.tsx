@@ -38,10 +38,8 @@ export default function LoginPage() {
 
       console.log('🔄 Redirecting to:', redirectPath);
       
-      // Direct redirect - no delay needed since user is already authenticated
-      const url = new URL(redirectPath, window.location.origin);
-      url.searchParams.set('_auth', '1');
-      window.location.href = url.toString();
+      // Use Next.js router for client-side navigation
+      router.replace(`${redirectPath}?_auth=1`);
     }
   }, [user, authLoading, router]);
 
@@ -55,7 +53,7 @@ export default function LoginPage() {
       if (result.success && result.user) {
         toast.success('Login berhasil!');
         
-        // Redirect immediately after successful login
+        // Redirect based on role using Next.js router for client-side navigation
         let redirectPath = '/dashboard';
         if (result.user.role === 'admin' || result.user.role === 'staff') {
           redirectPath = '/admin';
@@ -71,10 +69,8 @@ export default function LoginPage() {
 
         console.log('✅ Login successful, redirecting to:', redirectPath);
         
-        // Direct redirect without delay - token is already saved
-        const url = new URL(redirectPath, window.location.origin);
-        url.searchParams.set('_auth', '1');
-        window.location.href = url.toString();
+        // Use Next.js router for client-side navigation (preserves React state)
+        router.replace(`${redirectPath}?_auth=1`);
         
         // Keep loading state active during redirect
       } else {

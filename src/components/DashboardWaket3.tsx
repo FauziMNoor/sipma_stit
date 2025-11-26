@@ -48,7 +48,13 @@ export default function DashboardWaket3({ userId }: DashboardWaket3Props) {
 
   const fetchDashboardData = async () => {
     try {
-      const response = await fetch(`/api/waket3/dashboard/${userId}`);
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/waket3/dashboard/${userId}`, {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        credentials: 'include',
+      });
       const result = await response.json();
 
       if (!response.ok || !result.success) {

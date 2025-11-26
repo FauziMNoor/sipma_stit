@@ -45,7 +45,13 @@ export default function VerifikasiWaket3({ userId }: VerifikasiWaket3Props) {
   const fetchPengajuan = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/waket3/verifikasi');
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch('/api/waket3/verifikasi', {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        credentials: 'include',
+      });
       const result = await response.json();
 
       if (!response.ok || !result.success) {

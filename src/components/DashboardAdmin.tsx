@@ -48,7 +48,11 @@ export function DashboardAdmin() {
 
   const fetchStats = async () => {
     try {
+      const token = localStorage.getItem('auth-token');
       const response = await fetch('/api/dashboard/stats', {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
       });
       const result = await response.json();
