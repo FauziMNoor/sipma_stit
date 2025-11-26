@@ -58,10 +58,52 @@ export default function RekapitulasiPoinMusyrif() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat data...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
+          <div className="max-w-3xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-6 bg-white/20 rounded w-48 animate-pulse" />
+            </div>
+          </div>
+        </div>
+
+        {/* Search Skeleton */}
+        <div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
+          <div className="max-w-3xl mx-auto">
+            <div className="h-12 bg-muted rounded-xl animate-pulse" />
+          </div>
+        </div>
+
+        {/* List Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex gap-3 mb-3">
+                  <div className="size-12 rounded-full bg-muted animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-2/3 animate-pulse" />
+                  </div>
+                  <div className="text-right space-y-2">
+                    <div className="h-8 bg-muted rounded w-16 ml-auto animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-16 ml-auto animate-pulse" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border">
+                  {[1, 2, 3].map((j) => (
+                    <div key={j} className="text-center space-y-1">
+                      <div className="h-6 bg-muted rounded w-12 mx-auto animate-pulse" />
+                      <div className="h-3 bg-muted rounded w-16 mx-auto animate-pulse" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -81,7 +123,7 @@ export default function RekapitulasiPoinMusyrif() {
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary border-b border-border">
+      <div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
@@ -96,26 +138,26 @@ export default function RekapitulasiPoinMusyrif() {
       </div>
 
       {/* Search */}
-      <div className="px-6 py-4 bg-card border-b border-border">
+      <div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
         <div className="max-w-3xl mx-auto">
-        <div className="relative">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-xl bg-input border border-border text-sm"
-            placeholder="Cari mahasiswa..."
-          />
-          <Icon
-            icon="solar:magnifer-linear"
-            className="size-5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2"
-          />
-        </div>
+          <div className="relative">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-11 pr-4 py-3 rounded-xl bg-input border border-border text-sm"
+              placeholder="Cari mahasiswa..."
+            />
+            <Icon
+              icon="solar:magnifer-linear"
+              className="size-5 text-muted-foreground absolute left-4 top-1/2 -translate-y-1/2"
+            />
+          </div>
         </div>
       </div>
 
       {/* List */}
-      <div className="flex-1 overflow-y-auto px-6 py-5">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
         <div className="max-w-3xl mx-auto space-y-4">
         {filteredList.length === 0 ? (
           <div className="bg-card rounded-2xl p-8 text-center">

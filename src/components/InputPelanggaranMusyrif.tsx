@@ -210,21 +210,52 @@ export default function InputPelanggaranMusyrif() {
   if (isLoading) {
     return (
       <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
         <div className="px-4 sm:px-6 py-5 bg-primary">
           <div className="max-w-2xl mx-auto">
             <div className="flex items-center justify-between mb-1">
-              <button className="flex items-center justify-center size-10 sm:size-11">
-                <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
-              </button>
-              <h1 className="text-base sm:text-lg font-bold text-white font-heading">Input Pelanggaran</h1>
+              <div className="size-10 sm:size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-5 sm:h-6 bg-white/20 rounded w-40 animate-pulse" />
               <div className="size-10 sm:size-11" />
             </div>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">Memuat data...</p>
+        
+        {/* Form Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+          <div className="max-w-2xl mx-auto space-y-6">
+            {/* Mahasiswa Field */}
+            <div>
+              <div className="h-4 bg-muted rounded w-32 mb-2 animate-pulse" />
+              <div className="h-12 bg-muted rounded-xl animate-pulse" />
+            </div>
+
+            {/* Kategori Field */}
+            <div>
+              <div className="h-4 bg-muted rounded w-40 mb-2 animate-pulse" />
+              <div className="h-12 bg-muted rounded-xl animate-pulse" />
+            </div>
+
+            {/* Tanggal Field */}
+            <div>
+              <div className="h-4 bg-muted rounded w-28 mb-2 animate-pulse" />
+              <div className="h-12 bg-muted rounded-xl animate-pulse" />
+            </div>
+
+            {/* Keterangan Field */}
+            <div>
+              <div className="h-4 bg-muted rounded w-24 mb-2 animate-pulse" />
+              <div className="h-32 bg-muted rounded-xl animate-pulse" />
+            </div>
+
+            {/* Bukti Field */}
+            <div>
+              <div className="h-4 bg-muted rounded w-36 mb-2 animate-pulse" />
+              <div className="h-40 bg-muted rounded-xl animate-pulse" />
+            </div>
+
+            {/* Submit Button */}
+            <div className="h-12 bg-muted rounded-xl animate-pulse" />
           </div>
         </div>
       </div>

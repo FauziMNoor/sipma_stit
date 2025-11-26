@@ -21,7 +21,7 @@ export default function Waket3VerifikasiDetailPage({
     } else if (!isLoading && user && user.role !== 'waket3') {
       router.push('/login');
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading]);
 
   if (isLoading) {
     return (

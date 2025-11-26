@@ -131,10 +131,47 @@ export default function RiwayatPelanggaranMusyrif() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat riwayat pelanggaran...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 py-5 bg-primary border-b border-border">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-1">
+              <div className="size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-6 bg-white/20 rounded w-48 animate-pulse" />
+              <div className="size-11" />
+            </div>
+          </div>
+        </div>
+
+        {/* Filter Tabs Skeleton */}
+        <div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
+          <div className="max-w-3xl mx-auto flex gap-2 overflow-x-auto">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="h-10 bg-muted rounded-xl w-32 flex-shrink-0 animate-pulse" />
+            ))}
+          </div>
+        </div>
+
+        {/* List Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-8 bg-muted rounded-full w-32 animate-pulse" />
+                  <div className="h-3 bg-muted rounded w-24 animate-pulse" />
+                </div>
+                <div className="flex gap-3">
+                  <div className="size-12 rounded-full bg-muted animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-2/3 animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

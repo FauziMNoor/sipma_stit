@@ -151,10 +151,73 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat detail...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 py-5 bg-primary">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-6 bg-white/20 rounded w-40 animate-pulse" />
+              <div className="size-11" />
+            </div>
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Mahasiswa Info Skeleton */}
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="size-16 rounded-full bg-muted animate-pulse" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-5 bg-muted rounded w-48 animate-pulse" />
+                  <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+                  <div className="h-3 bg-muted rounded w-40 animate-pulse" />
+                </div>
+              </div>
+            </div>
+
+            {/* Activity Details Skeleton */}
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border space-y-4">
+              <div>
+                <div className="h-3 bg-muted rounded w-32 mb-2 animate-pulse" />
+                <div className="h-5 bg-muted rounded w-full animate-pulse" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <div className="h-3 bg-muted rounded w-16 mb-2 animate-pulse" />
+                  <div className="h-4 bg-muted rounded w-28 animate-pulse" />
+                </div>
+                <div>
+                  <div className="h-3 bg-muted rounded w-12 mb-2 animate-pulse" />
+                  <div className="h-4 bg-muted rounded w-16 animate-pulse" />
+                </div>
+              </div>
+              <div>
+                <div className="h-3 bg-muted rounded w-20 mb-2 animate-pulse" />
+                <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+              </div>
+            </div>
+
+            {/* Bukti Skeleton */}
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+              <div className="h-3 bg-muted rounded w-24 mb-3 animate-pulse" />
+              <div className="w-full h-64 rounded-xl bg-muted animate-pulse" />
+            </div>
+
+            {/* Status Skeleton */}
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+              <div className="h-3 bg-muted rounded w-20 mb-3 animate-pulse" />
+              <div className="h-10 bg-muted rounded w-32 animate-pulse" />
+            </div>
+
+            {/* Buttons Skeleton */}
+            <div className="flex gap-3">
+              <div className="flex-1 h-12 bg-muted rounded-xl animate-pulse" />
+              <div className="flex-1 h-12 bg-muted rounded-xl animate-pulse" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -180,7 +243,7 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
+      <div className="px-4 sm:px-6 py-5 bg-primary">
         <div className="max-w-3xl mx-auto flex items-center justify-between">
           <button
             onClick={() => router.back()}
@@ -194,7 +257,7 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto px-6 py-6">
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
         <div className="max-w-3xl mx-auto space-y-6">
         {/* Mahasiswa Info */}
         <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">

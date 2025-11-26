@@ -155,21 +155,49 @@ export default function VerifikasiAdabAsrama() {
   if (isLoading) {
     return (
       <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
         <div className="px-4 sm:px-6 py-5 bg-primary">
           <div className="max-w-3xl mx-auto">
-          <div className="flex items-center justify-between mb-1">
-            <button className="flex items-center justify-center size-10 sm:size-11">
-              <Icon icon="solar:arrow-left-linear" className="size-5 sm:size-6 text-white" />
-            </button>
-            <h1 className="text-base sm:text-lg font-bold text-white font-heading">Verifikasi Adab</h1>
-            <div className="size-10 sm:size-11" />
-          </div>
+            <div className="flex items-center justify-between mb-1">
+              <div className="size-10 sm:size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-5 sm:h-6 bg-white/20 rounded w-40 animate-pulse" />
+              <div className="size-10 sm:size-11 rounded-xl bg-white/20 animate-pulse" />
+            </div>
+            <div className="h-3 sm:h-4 bg-white/20 rounded w-56 mx-auto mt-2 animate-pulse" />
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">Memuat data...</p>
+
+        {/* Search & Filter Skeleton */}
+        <div className="bg-card px-4 sm:px-6 py-4">
+          <div className="max-w-3xl mx-auto">
+            <div className="h-12 bg-muted rounded-xl mb-4 animate-pulse" />
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-10 bg-muted rounded-xl w-24 flex-shrink-0 animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* List Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex items-start gap-3 mb-3">
+                  <div className="size-12 rounded-full bg-muted animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+                    <div className="h-8 bg-muted rounded w-24 mt-2 animate-pulse" />
+                  </div>
+                  <div className="text-right space-y-2">
+                    <div className="h-6 bg-muted rounded w-16 ml-auto animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-20 ml-auto animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
