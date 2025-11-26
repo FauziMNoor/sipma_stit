@@ -45,18 +45,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // If accessing auth route with valid token, redirect based on role
+  // If accessing auth route with valid token, let client-side handle redirect
+  // Don't redirect here to avoid race condition with cookie setting
   if (isAuthRoute && token) {
-    try {
-      const payload = verifyJWT(token);
-
-      // Redirect based on role
-      const redirectPath = payload.role === 'admin' ? '/admin' : '/dashboard';
-      return NextResponse.redirect(new URL(redirectPath, request.url));
-    } catch (error) {
-      // Token invalid, allow access to auth route
-      return NextResponse.next();
-    }
+    // Just verify token is valid, but don't redirect
+    // Client-side useEffect in login page will handle the redirect
+    return NextResponse.next();
   }
 
   // If accessing protected route with token, verify and add user info to headers
