@@ -21,7 +21,7 @@ const protectedRoutes = [
 const authRoutes = ['/login'];
 
 export async function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, searchParams } = request.nextUrl;
 
   // Try to get token from cookie first, then from Authorization header (localStorage fallback)
   let token = request.cookies.get('auth-token')?.value;
@@ -38,8 +38,29 @@ export async function middleware(request: NextRequest) {
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
   const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
-  // If accessing protected route without token, redirect to login
+  // Skip middleware check if this is a client-side navigation (has referer from same origin)
+  const referer = request.headers.get('referer');
+  const isClientNavigation = referer && new URL(referer).origin === new URL(request.url).origin;
+
+  // If accessing protected route without token
   if (isProtectedRoute && !token) {
+    // Check if this is a post-login navigation (has _auth query param)
+    const authBypass = searchParams.get('_auth');
+    if (authBypass === '1') {
+      console.log('🔄 Middleware: Post-login navigation detected, bypassing auth check');
+      // Remove the query param and let the request through
+      const url = request.nextUrl.clone();
+      url.searchParams.delete('_auth');
+      return NextResponse.rewrite(url);
+    }
+
+    // If it's a client-side navigation from login, let it through
+    // The client will handle auth check and redirect if needed
+    if (isClientNavigation && referer && referer.includes('/login')) {
+      console.log('🔄 Middleware: Client navigation from login, letting through');
+      return NextResponse.next();
+    }
+
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);

@@ -37,7 +37,15 @@ export default function LoginPage() {
       }
 
       console.log('🔄 Redirecting to:', redirectPath);
-      window.location.href = redirectPath; // Use window.location for full page reload
+      
+      // Add a delay to ensure cookie propagates before navigation
+      // This is important for Vercel edge functions
+      setTimeout(() => {
+        // Add query parameter to bypass middleware check once
+        const url = new URL(redirectPath, window.location.origin);
+        url.searchParams.set('_auth', '1');
+        window.location.href = url.toString();
+      }, 200);
     }
   }, [user, authLoading, router]);
 
@@ -50,8 +58,9 @@ export default function LoginPage() {
 
       if (result.success && result.user) {
         toast.success('Login berhasil!');
-        // Don't redirect here - let useEffect handle it after user state is updated
-        // This prevents race condition and ensures cookie is properly set
+        
+        // Keep loading state active, useEffect will handle redirect
+        // Don't set isLoading to false here - let the redirect happen
       } else {
         toast.error(result.error || 'Login gagal');
         setIsLoading(false);
