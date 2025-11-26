@@ -14,14 +14,16 @@ interface ProtectedRouteProps {
  * CRITICAL: This is the primary auth check since middleware bypasses client-side navigation
  * due to cookie persistence issues in Vercel Edge Runtime
  */
-export function ProtectedRoute({ 
-  children, 
+export function ProtectedRoute({
+  children,
   allowedRoles,
-  fallbackPath = '/login' 
+  fallbackPath = '/login'
 }: ProtectedRouteProps) {
   const { user, isLoading } = useAuth();
 
   useEffect(() => {
+    console.log('🔍 ProtectedRoute check:', { isLoading, hasUser: !!user, userRole: user?.role, allowedRoles });
+
     if (!isLoading) {
       if (!user) {
         // Not logged in - redirect to login
@@ -37,38 +39,16 @@ export function ProtectedRoute({
     }
   }, [user, isLoading, allowedRoles, fallbackPath]);
 
-  // Show skeleton loader while checking auth
-  if (isLoading || !user || (allowedRoles && !allowedRoles.includes(user.role))) {
+  // Show loading state while checking auth
+  if (isLoading) {
+    console.log('⏳ ProtectedRoute: Loading...');
     return (
-      <div className="flex flex-col h-screen bg-background">
-        {/* Header Skeleton */}
-        <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
-          <div className="max-w-3xl mx-auto flex items-center justify-between">
-            <div className="h-6 bg-muted rounded w-40 animate-pulse" />
-            <div className="size-10 sm:size-11 rounded-xl bg-muted animate-pulse" />
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
-          <div className="max-w-3xl mx-auto space-y-6">
-            {/* Content Skeleton */}
-            <div className="rounded-2xl sm:rounded-3xl px-4 sm:px-6 py-4 sm:py-6 shadow-lg bg-muted animate-pulse h-32" />
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm border border-border h-20 animate-pulse" />
-              ))}
-            </div>
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-md border border-border h-24 animate-pulse" />
-              ))}
-            </div>
-          </div>
-        </div>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
       </div>
     );
   }
 
-  // User is authenticated and authorized - render children
+  // Render children if authorized
   return <>{children}</>;
 }

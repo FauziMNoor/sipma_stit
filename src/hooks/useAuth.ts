@@ -3,27 +3,45 @@ import { useAuthStore } from '@/store/authStore';
 import type { User } from '@/types';
 
 export function useAuth() {
-  const { user, isLoading, setUser, setLoading, logout } = useAuthStore();
+  const { user, isLoading, isFetching, hasFetched, setUser, setLoading, setFetching, logout } = useAuthStore();
 
   useEffect(() => {
+    // Skip if already fetching or already fetched
+    if (isFetching || hasFetched) {
+      console.log('⏭️ useAuth - Skipping fetch:', { isFetching, hasFetched, user: !!user, isLoading });
+      // Ensure isLoading is false if we already have user data
+      if (hasFetched && isLoading) {
+        console.log('🔧 useAuth - Setting isLoading to false (already fetched)');
+        setLoading(false);
+      }
+      return;
+    }
+
     // Fetch current user on mount
     async function fetchUser() {
+      const token = localStorage.getItem('auth-token');
+
       try {
-        // Get token from localStorage (fallback for Next.js 16 bug)
-        const token = localStorage.getItem('auth-token');
+        setFetching(true);
+
         console.log('🔍 useAuth - Fetching user, token from localStorage:', { hasToken: !!token, tokenLength: token?.length });
+
+        // If no token, skip API call
+        if (!token) {
+          console.log('⏭️ useAuth - No token found, skipping API call');
+          setUser(null);
+          setLoading(false);
+          setFetching(false);
+          return;
+        }
 
         const headers: HeadersInit = {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
         };
 
-        // Add Authorization header if token exists in localStorage
-        if (token) {
-          headers['Authorization'] = `Bearer ${token}`;
-        }
-
         const response = await fetch('/api/auth/me', {
-          credentials: 'include', // Include cookies
+          credentials: 'include',
           headers,
         });
 
@@ -46,11 +64,12 @@ export function useAuth() {
         setUser(null);
       } finally {
         setLoading(false);
+        setFetching(false);
       }
     }
 
     fetchUser();
-  }, [setUser, setLoading]);
+  }, [isFetching, hasFetched, user, isLoading, setUser, setLoading, setFetching]);
 
   const login = async (email: string, password: string) => {
     try {
@@ -75,28 +94,35 @@ export function useAuth() {
         console.log('✅ Token saved to localStorage and cookie:', { tokenLength: data.token.length });
       }
 
+      // Update user state immediately
       setUser(data.user);
+      console.log('✅ User state updated:', { role: data.user?.role, nama: data.user?.nama });
+
       return { success: true, user: data.user };
     } catch (error: any) {
+      console.error('❌ Login error:', error);
       return { success: false, error: error.message };
     }
   };
 
   const handleLogout = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' });
-      // Clear localStorage
-      localStorage.removeItem('auth-token');
-      // Clear cookie from client-side
-      document.cookie = 'auth-token=; path=/; max-age=0';
+      // Clear local state first
       logout();
+      localStorage.removeItem('auth-token');
+      document.cookie = 'auth-token=; path=/; max-age=0';
+      
+      // Call logout API
+      await fetch('/api/auth/logout', { method: 'POST' });
+      
+      // Use window.location to force full page reload and clear all state
       window.location.href = '/login';
     } catch (error) {
       console.error('Logout error:', error);
       // Clear local state even if API call fails
+      logout();
       localStorage.removeItem('auth-token');
       document.cookie = 'auth-token=; path=/; max-age=0';
-      logout();
       window.location.href = '/login';
     }
   };

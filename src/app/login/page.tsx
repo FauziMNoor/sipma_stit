@@ -6,6 +6,23 @@ import { Icon } from '@iconify/react';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import type { User } from '@/types';
+
+// Helper function to get redirect path based on user role
+function getRedirectPath(user: User): string {
+  if (user.role === 'admin' || user.role === 'staff') {
+    return '/admin';
+  } else if (user.role === 'dosen_pa') {
+    return '/dosen-pa/dashboard';
+  } else if (user.role === 'waket3') {
+    return '/waket3/dashboard';
+  } else if (user.role === 'musyrif') {
+    return '/musyrif/dashboard';
+  } else if (user.role === 'mahasiswa') {
+    return '/mahasiswa/dashboard';
+  }
+  return '/dashboard';
+}
 
 export default function LoginPage() {
   const toast = useToast();
@@ -16,75 +33,74 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [hasRedirected, setHasRedirected] = useState(false);
+  const [justLoggedIn, setJustLoggedIn] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Redirect if already authenticated (for direct access to /login when logged in)
+  // Check if component is mounted (client-side only)
   useEffect(() => {
-    if (!authLoading && user) {
+    setMounted(true);
+    setJustLoggedIn(sessionStorage.getItem('just-logged-in') === 'true');
+  }, []);
+
+  // Redirect when user is already authenticated (e.g., accessing /login while logged in)
+  useEffect(() => {
+    // Skip if already redirected or currently logging in
+    if (hasRedirected || isLoading) {
+      return;
+    }
+
+    // Only redirect if we have both user AND token (user already logged in)
+    // This prevents redirect during logout process
+    const hasToken = typeof window !== 'undefined' && localStorage.getItem('auth-token');
+
+    if (!authLoading && user && hasToken) {
       console.log('🔄 Login page - User already authenticated, redirecting...', { role: user.role, nama: user.nama });
 
-      // User already logged in (accessing /login directly), redirect based on role
-      let redirectPath = '/dashboard';
-      if (user.role === 'admin' || user.role === 'staff') {
-        redirectPath = '/admin';
-      } else if (user.role === 'dosen_pa') {
-        redirectPath = '/dosen-pa/dashboard';
-      } else if (user.role === 'waket3') {
-        redirectPath = '/waket3/dashboard';
-      } else if (user.role === 'musyrif') {
-        redirectPath = '/musyrif/dashboard';
-      } else if (user.role === 'mahasiswa') {
-        redirectPath = '/mahasiswa/dashboard';
-      }
+      setHasRedirected(true);
+      const redirectPath = getRedirectPath(user);
 
       console.log('🔄 Redirecting to:', redirectPath);
-      
-      // Use Next.js router for client-side navigation
-      router.replace(`${redirectPath}?_auth=1`);
+
+      // Use router for client-side navigation
+      router.replace(redirectPath);
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, hasRedirected, isLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
+    setHasRedirected(true); // Prevent any other redirect attempts
 
     try {
       const result = await login(email, password);
 
       if (result.success && result.user) {
         toast.success('Login berhasil!');
-        
-        // Redirect based on role using Next.js router for client-side navigation
-        let redirectPath = '/dashboard';
-        if (result.user.role === 'admin' || result.user.role === 'staff') {
-          redirectPath = '/admin';
-        } else if (result.user.role === 'dosen_pa') {
-          redirectPath = '/dosen-pa/dashboard';
-        } else if (result.user.role === 'waket3') {
-          redirectPath = '/waket3/dashboard';
-        } else if (result.user.role === 'musyrif') {
-          redirectPath = '/musyrif/dashboard';
-        } else if (result.user.role === 'mahasiswa') {
-          redirectPath = '/mahasiswa/dashboard';
-        }
 
+        // Get redirect path based on user role
+        const redirectPath = getRedirectPath(result.user);
         console.log('✅ Login successful, redirecting to:', redirectPath);
-        
-        // Use Next.js router for client-side navigation (preserves React state)
-        router.replace(`${redirectPath}?_auth=1`);
-        
-        // Keep loading state active during redirect
+
+        // Use router.push for client-side navigation (keeps Zustand state intact)
+        // This is crucial: window.location.href would cause full page reload
+        // and lose the user state we just set in Zustand
+        router.push(redirectPath);
       } else {
         toast.error(result.error || 'Login gagal');
         setIsLoading(false);
+        setHasRedirected(false);
       }
     } catch (error: any) {
       toast.error(error.message || 'Terjadi kesalahan');
       setIsLoading(false);
+      setHasRedirected(false);
     }
   };
 
-  // Show skeleton loader during auth check or login process
-  if (authLoading || isLoading) {
+  // Show loading state only on client-side after mount to avoid hydration mismatch
+  // On server, always render the login form
+  if (mounted && ((authLoading && !hasRedirected && !justLoggedIn) || isLoading)) {
     return (
       <div className="flex flex-col h-screen bg-white">
         <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-12">

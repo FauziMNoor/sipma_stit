@@ -56,6 +56,11 @@ export default function DashboardMahasiswa() {
   const { user } = useAuth();
 
   useEffect(() => {
+    // Clear just-logged-in flag when dashboard mounts
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('just-logged-in');
+    }
+    
     if (user?.id) {
       fetchDashboardData(user.id);
     }

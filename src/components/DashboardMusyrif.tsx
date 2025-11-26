@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@/hooks/useAuth';
 
 interface MusyrifData {
   id: string;
@@ -46,13 +47,16 @@ interface DashboardData {
 
 export default function DashboardMusyrif() {
   const router = useRouter();
+  const { user } = useAuth();
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showSettingsMenu, setShowSettingsMenu] = useState(false);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (user?.id) {
+      fetchDashboardData();
+    }
+  }, [user?.id]);
 
   const fetchDashboardData = async () => {
     try {

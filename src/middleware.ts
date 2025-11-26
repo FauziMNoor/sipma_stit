@@ -17,78 +17,22 @@ const protectedRoutes = [
   '/dosen-pa',
 ];
 
-// Routes that are only accessible when not authenticated
-const authRoutes = ['/login'];
-
 export async function middleware(request: NextRequest) {
-  const { pathname, searchParams } = request.nextUrl;
+  const { pathname } = request.nextUrl;
 
-  // Try to get token from cookie first, then from Authorization header (localStorage fallback)
-  let token = request.cookies.get('auth-token')?.value;
-
-  if (!token) {
-    // Check Authorization header (sent by client with localStorage token)
-    const authHeader = request.headers.get('authorization');
-    if (authHeader?.startsWith('Bearer ')) {
-      token = authHeader.substring(7);
-    }
-  }
+  // Try to get token from cookie
+  const token = request.cookies.get('auth-token')?.value;
 
   // Check if route is protected
   const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route));
-  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
-  // Skip middleware check if this is a client-side navigation (has referer from same origin)
-  const referer = request.headers.get('referer');
-  const isClientNavigation = referer && new URL(referer).origin === new URL(request.url).origin;
-
-  // If accessing protected route without token
-  if (isProtectedRoute && !token) {
-    // Check if this is a post-login navigation (has _auth query param)
-    const authBypass = searchParams.get('_auth');
-    if (authBypass === '1') {
-      console.log('🔄 Middleware: Post-login navigation detected, bypassing auth check once');
-      // Remove the query param and let the request through
-      const url = request.nextUrl.clone();
-      url.searchParams.delete('_auth');
-      return NextResponse.rewrite(url);
-    }
-
-    // CRITICAL: Cookie set from client-side JS doesn't persist reliably in Vercel Edge Runtime
-    // If this is a client-side navigation (has same-origin referer), bypass middleware check
-    // and rely on client-side auth protection in page layouts
-    if (isClientNavigation) {
-      console.log('🔄 Middleware: Client-side navigation detected, bypassing (cookie not reliable in Edge Runtime)');
-      console.log('   From:', referer);
-      console.log('   To:', pathname);
-      console.log('   Client-side layout will handle auth check');
-      return NextResponse.next();
-    }
-
-    // Only redirect for direct access (no referer = user typing URL or bookmark)
-    console.log('🔒 Middleware: Direct access to protected route without token, redirecting to login');
-    console.log('   Path:', pathname);
-    console.log('   Has cookie:', !!request.cookies.get('auth-token'));
-    
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('redirect', pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // If accessing auth route with valid token, let client-side handle redirect
-  // Don't redirect here to avoid race condition with cookie setting
-  if (isAuthRoute && token) {
-    // Just verify token is valid, but don't redirect
-    // Client-side useEffect in login page will handle the redirect
-    return NextResponse.next();
-  }
-
-  // If accessing protected route with token, verify and add user info to headers
+  // If accessing protected route with valid token, add user info to headers
+  // This is ONLY for adding headers, NOT for redirecting
   if (isProtectedRoute && token) {
     try {
       const payload = verifyJWT(token);
-      
-      // Add user info to request headers for API routes
+
+      // Add user info to request headers for server components/API routes
       const requestHeaders = new Headers(request.headers);
       requestHeaders.set('x-user-id', payload.userId);
       requestHeaders.set('x-user-email', payload.email);
@@ -101,15 +45,17 @@ export async function middleware(request: NextRequest) {
         },
       });
     } catch (error) {
-      // Token invalid, redirect to login
-      const loginUrl = new URL('/login', request.url);
-      loginUrl.searchParams.set('redirect', pathname);
-      const response = NextResponse.redirect(loginUrl);
+      // Token invalid - just delete cookie and let client-side handle redirect
+      // DO NOT redirect from middleware to avoid race conditions
+      console.log('🔄 Middleware: Invalid token, clearing cookie');
+      const response = NextResponse.next();
       response.cookies.delete('auth-token');
       return response;
     }
   }
 
+  // For all other cases, just pass through
+  // Client-side ProtectedRoute will handle auth checks
   return NextResponse.next();
 }
 
