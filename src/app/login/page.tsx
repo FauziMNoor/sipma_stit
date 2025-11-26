@@ -20,6 +20,8 @@ export default function LoginPage() {
   // Redirect if already authenticated
   useEffect(() => {
     if (!authLoading && user) {
+      console.log('🔄 Login page - User authenticated, redirecting...', { role: user.role, nama: user.nama });
+
       // User already logged in, redirect based on role
       let redirectPath = '/dashboard';
       if (user.role === 'admin' || user.role === 'staff') {
@@ -34,7 +36,8 @@ export default function LoginPage() {
         redirectPath = '/mahasiswa/dashboard';
       }
 
-      router.replace(redirectPath);
+      console.log('🔄 Redirecting to:', redirectPath);
+      window.location.href = redirectPath; // Use window.location for full page reload
     }
   }, [user, authLoading, router]);
 
@@ -47,23 +50,8 @@ export default function LoginPage() {
 
       if (result.success && result.user) {
         toast.success('Login berhasil!');
-
-        // Redirect based on role
-        let redirectPath = '/dashboard';
-        if (result.user.role === 'admin' || result.user.role === 'staff') {
-          redirectPath = '/admin';
-        } else if (result.user.role === 'dosen_pa') {
-          redirectPath = '/dosen-pa/dashboard';
-        } else if (result.user.role === 'waket3') {
-          redirectPath = '/waket3/dashboard';
-        } else if (result.user.role === 'musyrif') {
-          redirectPath = '/musyrif/dashboard';
-        } else if (result.user.role === 'mahasiswa') {
-          redirectPath = '/mahasiswa/dashboard';
-        }
-
-        // Use window.location for full page reload
-        window.location.href = redirectPath;
+        // Don't redirect here - let useEffect handle it after user state is updated
+        // This prevents race condition and ensures cookie is properly set
       } else {
         toast.error(result.error || 'Login gagal');
         setIsLoading(false);
