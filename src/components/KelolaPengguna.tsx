@@ -410,10 +410,46 @@ export default function KelolaPengguna() {
             <div className="size-11"></div>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">Memuat data...</p>
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Search Bar Skeleton */}
+            <div className="h-12 bg-muted rounded-xl animate-pulse" />
+
+            {/* Filter Tabs Skeleton */}
+            <div className="flex flex-wrap gap-2">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-9 bg-muted rounded-full w-20 animate-pulse" />
+              ))}
+            </div>
+
+            {/* User List Skeleton */}
+            <div className="space-y-3">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3 flex-1">
+                      <div className="size-12 rounded-full bg-muted animate-pulse" />
+                      <div className="flex-1 space-y-2">
+                        <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+                        <div className="h-3 bg-muted rounded w-24 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="size-9 rounded-lg bg-muted animate-pulse" />
+                      <div className="size-9 rounded-lg bg-muted animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Add Button Skeleton */}
+        <div className="px-6 pb-6">
+          <div className="max-w-3xl mx-auto">
+            <div className="h-14 bg-muted rounded-2xl animate-pulse" />
           </div>
         </div>
       </div>

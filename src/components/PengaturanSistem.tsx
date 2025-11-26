@@ -459,10 +459,47 @@ export function PengaturanSistem() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <Icon icon="solar:loading-bold" className="size-12 text-primary animate-spin mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat pengaturan...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="size-11 rounded-xl bg-muted animate-pulse" />
+              <div className="h-6 bg-muted rounded w-48 animate-pulse" />
+              <div className="size-11" />
+            </div>
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-4">
+            {/* Settings Cards Skeleton */}
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+                <div className="flex items-start gap-4">
+                  <div className="size-12 rounded-xl bg-muted animate-pulse shrink-0" />
+                  <div className="flex-1 space-y-3">
+                    <div className="space-y-2">
+                      <div className="h-5 bg-muted rounded w-48 animate-pulse" />
+                      <div className="h-4 bg-muted rounded w-full animate-pulse" />
+                    </div>
+                    <div className="space-y-2">
+                      {[1, 2].map((j) => (
+                        <div key={j} className="flex items-center justify-between py-2">
+                          <div className="space-y-1">
+                            <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+                            <div className="h-3 bg-muted rounded w-24 animate-pulse" />
+                          </div>
+                          <div className="h-8 bg-muted rounded-lg w-16 animate-pulse" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

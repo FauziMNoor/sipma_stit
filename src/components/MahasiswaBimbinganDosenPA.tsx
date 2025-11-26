@@ -77,10 +77,51 @@ export default function MahasiswaBimbinganDosenPA() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat data...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 py-5 bg-primary">
+          <div className="max-w-2xl mx-auto">
+            <div className="flex items-center justify-between mb-4">
+              <div className="size-10 sm:size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="space-y-2 flex-1 mx-4">
+                <div className="h-5 bg-white/20 rounded w-48 mx-auto animate-pulse" />
+                <div className="h-3 bg-white/20 rounded w-32 mx-auto animate-pulse" />
+              </div>
+              <div className="size-10 sm:size-11" />
+            </div>
+          </div>
+        </div>
+
+        {/* Stats Skeleton */}
+        <div className="px-4 sm:px-6 py-4 bg-card border-b border-border">
+          <div className="max-w-2xl mx-auto">
+            <div className="grid grid-cols-3 gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="bg-background rounded-xl p-3 text-center space-y-2">
+                  <div className="h-3 bg-muted rounded w-16 mx-auto animate-pulse" />
+                  <div className="h-6 bg-muted rounded w-12 mx-auto animate-pulse" />
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+          <div className="max-w-2xl mx-auto space-y-3">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                <div className="flex items-center gap-3">
+                  <div className="size-12 rounded-full bg-muted animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+                  </div>
+                  <div className="h-8 bg-muted rounded w-16 animate-pulse" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

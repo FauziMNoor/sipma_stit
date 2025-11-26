@@ -385,8 +385,28 @@ return (
 <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
 <div className="max-w-3xl mx-auto space-y-4">
 {loading ? (
-<div className="flex items-center justify-center py-12">
-<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+<div className="space-y-3">
+{[1, 2, 3, 4, 5].map((i) => (
+<div key={i} className="bg-card rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-md border border-border">
+<div className="flex gap-3 sm:gap-4">
+<div className="size-14 sm:size-16 rounded-full bg-muted animate-pulse flex-shrink-0" />
+<div className="flex-1 min-w-0 space-y-3">
+<div className="space-y-2">
+<div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+<div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+</div>
+<div className="grid grid-cols-2 gap-2">
+<div className="h-3 bg-muted rounded animate-pulse" />
+<div className="h-3 bg-muted rounded animate-pulse" />
+</div>
+<div className="flex gap-2">
+<div className="h-8 bg-muted rounded-lg flex-1 animate-pulse" />
+<div className="h-8 bg-muted rounded-lg flex-1 animate-pulse" />
+</div>
+</div>
+</div>
+</div>
+))}
 </div>
 ) : filteredMahasiswa.length === 0 ? (
 <div className="text-center py-12">

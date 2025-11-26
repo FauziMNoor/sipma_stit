@@ -201,24 +201,69 @@ export default function LaporanStatistik() {
   if (isLoadingSettings || (isLoading && !stats)) {
     return (
       <div className="flex flex-col h-full bg-background">
-        <div className="px-6 py-5 bg-card border-b border-border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => router.back()}
-                className="flex items-center justify-center size-11 rounded-xl bg-primary/10 hover:bg-primary/20 transition-colors"
-                type="button"
-              >
-                <Icon icon="solar:arrow-left-linear" className="size-6 text-primary" />
-              </button>
-              <h1 className="text-xl font-bold text-foreground font-heading">Laporan & Statistik</h1>
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 py-5 bg-card border-b border-border">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="size-11 rounded-xl bg-muted animate-pulse" />
+                <div className="h-6 bg-muted rounded w-48 animate-pulse" />
+              </div>
+              <div className="size-11 rounded-xl bg-muted animate-pulse" />
             </div>
           </div>
         </div>
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center">
-            <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-4" />
-            <p className="text-muted-foreground">Memuat data...</p>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Period Selector Skeleton */}
+            <div className="flex gap-2 p-1 bg-muted rounded-2xl">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="flex-1 h-10 bg-background rounded-xl animate-pulse" />
+              ))}
+            </div>
+
+            {/* Stats Cards Skeleton */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                  <div className="space-y-2">
+                    <div className="h-4 bg-muted rounded w-24 animate-pulse" />
+                    <div className="h-8 bg-muted rounded w-16 animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Charts Skeleton */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {[1, 2].map((i) => (
+                <div key={i} className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+                  <div className="h-5 bg-muted rounded w-40 mb-4 animate-pulse" />
+                  <div className="h-64 bg-muted rounded-xl animate-pulse" />
+                </div>
+              ))}
+            </div>
+
+            {/* Top Mahasiswa Skeleton */}
+            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+              <div className="h-5 bg-muted rounded w-48 mb-4 animate-pulse" />
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="size-10 rounded-full bg-muted animate-pulse" />
+                      <div className="space-y-2">
+                        <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+                        <div className="h-3 bg-muted rounded w-24 animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="h-6 bg-muted rounded w-16 animate-pulse" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>

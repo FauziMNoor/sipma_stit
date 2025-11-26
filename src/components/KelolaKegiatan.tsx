@@ -285,8 +285,22 @@ export default function KelolaKegiatan() {
       <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
         <div className="max-w-3xl mx-auto space-y-4">
         {isLoading ? (
-          <div className="flex items-center justify-center py-12">
-            <Icon icon="svg-spinners:ring-resize" className="size-8 text-primary" />
+          <div className="space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-card rounded-xl sm:rounded-2xl p-4 sm:p-5 shadow-sm border border-border">
+                <div className="flex items-center gap-3 sm:gap-4">
+                  <div className="size-12 sm:size-14 rounded-xl bg-muted animate-pulse flex-shrink-0" />
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="h-4 bg-muted rounded w-3/4 animate-pulse" />
+                    <div className="h-5 bg-muted rounded-full w-24 animate-pulse" />
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="size-9 rounded-lg bg-muted animate-pulse" />
+                    <div className="size-9 rounded-lg bg-muted animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         ) : filteredKegiatan.length === 0 ? (
           <div className="text-center py-12">
