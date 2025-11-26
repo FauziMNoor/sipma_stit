@@ -54,11 +54,21 @@ export async function middleware(request: NextRequest) {
       return NextResponse.rewrite(url);
     }
 
-    // Redirect to login
-    console.log('🔒 Middleware: No token found for protected route, redirecting to login');
+    // CRITICAL: Cookie set from client-side JS doesn't persist reliably in Vercel Edge Runtime
+    // If this is a client-side navigation (has same-origin referer), bypass middleware check
+    // and rely on client-side auth protection in page layouts
+    if (isClientNavigation) {
+      console.log('🔄 Middleware: Client-side navigation detected, bypassing (cookie not reliable in Edge Runtime)');
+      console.log('   From:', referer);
+      console.log('   To:', pathname);
+      console.log('   Client-side layout will handle auth check');
+      return NextResponse.next();
+    }
+
+    // Only redirect for direct access (no referer = user typing URL or bookmark)
+    console.log('🔒 Middleware: Direct access to protected route without token, redirecting to login');
     console.log('   Path:', pathname);
     console.log('   Has cookie:', !!request.cookies.get('auth-token'));
-    console.log('   Referer:', referer || 'none');
     
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);

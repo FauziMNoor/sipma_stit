@@ -2,15 +2,14 @@
 
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 
-export default function AdminLayout({
+export default function MahasiswaLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <ProtectedRoute allowedRoles={['admin', 'staff']}>
+    <ProtectedRoute allowedRoles={['mahasiswa']}>
       {children}
     </ProtectedRoute>
   );
 }
-
