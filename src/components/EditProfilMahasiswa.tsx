@@ -134,8 +134,45 @@ export default function EditProfilMahasiswa() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <Icon icon="solar:loading-bold" className="size-8 text-primary animate-spin" />
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-6 py-5 bg-primary">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-1">
+              <div className="size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-6 bg-white/20 rounded w-32 animate-pulse" />
+              <div className="size-11" />
+            </div>
+            <div className="h-4 bg-white/20 rounded w-40 mx-auto animate-pulse mt-2" />
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Photo Upload Skeleton */}
+            <div className="flex flex-col items-center space-y-4">
+              <div className="size-32 rounded-full bg-muted animate-pulse" />
+              <div className="h-10 bg-muted rounded-lg w-40 animate-pulse" />
+            </div>
+
+            {/* Form Fields Skeleton */}
+            <div className="space-y-4">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i}>
+                  <div className="h-4 bg-muted rounded w-24 mb-2 animate-pulse" />
+                  <div className="h-12 bg-muted rounded-lg w-full animate-pulse" />
+                </div>
+              ))}
+            </div>
+
+            {/* Buttons Skeleton */}
+            <div className="flex gap-3">
+              <div className="h-12 bg-muted rounded-lg flex-1 animate-pulse" />
+              <div className="h-12 bg-muted rounded-lg flex-1 animate-pulse" />
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -104,10 +104,79 @@ export default function DashboardMahasiswa() {
 
   if (isLoading || !data) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-6 py-5 bg-card border-b border-border">
+          <div className="max-w-3xl mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="size-11 rounded-full bg-muted animate-pulse" />
+              <div className="space-y-2">
+                <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+                <div className="h-3 bg-muted rounded w-24 animate-pulse" />
+              </div>
+            </div>
+            <div className="size-11 rounded-xl bg-muted animate-pulse" />
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="overflow-y-auto space-y-6 p-6 pb-24">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Poin Card Skeleton */}
+            <div className="rounded-3xl p-6 shadow-lg bg-muted animate-pulse">
+              <div className="space-y-4">
+                <div className="text-center space-y-3">
+                  <div className="h-4 bg-background/50 rounded w-32 mx-auto" />
+                  <div className="h-12 bg-background/50 rounded w-40 mx-auto" />
+                </div>
+                <div className="bg-background/30 rounded-xl px-4 py-3">
+                  <div className="h-4 bg-background/50 rounded w-48 mx-auto" />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex justify-between">
+                    <div className="h-3 bg-background/50 rounded w-32" />
+                    <div className="h-3 bg-background/50 rounded w-12" />
+                  </div>
+                  <div className="h-3 bg-background/50 rounded-full" />
+                </div>
+              </div>
+            </div>
+
+            {/* Kategori Poin Skeleton */}
+            <div>
+              <div className="h-6 bg-muted rounded w-40 mb-4 animate-pulse" />
+              <div className="grid grid-cols-2 gap-4">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div key={i} className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+                    <div className="flex flex-col items-center text-center space-y-3">
+                      <div className="size-14 rounded-2xl bg-muted animate-pulse" />
+                      <div className="space-y-2 w-full">
+                        <div className="h-4 bg-muted rounded w-24 mx-auto animate-pulse" />
+                        <div className="h-3 bg-muted rounded w-16 mx-auto animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Button Skeleton */}
+            <div className="pb-6">
+              <div className="h-14 bg-muted rounded-2xl animate-pulse" />
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Navigation Skeleton */}
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border px-6 py-3">
+          <div className="max-w-3xl mx-auto flex items-center justify-around">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex flex-col items-center gap-1 py-2 px-4">
+                <div className="size-6 rounded bg-muted animate-pulse" />
+                <div className="h-3 bg-muted rounded w-12 animate-pulse" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

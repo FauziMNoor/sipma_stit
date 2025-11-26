@@ -80,10 +80,38 @@ export default function RiwayatVerifikasiWaket3({ userId }: RiwayatVerifikasiWak
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat riwayat...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-6 py-5 bg-primary">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-1">
+              <div className="size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-6 bg-white/20 rounded w-44 animate-pulse" />
+              <div className="size-11" />
+            </div>
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-4">
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="h-6 bg-muted rounded-full w-24 animate-pulse" />
+                  <div className="h-3 bg-muted rounded w-20 animate-pulse" />
+                </div>
+                <div className="flex items-start gap-4">
+                  <div className="size-12 rounded-full bg-muted animate-pulse" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-4 bg-muted rounded w-full animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-3/4 animate-pulse" />
+                    <div className="h-3 bg-muted rounded w-1/2 animate-pulse" />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     );

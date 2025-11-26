@@ -196,10 +196,55 @@ export default function ProfilDosenPA() {
 
   if (isLoading || !profile) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat profil...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-6 py-5 bg-primary">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-1">
+              <div className="size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-6 bg-white/20 rounded w-32 animate-pulse" />
+              <div className="size-11" />
+            </div>
+            <div className="h-4 bg-white/20 rounded w-44 mx-auto animate-pulse mt-2" />
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            {/* Profile Card Skeleton */}
+            <div className="bg-card rounded-2xl p-6 shadow-sm border border-border">
+              <div className="flex flex-col items-center text-center mb-6">
+                <div className="size-24 rounded-full bg-muted animate-pulse mb-4" />
+                <div className="h-6 bg-muted rounded w-48 mx-auto animate-pulse mb-2" />
+                <div className="h-4 bg-muted rounded w-32 mx-auto animate-pulse mb-2" />
+                <div className="h-4 bg-muted rounded w-40 mx-auto animate-pulse mb-4" />
+                <div className="px-4 py-2 rounded-lg bg-muted animate-pulse w-40 h-12" />
+              </div>
+              <div className="h-12 bg-muted rounded-xl animate-pulse" />
+            </div>
+
+            {/* Stats Skeleton */}
+            <div>
+              <div className="h-6 bg-muted rounded w-32 mb-4 animate-pulse" />
+              <div className="grid grid-cols-2 gap-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="bg-card rounded-2xl p-4 shadow-sm border border-border">
+                    <div className="flex flex-col items-center text-center space-y-2">
+                      <div className="size-12 rounded-xl bg-muted animate-pulse" />
+                      <div className="h-6 bg-muted rounded w-12 mx-auto animate-pulse" />
+                      <div className="h-3 bg-muted rounded w-24 mx-auto animate-pulse" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Logout Button Skeleton */}
+            <div className="pb-6">
+              <div className="h-14 bg-muted rounded-2xl animate-pulse" />
+            </div>
+          </div>
         </div>
       </div>
     );

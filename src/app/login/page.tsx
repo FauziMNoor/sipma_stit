@@ -51,6 +51,54 @@ export default function LoginPage() {
     }
   };
 
+  // Show skeleton loader during login process
+  if (isLoading) {
+    return (
+      <div className="flex flex-col h-screen bg-white">
+        <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-12">
+          <div className="w-full max-w-md mx-auto space-y-8">
+            {/* Logo and Title Skeleton */}
+            <div className="text-center space-y-4 mb-12">
+              <div className="flex justify-center mb-6">
+                <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-full bg-neutral-200 animate-pulse" />
+              </div>
+              <div className="h-8 sm:h-10 bg-neutral-200 rounded-lg w-3/4 mx-auto animate-pulse" />
+              <div className="h-4 bg-neutral-200 rounded w-1/2 mx-auto animate-pulse" />
+            </div>
+
+            {/* Form Skeleton */}
+            <div className="space-y-6">
+              {/* Input Field 1 */}
+              <div>
+                <div className="h-4 bg-neutral-200 rounded w-24 mb-3 animate-pulse" />
+                <div className="h-12 sm:h-14 bg-neutral-200 rounded-xl sm:rounded-2xl animate-pulse" />
+              </div>
+
+              {/* Input Field 2 */}
+              <div>
+                <div className="h-4 bg-neutral-200 rounded w-24 mb-3 animate-pulse" />
+                <div className="h-12 sm:h-14 bg-neutral-200 rounded-xl sm:rounded-2xl animate-pulse" />
+              </div>
+
+              {/* Button Skeleton - dengan efek loading */}
+              <div className="h-12 sm:h-14 bg-gradient-to-r from-primary-400 to-primary-500 rounded-xl sm:rounded-2xl animate-pulse mt-8" />
+
+              {/* Link Skeleton */}
+              <div className="flex justify-center">
+                <div className="h-4 bg-neutral-200 rounded w-32 animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Skeleton */}
+        <div className="px-6 pb-6 sm:pb-8 text-center">
+          <div className="h-4 bg-neutral-200 rounded w-48 mx-auto animate-pulse" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen bg-white">
       <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-12">

@@ -111,7 +111,7 @@ export default function RekapPoinDosenPA() {
           </div>
           <div className="bg-card rounded-xl p-4 border border-border">
             <p className="text-xs text-muted-foreground mb-1">Hasil Pencarian</p>
-            <p className="text-2xl font-bold text-foreground">{filteredMahasiswa.length}</p>
+            <p className="text-2xl font-bold text-foreground">{filteredList.length}</p>
           </div>
         </div>
       </div>
