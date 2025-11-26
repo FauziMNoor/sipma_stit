@@ -47,7 +47,7 @@ export default function RiwayatVerifikasiDosenPA() {
     if (user?.id) {
       fetchRiwayat();
     }
-  }, [user, statusFilter, startDate, endDate]);
+  }, [user?.id, statusFilter, startDate, endDate]);
 
   const fetchRiwayat = async () => {
     try {

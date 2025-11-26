@@ -16,7 +16,7 @@ export default function ProfilDosenPAPage() {
     } else if (!isLoading && user && user.role !== 'dosen_pa') {
       router.push('/login');
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading]);
 
   if (isLoading) {
     return (

@@ -35,7 +35,7 @@ export default function ProfilDosenPA() {
     if (user?.id) {
       fetchProfile();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchProfile = async () => {
     try {

@@ -123,10 +123,80 @@ export default function DetailPengajuanDosenPA({ aktivitasId }: DetailPengajuanD
 
   if (isLoading || !aktivitas) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <div className="text-center">
-          <Icon icon="svg-spinners:ring-resize" className="size-12 text-primary mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">Memuat detail...</p>
+      <div className="flex flex-col h-full bg-background">
+        {/* Header Skeleton */}
+        <div className="px-4 sm:px-6 py-5 bg-primary">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex items-center justify-between mb-1">
+              <div className="size-11 rounded-xl bg-white/20 animate-pulse" />
+              <div className="h-6 bg-white/20 rounded w-40 animate-pulse" />
+              <div className="size-11" />
+            </div>
+            <div className="h-4 bg-white/20 rounded w-48 mx-auto mt-2 animate-pulse" />
+          </div>
+        </div>
+
+        {/* Mahasiswa Info Skeleton */}
+        <div className="bg-card border-b border-border px-4 sm:px-6 py-5">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex gap-4 items-center">
+              <div className="size-16 rounded-full bg-muted animate-pulse" />
+              <div className="flex-1 space-y-2">
+                <div className="h-5 bg-muted rounded w-48 animate-pulse" />
+                <div className="h-4 bg-muted rounded w-32 animate-pulse" />
+                <div className="h-12 bg-muted rounded w-32 mt-2 animate-pulse" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Content Skeleton */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border space-y-5">
+            {/* Nama Kegiatan */}
+            <div>
+              <div className="h-3 bg-muted rounded w-24 mb-2 animate-pulse" />
+              <div className="h-5 bg-muted rounded w-full animate-pulse" />
+            </div>
+
+            {/* Kategori & Tanggal */}
+            <div className="flex items-center gap-3">
+              <div className="flex-1">
+                <div className="h-3 bg-muted rounded w-16 mb-2 animate-pulse" />
+                <div className="h-8 bg-muted rounded w-32 animate-pulse" />
+              </div>
+              <div className="flex-1">
+                <div className="h-3 bg-muted rounded w-16 mb-2 animate-pulse" />
+                <div className="h-4 bg-muted rounded w-28 animate-pulse" />
+              </div>
+            </div>
+
+            {/* Poin */}
+            <div className="bg-accent/10 rounded-xl p-4 text-center border-2 border-accent/30">
+              <div className="h-3 bg-muted rounded w-20 mx-auto mb-2 animate-pulse" />
+              <div className="h-12 bg-muted rounded w-24 mx-auto animate-pulse" />
+            </div>
+
+            {/* Foto Bukti */}
+            <div>
+              <div className="h-3 bg-muted rounded w-32 mb-3 animate-pulse" />
+              <div className="w-full h-64 rounded-xl bg-muted animate-pulse" />
+            </div>
+          </div>
+
+            {/* Notes Skeleton */}
+            <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+              <div className="h-3 bg-muted rounded w-28 mb-3 animate-pulse" />
+              <div className="h-24 bg-muted rounded animate-pulse" />
+            </div>
+
+            {/* Buttons Skeleton */}
+            <div className="flex gap-3">
+              <div className="flex-1 h-12 bg-muted rounded-xl animate-pulse" />
+              <div className="flex-1 h-12 bg-muted rounded-xl animate-pulse" />
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -135,40 +205,44 @@ export default function DetailPengajuanDosenPA({ aktivitasId }: DetailPengajuanD
   return (
     <div className="flex flex-col h-full bg-background">
       {/* Header */}
-      <div className="px-6 py-5 bg-primary">
-        <div className="flex items-center justify-between mb-1">
-          <button
-            onClick={() => router.back()}
-            className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
-          >
-            <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
-          </button>
-          <h1 className="text-lg font-bold text-white font-heading">Detail Pengajuan</h1>
-          <div className="size-11" />
+      <div className="px-4 sm:px-6 py-5 bg-primary">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex items-center justify-between mb-1">
+            <button
+              onClick={() => router.back()}
+              className="flex items-center justify-center size-11 rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              <Icon icon="solar:arrow-left-linear" className="size-6 text-white" />
+            </button>
+            <h1 className="text-lg font-bold text-white font-heading">Detail Pengajuan</h1>
+            <div className="size-11" />
+          </div>
+          <p className="text-sm text-white/80 text-center">Verifikasi kegiatan mahasiswa</p>
         </div>
-        <p className="text-sm text-white/80 text-center">Verifikasi kegiatan mahasiswa</p>
       </div>
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         {/* Mahasiswa Info */}
-        <div className="bg-card border-b border-border px-6 py-5">
-          <div className="flex gap-4 items-center">
-            <img
-              alt={aktivitas.mahasiswa.nama}
-              src={
-                aktivitas.mahasiswa.foto ||
-                `https://ui-avatars.com/api/?name=${encodeURIComponent(aktivitas.mahasiswa.nama)}`
-              }
-              className="size-16 rounded-full border-2 border-secondary object-cover"
-            />
-            <div className="flex-1">
-              <p className="text-base font-bold text-foreground">{aktivitas.mahasiswa.nama}</p>
-              <p className="text-sm text-muted-foreground">NIM: {aktivitas.mahasiswa.nim}</p>
-              <div className="flex items-center gap-2 mt-2">
-                <div className="px-3 py-1.5 rounded-lg bg-primary/10">
-                  <p className="text-xs text-muted-foreground">Total Poin Saat Ini</p>
-                  <p className="text-lg font-bold text-primary">{aktivitas.mahasiswa.total_poin}</p>
+        <div className="bg-card border-b border-border px-4 sm:px-6 py-5">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex gap-4 items-center">
+              <img
+                alt={aktivitas.mahasiswa.nama}
+                src={
+                  aktivitas.mahasiswa.foto ||
+                  `https://ui-avatars.com/api/?name=${encodeURIComponent(aktivitas.mahasiswa.nama)}`
+                }
+                className="size-16 rounded-full border-2 border-secondary object-cover"
+              />
+              <div className="flex-1">
+                <p className="text-base font-bold text-foreground">{aktivitas.mahasiswa.nama}</p>
+                <p className="text-sm text-muted-foreground">NIM: {aktivitas.mahasiswa.nim}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="px-3 py-1.5 rounded-lg bg-primary/10">
+                    <p className="text-xs text-muted-foreground">Total Poin Saat Ini</p>
+                    <p className="text-lg font-bold text-primary">{aktivitas.mahasiswa.total_poin}</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -176,7 +250,8 @@ export default function DetailPengajuanDosenPA({ aktivitasId }: DetailPengajuanD
         </div>
 
         {/* Detail Kegiatan */}
-        <div className="px-6 py-6 space-y-6">
+        <div className="px-4 sm:px-6 py-6">
+          <div className="max-w-3xl mx-auto space-y-6">
           <div className="bg-card rounded-2xl p-5 shadow-sm border border-border space-y-5">
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase mb-2">
@@ -265,29 +340,32 @@ export default function DetailPengajuanDosenPA({ aktivitasId }: DetailPengajuanD
               </div>
             )}
           </div>
+          </div>
         </div>
       </div>
 
       {/* Action Buttons (only for pending status) */}
       {aktivitas.status === 'pending' && (
-        <div className="px-6 py-5 bg-card border-t border-border">
-          <div className="flex gap-3">
-            <button
-              onClick={() => handleVerifikasi('reject')}
-              disabled={isSubmitting}
-              style={{ color: '#E63946', borderColor: '#E63946' }}
-              className="flex-1 py-4 px-4 rounded-xl border-2 font-bold text-sm disabled:opacity-50"
-            >
-              {isSubmitting ? 'Memproses...' : 'Tolak'}
-            </button>
-            <button
-              onClick={() => handleVerifikasi('approve')}
-              disabled={isSubmitting}
-              style={{ color: '#FFFFFF', backgroundColor: '#0059A8' }}
-              className="flex-1 py-4 px-4 rounded-xl font-bold text-sm disabled:opacity-50"
-            >
-              {isSubmitting ? 'Memproses...' : 'Setujui'}
-            </button>
+        <div className="px-4 sm:px-6 py-5 bg-card border-t border-border">
+          <div className="max-w-3xl mx-auto">
+            <div className="flex gap-3">
+              <button
+                onClick={() => handleVerifikasi('reject')}
+                disabled={isSubmitting}
+                style={{ color: '#E63946', borderColor: '#E63946' }}
+                className="flex-1 py-4 px-4 rounded-xl border-2 font-bold text-sm disabled:opacity-50"
+              >
+                {isSubmitting ? 'Memproses...' : 'Tolak'}
+              </button>
+              <button
+                onClick={() => handleVerifikasi('approve')}
+                disabled={isSubmitting}
+                style={{ color: '#FFFFFF', backgroundColor: '#0059A8' }}
+                className="flex-1 py-4 px-4 rounded-xl font-bold text-sm disabled:opacity-50"
+              >
+                {isSubmitting ? 'Memproses...' : 'Setujui'}
+              </button>
+            </div>
           </div>
         </div>
       )}

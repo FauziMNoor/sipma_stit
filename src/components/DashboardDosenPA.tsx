@@ -48,7 +48,7 @@ export default function DashboardDosenPA() {
     if (user?.id) {
       fetchDashboardData();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchDashboardData = async () => {
     try {

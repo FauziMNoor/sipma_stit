@@ -27,7 +27,7 @@ export default function RekapPoinDosenPA() {
     if (user?.id) {
       fetchRekapPoin();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchRekapPoin = async () => {
     try {

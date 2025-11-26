@@ -28,7 +28,7 @@ export default function MahasiswaBimbinganDosenPA() {
     if (user?.id) {
       fetchMahasiswa();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchMahasiswa = async () => {
     try {
@@ -60,18 +60,33 @@ export default function MahasiswaBimbinganDosenPA() {
     );
   });
 
-  const getStatusColor = (status: string) => {
+  const getStatusTextColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'sangat aktif':
-        return 'text-green-600 bg-green-600';
+        return 'text-green-600';
       case 'aktif':
-        return 'text-blue-600 bg-blue-600';
+        return 'text-blue-600';
       case 'cukup aktif':
-        return 'text-yellow-600 bg-yellow-600';
+        return 'text-yellow-600';
       case 'pasif':
-        return 'text-red-600 bg-red-600';
+        return 'text-red-600';
       default:
-        return 'text-gray-600 bg-gray-600';
+        return 'text-gray-600';
+    }
+  };
+
+  const getStatusBgColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'sangat aktif':
+        return '#16a34a'; // green-600
+      case 'aktif':
+        return '#2563eb'; // blue-600
+      case 'cukup aktif':
+        return '#ca8a04'; // yellow-600
+      case 'pasif':
+        return '#dc2626'; // red-600
+      default:
+        return '#4b5563'; // gray-600
     }
   };
 
@@ -175,8 +190,8 @@ export default function MahasiswaBimbinganDosenPA() {
           ) : (
             <div className="space-y-3 sm:space-y-4">
               {filteredMahasiswa.map((mahasiswa) => {
-                const statusColors = getStatusColor(mahasiswa.status_keaktifan);
-                const [textColor, bgColor] = statusColors.split(' bg-');
+                const textColor = getStatusTextColor(mahasiswa.status_keaktifan);
+                const bgColor = getStatusBgColor(mahasiswa.status_keaktifan);
                 
                 return (
                   <button
@@ -214,8 +229,11 @@ export default function MahasiswaBimbinganDosenPA() {
                             </div>
                             <div className="h-1.5 sm:h-2 bg-muted rounded-full overflow-hidden">
                               <div
-                                style={{ width: `${mahasiswa.progress_percentage}%` }}
-                                className={`h-full bg-${bgColor} rounded-full`}
+                                style={{ 
+                                  width: `${mahasiswa.progress_percentage}%`,
+                                  backgroundColor: bgColor 
+                                }}
+                                className="h-full rounded-full"
                               />
                             </div>
                           </div>

@@ -39,7 +39,7 @@ export default function VerifikasiKegiatanDosenPA() {
     if (user?.id) {
       fetchAktivitas();
     }
-  }, [user]);
+  }, [user?.id]);
 
   const fetchAktivitas = async () => {
     try {

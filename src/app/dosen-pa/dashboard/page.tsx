@@ -16,7 +16,7 @@ export default function DosenPADashboardPage() {
     } else if (!isLoading && user && user.role !== 'dosen_pa') {
       router.push('/login');
     }
-  }, [user, isLoading, router]);
+  }, [user, isLoading]);
 
   // Show loading or redirect - let component handle its own loading
   if (isLoading || !user || user.role !== 'dosen_pa') {
