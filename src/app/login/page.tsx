@@ -17,12 +17,12 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated (for direct access to /login when logged in)
   useEffect(() => {
     if (!authLoading && user) {
-      console.log('🔄 Login page - User authenticated, redirecting...', { role: user.role, nama: user.nama });
+      console.log('🔄 Login page - User already authenticated, redirecting...', { role: user.role, nama: user.nama });
 
-      // User already logged in, redirect based on role
+      // User already logged in (accessing /login directly), redirect based on role
       let redirectPath = '/dashboard';
       if (user.role === 'admin' || user.role === 'staff') {
         redirectPath = '/admin';
@@ -38,14 +38,10 @@ export default function LoginPage() {
 
       console.log('🔄 Redirecting to:', redirectPath);
       
-      // Add a delay to ensure cookie propagates before navigation
-      // This is important for Vercel edge functions
-      setTimeout(() => {
-        // Add query parameter to bypass middleware check once
-        const url = new URL(redirectPath, window.location.origin);
-        url.searchParams.set('_auth', '1');
-        window.location.href = url.toString();
-      }, 200);
+      // Direct redirect - no delay needed since user is already authenticated
+      const url = new URL(redirectPath, window.location.origin);
+      url.searchParams.set('_auth', '1');
+      window.location.href = url.toString();
     }
   }, [user, authLoading, router]);
 
@@ -59,8 +55,28 @@ export default function LoginPage() {
       if (result.success && result.user) {
         toast.success('Login berhasil!');
         
-        // Keep loading state active, useEffect will handle redirect
-        // Don't set isLoading to false here - let the redirect happen
+        // Redirect immediately after successful login
+        let redirectPath = '/dashboard';
+        if (result.user.role === 'admin' || result.user.role === 'staff') {
+          redirectPath = '/admin';
+        } else if (result.user.role === 'dosen_pa') {
+          redirectPath = '/dosen-pa/dashboard';
+        } else if (result.user.role === 'waket3') {
+          redirectPath = '/waket3/dashboard';
+        } else if (result.user.role === 'musyrif') {
+          redirectPath = '/musyrif/dashboard';
+        } else if (result.user.role === 'mahasiswa') {
+          redirectPath = '/mahasiswa/dashboard';
+        }
+
+        console.log('✅ Login successful, redirecting to:', redirectPath);
+        
+        // Direct redirect without delay - token is already saved
+        const url = new URL(redirectPath, window.location.origin);
+        url.searchParams.set('_auth', '1');
+        window.location.href = url.toString();
+        
+        // Keep loading state active during redirect
       } else {
         toast.error(result.error || 'Login gagal');
         setIsLoading(false);
