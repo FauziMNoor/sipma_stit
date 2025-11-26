@@ -1,135 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase';
-import { verifyJWT } from '@/lib/auth';
 
 // Force dynamic rendering to prevent build-time data collection
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-
-/**
- * PUT /api/musyrif/verifikasi/[id]
- * Approve or reject pengajuan
- */
-export async function PUT(
+// GET - Fetch detail pengajuan
+export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    // Get token from cookie or Authorization header
-    let token = request.cookies.get('auth-token')?.value;
+    const { id } = await context.params;
 
-    if (!token) {
-      const authHeader = request.headers.get('authorization');
-      if (authHeader?.startsWith('Bearer ')) {
-        token = authHeader.substring(7);
-      }
-    }
-
-    if (!token) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized - No token' },
-        { status: 401 }
-      );
-    }
-
-    // Verify JWT and get user info
-    let payload;
-    try {
-      payload = verifyJWT(token);
-    } catch (error) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized - Invalid token' },
-        { status: 401 }
-      );
-    }
-
-    const userId = payload.userId;
-    const { id } = await params;
-    const body = await request.json();
-    const { action, notes } = body;
-
-    if (!action || !['approve', 'reject'].includes(action)) {
-      return NextResponse.json(
-        { success: false, error: 'Action harus approve atau reject' },
-        { status: 400 }
-      );
-    }
-
-    // Get pengajuan data
-    const { data: pengajuan, error: fetchError } = await supabaseAdmin
-      .from('poin_aktivitas')
-      .select('*')
-      .eq('id', id)
-      .single();
-
-    if (fetchError || !pengajuan) {
-      return NextResponse.json(
-        { success: false, error: 'Pengajuan tidak ditemukan' },
-        { status: 404 }
-      );
-    }
-
-    // NOTE: Musyrif can approve Adab from ALL mahasiswa (no musyrif_id check)
-
-    // Get kategori_utama from pengajuan
-    const { data: kategoriData, error: kategoriError } = await supabaseAdmin
-      .from('kategori_poin')
-      .select('kategori_utama')
-      .eq('id', pengajuan.kategori_id)
-      .single();
-
-    if (kategoriError || !kategoriData) {
-      return NextResponse.json(
-        { success: false, error: 'Kategori tidak ditemukan' },
-        { status: 404 }
-      );
-    }
-
-    const kategoriUtama = kategoriData.kategori_utama;
-
-    // ATURAN APPROVAL MUSYRIF:
-    // - Adab: Bisa approve/reject
-    // - Pelanggaran: TIDAK bisa approve, hanya bisa input (tetap pending untuk Waket3)
-    if (kategoriUtama === 'Pelanggaran') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Pelanggaran harus divalidasi oleh Wakil Ketua III. Musyrif hanya bisa menginput data pelanggaran.'
-        },
-        { status: 403 }
-      );
-    }
-
-    if (kategoriUtama !== 'Adab') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Musyrif hanya bisa memverifikasi kategori Adab'
-        },
-        { status: 403 }
-      );
-    }
-
-    // Update status (hanya untuk Adab)
-    const newStatus = action === 'approve' ? 'approved' : 'rejected';
     const { data, error } = await supabaseAdmin
       .from('poin_aktivitas')
-      .update({
-        status: newStatus,
-        verifikator_id: userId,
-        notes_verifikator: notes || null,
-        verified_at: new Date().toISOString(),
-      })
-      .eq('id', id)
       .select(`
         id,
+        mahasiswa_id,
+        kategori_id,
         tanggal,
-        status,
-        bukti,
         deskripsi_kegiatan,
+        bukti,
+        status,
         notes_verifikator,
         verified_at,
+        verifikator_id,
         created_at,
         mahasiswa:mahasiswa_id (
           id,
@@ -141,32 +37,154 @@ export async function PUT(
           id,
           kode,
           nama,
-          jenis,
           bobot,
+          jenis,
+          kategori_utama
+        ),
+        verifikator:verifikator_id (
+          nama
+        )
+      `)
+      .eq('id', id)
+      .single();
+
+    if (error || !data) {
+      console.error('Error fetching pengajuan:', error);
+      return NextResponse.json(
+        { success: false, error: 'Pengajuan tidak ditemukan' },
+        { status: 404 }
+      );
+    }
+
+    // Format response
+    const mahasiswa = Array.isArray(data.mahasiswa) ? data.mahasiswa[0] : data.mahasiswa;
+    const kategoriPoin = Array.isArray(data.kategori_poin) ? data.kategori_poin[0] : data.kategori_poin;
+    const verifikator = Array.isArray(data.verifikator) ? data.verifikator[0] : data.verifikator;
+
+    const formattedData = {
+      id: data.id,
+      mahasiswa_id: data.mahasiswa_id,
+      mahasiswa_nama: mahasiswa?.nama || '',
+      mahasiswa_nim: mahasiswa?.nim || '',
+      mahasiswa_foto: mahasiswa?.foto,
+      kategori_id: data.kategori_id,
+      kategori_nama: kategoriPoin?.nama || '',
+      kategori_poin: kategoriPoin?.bobot || 0,
+      kategori_jenis: kategoriPoin?.jenis || 'positif',
+      kategori_utama: kategoriPoin?.kategori_utama || '',
+      deskripsi_kegiatan: data.deskripsi_kegiatan,
+      tanggal: data.tanggal,
+      bukti: data.bukti,
+      status: data.status,
+      notes_verifikator: data.notes_verifikator,
+      verified_at: data.verified_at,
+      verifikator_nama: verifikator?.nama,
+      created_at: data.created_at,
+    };
+
+    return NextResponse.json({
+      success: true,
+      data: formattedData,
+    });
+  } catch (error) {
+    console.error('Error in musyrif verifikasi GET API:', error);
+    return NextResponse.json(
+      { success: false, error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+// PATCH - Update pengajuan (approve/reject)
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params;
+    const body = await request.json();
+    const { action, musyrif_id, notes } = body;
+
+    if (!action || !musyrif_id) {
+      return NextResponse.json(
+        { success: false, error: 'Missing required fields' },
+        { status: 400 }
+      );
+    }
+
+    if (action !== 'approve' && action !== 'reject') {
+      return NextResponse.json(
+        { success: false, error: 'Invalid action' },
+        { status: 400 }
+      );
+    }
+
+    // 1. Get pengajuan with kategori info
+    const { data: pengajuan, error: fetchError } = await supabaseAdmin
+      .from('poin_aktivitas')
+      .select(`
+        *,
+        kategori_poin:kategori_id (
           kategori_utama
         )
       `)
+      .eq('id', id)
+      .single();
+
+    if (fetchError || !pengajuan) {
+      return NextResponse.json(
+        { success: false, error: 'Pengajuan tidak ditemukan' },
+        { status: 404 }
+      );
+    }
+
+    // 2. Verify kategori is Adab (musyrif only handles Adab)
+    const kategoriUtama = pengajuan.kategori_poin?.kategori_utama;
+    if (kategoriUtama !== 'Adab') {
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'Musyrif hanya bisa memverifikasi kategori Adab'
+        },
+        { status: 403 }
+      );
+    }
+
+    // Update the pengajuan
+    const updateData: any = {
+      status: action === 'approve' ? 'approved' : 'rejected',
+      verifikator_id: musyrif_id,
+      verified_at: new Date().toISOString(),
+    };
+
+    if (notes) {
+      updateData.notes_verifikator = notes;
+    }
+
+    const { data, error } = await supabaseAdmin
+      .from('poin_aktivitas')
+      .update(updateData)
+      .eq('id', id)
+      .select()
       .single();
 
     if (error) {
-      console.error('❌ Error updating pengajuan:', error);
+      console.error('Error updating pengajuan:', error);
       return NextResponse.json(
-        { success: false, error: 'Gagal memperbarui status pengajuan' },
+        { success: false, error: 'Failed to update pengajuan' },
         { status: 500 }
       );
     }
 
     return NextResponse.json({
       success: true,
-      data,
-      message: `Pengajuan berhasil ${action === 'approve' ? 'disetujui' : 'ditolak'}`,
+      data: data,
     });
-  } catch (error: any) {
-    console.error('❌ Error in PUT /api/musyrif/verifikasi/[id]:', error);
+  } catch (error) {
+    console.error('Error in musyrif verifikasi PATCH API:', error);
     return NextResponse.json(
-      { success: false, error: 'Terjadi kesalahan server' },
+      { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
-

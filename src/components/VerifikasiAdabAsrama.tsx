@@ -387,7 +387,10 @@ export default function VerifikasiAdabAsrama() {
                         </button>
                       </div>
                     ) : (
-                      <button className="flex-1 py-2 px-3 rounded-xl bg-primary text-primary-foreground text-xs font-semibold w-full">
+                      <button
+                        onClick={() => router.push(`/musyrif/verifikasi/${item.id}`)}
+                        className="flex-1 py-2 px-3 rounded-xl bg-primary text-primary-foreground text-xs font-semibold w-full"
+                      >
                         Lihat Detail
                       </button>
                     )}
