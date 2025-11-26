@@ -26,7 +26,12 @@ export async function GET(request: NextRequest) {
 
     // Filter by role
     if (roleFilter && roleFilter !== 'all') {
-      query = query.eq('role', roleFilter);
+      // Special handling for 'dosen' filter - include dosen_pa and waket3
+      if (roleFilter === 'dosen') {
+        query = query.in('role', ['dosen', 'dosen_pa', 'waket3']);
+      } else {
+        query = query.eq('role', roleFilter);
+      }
     }
 
     // Search by name or email
@@ -44,17 +49,13 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Calculate counts
+    // Calculate counts - group dosen, dosen_pa, waket3 together
     const { data: allUsers } = await supabase.from('users').select('role');
     const counts = {
       all: allUsers?.length || 0,
       admin: allUsers?.filter((u: any) => u.role === 'admin').length || 0,
-      dosen: allUsers?.filter((u: any) => u.role === 'dosen').length || 0,
-      dosen_pa: allUsers?.filter((u: any) => u.role === 'dosen_pa').length || 0,
+      dosen: allUsers?.filter((u: any) => ['dosen', 'dosen_pa', 'waket3'].includes(u.role)).length || 0,
       musyrif: allUsers?.filter((u: any) => u.role === 'musyrif').length || 0,
-      waket3: allUsers?.filter((u: any) => u.role === 'waket3').length || 0,
-      staff: allUsers?.filter((u: any) => u.role === 'staff').length || 0,
-      mahasiswa: allUsers?.filter((u: any) => u.role === 'mahasiswa').length || 0,
     };
 
     return NextResponse.json({

@@ -22,12 +22,8 @@ interface User {
 interface Counts {
   all: number;
   admin: number;
-  dosen: number;
-  dosen_pa: number;
+  dosen: number; // includes dosen, dosen_pa, waket3
   musyrif: number;
-  waket3: number;
-  staff: number;
-  mahasiswa: number;
 }
 
 export default function KelolaPengguna() {
@@ -37,11 +33,7 @@ export default function KelolaPengguna() {
     all: 0,
     admin: 0,
     dosen: 0,
-    dosen_pa: 0,
     musyrif: 0,
-    waket3: 0,
-    staff: 0,
-    mahasiswa: 0
   });
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -204,6 +196,7 @@ export default function KelolaPengguna() {
           email: formData.email,
           nama: formData.nama,
           nip: formData.nip,
+          no_hp: formData.no_hp,
           role: formData.role,
           foto: photoUrl,
         }),
@@ -370,8 +363,10 @@ export default function KelolaPengguna() {
       case 'admin':
         return 'bg-destructive/10 text-destructive';
       case 'dosen':
-        return 'bg-primary/10 text-primary';
-      case 'staff':
+      case 'dosen_pa':
+      case 'waket3':
+        return 'bg-blue-500/10 text-blue-600';
+      case 'musyrif':
         return 'bg-green-600/10 text-green-700';
       default:
         return 'bg-muted text-muted-foreground';
@@ -500,7 +495,9 @@ export default function KelolaPengguna() {
             }`}
           >
             Admin
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-destructive/10 text-destructive text-xs">
+            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+              roleFilter === 'admin' ? 'bg-white/20' : 'bg-destructive/10 text-destructive'
+            }`}>
               {counts.admin}
             </span>
           </button>
@@ -513,21 +510,25 @@ export default function KelolaPengguna() {
             }`}
           >
             Dosen
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
+            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+              roleFilter === 'dosen' ? 'bg-white/20' : 'bg-blue-500/10 text-blue-600'
+            }`}>
               {counts.dosen}
             </span>
           </button>
           <button
-            onClick={() => setRoleFilter('staff')}
+            onClick={() => setRoleFilter('musyrif')}
             className={`px-5 py-2.5 rounded-xl font-semibold text-sm whitespace-nowrap transition-colors ${
-              roleFilter === 'staff'
+              roleFilter === 'musyrif'
                 ? 'bg-primary text-primary-foreground'
                 : 'bg-muted text-muted-foreground'
             }`}
           >
-            Staff
-            <span className="ml-2 px-2 py-0.5 rounded-full bg-green-600/10 text-green-700 text-xs">
-              {counts.staff}
+            Musyrif
+            <span className={`ml-2 px-2 py-0.5 rounded-full text-xs ${
+              roleFilter === 'musyrif' ? 'bg-white/20' : 'bg-green-600/10 text-green-700'
+            }`}>
+              {counts.musyrif}
             </span>
           </button>
         </div>

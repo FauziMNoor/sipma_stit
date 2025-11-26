@@ -47,10 +47,24 @@ const [showImportModal, setShowImportModal] = useState(false);
 const [importFile, setImportFile] = useState<File | null>(null);
 const [uploading, setUploading] = useState(false);
 const [isSubmitting, setIsSubmitting] = useState(false);
+const [prodiList, setProdiList] = useState<any[]>([]);
 
 useEffect(() => {
 fetchMahasiswa();
+fetchProdiList();
 }, []);
+
+const fetchProdiList = async () => {
+try {
+  const response = await fetch('/api/master-prodi?active_only=true');
+  const result = await response.json();
+  if (result.success) {
+    setProdiList(result.data);
+  }
+} catch (error) {
+  console.error('Error fetching prodi:', error);
+}
+};
 
 const fetchMahasiswa = async () => {
 try {
@@ -453,7 +467,24 @@ filteredMahasiswa.map((mahasiswa) => (
 </div>
 <div>
 <label className="block text-sm font-medium mb-2">Program Studi</label>
-<input type="text" value={formData.prodi} onChange={(e) => setFormData({ ...formData, prodi: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" placeholder="Masukkan prodi" />
+<select
+  value={formData.prodi}
+  onChange={(e) => setFormData({ ...formData, prodi: e.target.value })}
+  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+  required
+>
+  <option value="">Pilih Program Studi</option>
+  {prodiList.map((prodi) => (
+    <option key={prodi.id} value={prodi.nama_prodi}>
+      {prodi.nama_prodi}
+    </option>
+  ))}
+</select>
+{prodiList.length === 0 && (
+  <p className="text-xs text-red-500 mt-1">
+    Belum ada prodi. Tambahkan di Pengaturan Sistem &gt; Kelola Program Studi
+  </p>
+)}
 </div>
 <div className="grid grid-cols-2 gap-4">
 <div>
@@ -534,7 +565,19 @@ filteredMahasiswa.map((mahasiswa) => (
 </div>
 <div>
 <label className="block text-sm font-medium mb-2">Program Studi</label>
-<input type="text" value={formData.prodi} onChange={(e) => setFormData({ ...formData, prodi: e.target.value })} className="w-full px-4 py-2 rounded-xl border border-border bg-input" />
+<select
+  value={formData.prodi}
+  onChange={(e) => setFormData({ ...formData, prodi: e.target.value })}
+  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+  required
+>
+  <option value="">Pilih Program Studi</option>
+  {prodiList.map((prodi) => (
+    <option key={prodi.id} value={prodi.nama_prodi}>
+      {prodi.nama_prodi}
+    </option>
+  ))}
+</select>
 </div>
 <div className="grid grid-cols-2 gap-4">
 <div>

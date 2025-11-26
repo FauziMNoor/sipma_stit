@@ -5,18 +5,24 @@ import { supabaseAdmin } from '@/lib/supabase';
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
-
-// GET - Fetch rekap poin mahasiswa
+/**
+ * GET /api/musyrif/rekap-poin/[id]
+ * Fetch rekap poin for all mahasiswa (Musyrif can see all mahasiswa)
+ */
 export async function GET(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: dosenId } = await context.params;
+    const { id: musyrifId } = await context.params;
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || '';
 
+    console.log('🔍 [MUSYRIF REKAP POIN] Musyrif ID:', musyrifId);
+    console.log('🔍 Search query:', search || 'none');
+
     // 1. Fetch all active mahasiswa
+    // Note: Musyrif can see all mahasiswa (no musyrif_id filter)
     let query = supabaseAdmin
       .from('mahasiswa')
       .select('id, nim, nama, foto, is_active')
@@ -31,37 +37,18 @@ export async function GET(
     const { data: mahasiswaList, error: mahasiswaError } = await query;
 
     if (mahasiswaError) {
-      console.error('Error fetching mahasiswa:', mahasiswaError);
+      console.error('❌ Error fetching mahasiswa:', mahasiswaError);
       return NextResponse.json(
         { success: false, error: 'Failed to fetch mahasiswa' },
         { status: 500 }
       );
     }
 
-    // 2. For each mahasiswa, calculate stats (like waket3/rekapitulasi)
+    console.log('👥 Total mahasiswa fetched:', mahasiswaList?.length || 0);
+
+    // 2. For each mahasiswa, calculate total poin from approved activities
     const mahasiswaWithPoin = await Promise.all(
       (mahasiswaList || []).map(async (mhs) => {
-        // Count approved
-        const { count: approved } = await supabaseAdmin
-          .from('poin_aktivitas')
-          .select('*', { count: 'exact', head: true })
-          .eq('mahasiswa_id', mhs.id)
-          .eq('status', 'approved');
-
-        // Count pending
-        const { count: pending } = await supabaseAdmin
-          .from('poin_aktivitas')
-          .select('*', { count: 'exact', head: true })
-          .eq('mahasiswa_id', mhs.id)
-          .eq('status', 'pending');
-
-        // Count rejected
-        const { count: rejected } = await supabaseAdmin
-          .from('poin_aktivitas')
-          .select('*', { count: 'exact', head: true })
-          .eq('mahasiswa_id', mhs.id)
-          .eq('status', 'rejected');
-
         // Get all approved aktivitas with kategori details
         const { data: aktivitas } = await supabaseAdmin
           .from('poin_aktivitas')
@@ -95,14 +82,12 @@ export async function GET(
         }
 
         return {
-          mahasiswa_id: mhs.id,
-          mahasiswa_nama: mhs.nama,
-          mahasiswa_nim: mhs.nim,
-          mahasiswa_foto: mhs.foto,
+          id: mhs.id,
+          nim: mhs.nim,
+          nama: mhs.nama,
+          foto: mhs.foto,
+          is_active: mhs.is_active,
           total_poin: totalPoin,
-          total_approved: approved || 0,
-          total_pending: pending || 0,
-          total_rejected: rejected || 0,
         };
       })
     );
@@ -110,16 +95,18 @@ export async function GET(
     // Sort by total poin descending
     mahasiswaWithPoin.sort((a, b) => b.total_poin - a.total_poin);
 
+    console.log('✅ Rekap poin calculated for', mahasiswaWithPoin.length, 'mahasiswa');
+    console.log('📊 Top 3 mahasiswa:', mahasiswaWithPoin.slice(0, 3).map(m => ({ nama: m.nama, poin: m.total_poin })));
+
     return NextResponse.json({
       success: true,
       data: mahasiswaWithPoin,
     });
   } catch (error) {
-    console.error('Error in rekap-poin API:', error);
+    console.error('❌ Error in musyrif rekap-poin API:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
-

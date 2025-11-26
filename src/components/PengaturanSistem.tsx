@@ -67,6 +67,19 @@ export function PengaturanSistem() {
   const [campusAddress, setCampusAddress] = useState('');
   const [campusOperationalHours, setCampusOperationalHours] = useState('');
 
+  // Prodi management
+  const [showProdiModal, setShowProdiModal] = useState(false);
+  const [showAddProdiModal, setShowAddProdiModal] = useState(false);
+  const [showEditProdiModal, setShowEditProdiModal] = useState(false);
+  const [prodiList, setProdiList] = useState<any[]>([]);
+  const [loadingProdi, setLoadingProdi] = useState(false);
+  const [selectedProdi, setSelectedProdi] = useState<any>(null);
+  const [prodiForm, setProdiForm] = useState({
+    kode_prodi: '',
+    nama_prodi: '',
+    is_active: true,
+  });
+
   useEffect(() => {
     fetchSettings();
   }, []);
@@ -316,6 +329,134 @@ export function PengaturanSistem() {
     return roleNames[role] || role;
   };
 
+  // Prodi management functions
+  const fetchProdiList = async () => {
+    try {
+      setLoadingProdi(true);
+      const response = await fetch('/api/master-prodi');
+      const result = await response.json();
+
+      if (result.success) {
+        setProdiList(result.data);
+      } else {
+        alert(result.error || 'Gagal memuat data prodi');
+      }
+    } catch (error) {
+      console.error('Error fetching prodi:', error);
+      alert('Terjadi kesalahan saat memuat data prodi');
+    } finally {
+      setLoadingProdi(false);
+    }
+  };
+
+  const handleOpenProdiModal = () => {
+    setShowProdiModal(true);
+    fetchProdiList();
+  };
+
+  const handleAddProdi = async () => {
+    if (!prodiForm.kode_prodi || !prodiForm.nama_prodi) {
+      alert('Kode prodi dan nama prodi wajib diisi');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/master-prodi', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(prodiForm),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Prodi berhasil ditambahkan!');
+        setShowAddProdiModal(false);
+        setProdiForm({ kode_prodi: '', nama_prodi: '', is_active: true });
+        fetchProdiList();
+      } else {
+        alert(result.error || 'Gagal menambahkan prodi');
+      }
+    } catch (error) {
+      console.error('Error adding prodi:', error);
+      alert('Terjadi kesalahan saat menambahkan prodi');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleEditProdi = (prodi: any) => {
+    setSelectedProdi(prodi);
+    setProdiForm({
+      kode_prodi: prodi.kode_prodi,
+      nama_prodi: prodi.nama_prodi,
+      is_active: prodi.is_active,
+    });
+    setShowEditProdiModal(true);
+  };
+
+  const handleUpdateProdi = async () => {
+    if (!selectedProdi || !prodiForm.kode_prodi || !prodiForm.nama_prodi) {
+      alert('Kode prodi dan nama prodi wajib diisi');
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch('/api/master-prodi', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: selectedProdi.id,
+          ...prodiForm,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Prodi berhasil diupdate!');
+        setShowEditProdiModal(false);
+        setSelectedProdi(null);
+        setProdiForm({ kode_prodi: '', nama_prodi: '', is_active: true });
+        fetchProdiList();
+      } else {
+        alert(result.error || 'Gagal mengupdate prodi');
+      }
+    } catch (error) {
+      console.error('Error updating prodi:', error);
+      alert('Terjadi kesalahan saat mengupdate prodi');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteProdi = async (prodiId: string) => {
+    if (!confirm('Apakah Anda yakin ingin menonaktifkan prodi ini?')) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await fetch(`/api/master-prodi?id=${prodiId}`, {
+        method: 'DELETE',
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        alert('Prodi berhasil dinonaktifkan!');
+        fetchProdiList();
+      } else {
+        alert(result.error || 'Gagal menonaktifkan prodi');
+      }
+    } catch (error) {
+      console.error('Error deleting prodi:', error);
+      alert('Terjadi kesalahan saat menonaktifkan prodi');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
@@ -433,6 +574,33 @@ export function PengaturanSistem() {
                     Edit Informasi Kampus
                   </button>
                 </div>
+              </div>
+            </div>
+          </div>
+          </div>
+
+          {/* Kelola Program Studi */}
+          <div className="bg-card rounded-2xl p-5 shadow-sm border border-border">
+          <div className="flex items-start gap-4">
+            <div className="flex items-center justify-center size-12 rounded-xl bg-purple-500/10 shrink-0">
+              <Icon icon="solar:document-text-bold" className="size-6 text-purple-600" />
+            </div>
+            <div className="flex-1 space-y-3">
+              <div>
+                <h3 className="text-base font-bold text-foreground font-heading">
+                  Kelola Program Studi
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Kelola master data program studi untuk mahasiswa
+                </p>
+              </div>
+              <div className="flex items-center justify-center pt-2">
+                <button
+                  onClick={handleOpenProdiModal}
+                  className="px-4 py-2 text-sm font-semibold text-white bg-primary rounded-xl hover:bg-primary/90 transition-colors"
+                >
+                  Kelola Program Studi
+                </button>
               </div>
             </div>
           </div>
@@ -1066,6 +1234,208 @@ export function PengaturanSistem() {
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Kelola Prodi */}
+      {showProdiModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-2xl max-h-[80vh] flex flex-col">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold">Kelola Program Studi</h2>
+              <button
+                onClick={() => setShowProdiModal(false)}
+                className="flex items-center justify-center size-9 rounded-lg bg-muted hover:bg-muted/80 transition-colors"
+              >
+                <Icon icon="solar:close-circle-bold" className="size-5 text-foreground" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <button
+                onClick={() => setShowAddProdiModal(true)}
+                className="w-full px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold flex items-center justify-center gap-2"
+              >
+                <Icon icon="solar:add-circle-bold" className="size-5" />
+                Tambah Program Studi
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3">
+              {loadingProdi ? (
+                <div className="text-center py-8">
+                  <Icon icon="solar:loading-bold" className="size-8 text-primary animate-spin mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">Memuat data...</p>
+                </div>
+              ) : prodiList.length === 0 ? (
+                <div className="text-center py-8">
+                  <Icon icon="solar:document-text-bold" className="size-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">Belum ada program studi</p>
+                </div>
+              ) : (
+                prodiList.map((prodi) => (
+                  <div key={prodi.id} className="bg-muted rounded-xl p-4 flex items-center justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="font-semibold text-foreground">{prodi.nama_prodi}</p>
+                        <span className={`text-xs px-2 py-0.5 rounded-full ${prodi.is_active ? 'bg-green-500/20 text-green-600' : 'bg-red-500/20 text-red-600'}`}>
+                          {prodi.is_active ? 'Aktif' : 'Nonaktif'}
+                        </span>
+                      </div>
+                      <p className="text-sm text-muted-foreground">Kode: {prodi.kode_prodi}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEditProdi(prodi)}
+                        className="flex items-center justify-center size-9 rounded-lg bg-primary/10 hover:bg-primary/20 transition-colors"
+                      >
+                        <Icon icon="solar:pen-bold" className="size-5 text-primary" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteProdi(prodi.id)}
+                        disabled={isSubmitting || !prodi.is_active}
+                        className="flex items-center justify-center size-9 rounded-lg bg-red-500/20 hover:bg-red-500/30 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Icon icon="solar:trash-bin-trash-bold" className="size-5 text-red-600" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Tambah Prodi */}
+      {showAddProdiModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Tambah Program Studi</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Kode Prodi</label>
+                <input
+                  type="text"
+                  value={prodiForm.kode_prodi}
+                  onChange={(e) => setProdiForm({ ...prodiForm, kode_prodi: e.target.value.toUpperCase() })}
+                  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+                  placeholder="PAI, ES, HKI"
+                  maxLength={10}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Gunakan singkatan, maks 10 karakter</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Nama Program Studi</label>
+                <input
+                  type="text"
+                  value={prodiForm.nama_prodi}
+                  onChange={(e) => setProdiForm({ ...prodiForm, nama_prodi: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+                  placeholder="Pendidikan Agama Islam"
+                />
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowAddProdiModal(false);
+                    setProdiForm({ kode_prodi: '', nama_prodi: '', is_active: true });
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-3 rounded-xl border-2 border-border bg-background hover:bg-muted transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleAddProdi}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Icon icon="svg-spinners:ring-resize" className="size-5" />
+                      <span>Menambahkan...</span>
+                    </>
+                  ) : (
+                    'Tambah'
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Edit Prodi */}
+      {showEditProdiModal && selectedProdi && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-60 p-4">
+          <div className="bg-card rounded-2xl p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Edit Program Studi</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">Kode Prodi</label>
+                <input
+                  type="text"
+                  value={prodiForm.kode_prodi}
+                  onChange={(e) => setProdiForm({ ...prodiForm, kode_prodi: e.target.value.toUpperCase() })}
+                  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+                  placeholder="PAI, ES, HKI"
+                  maxLength={10}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Nama Program Studi</label>
+                <input
+                  type="text"
+                  value={prodiForm.nama_prodi}
+                  onChange={(e) => setProdiForm({ ...prodiForm, nama_prodi: e.target.value })}
+                  className="w-full px-4 py-2 rounded-xl border border-border bg-input"
+                  placeholder="Pendidikan Agama Islam"
+                />
+              </div>
+              <div className="flex items-center justify-between py-3 px-4 bg-muted rounded-xl">
+                <div>
+                  <p className="text-sm font-medium">Status Aktif</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Prodi nonaktif tidak akan muncul di form
+                  </p>
+                </div>
+                <button
+                  onClick={() => setProdiForm({ ...prodiForm, is_active: !prodiForm.is_active })}
+                  className={`w-12 h-6 rounded-full flex items-center px-1 transition-colors ${prodiForm.is_active ? 'bg-primary' : 'bg-border'}`}
+                >
+                  <div className={`size-5 bg-white rounded-full transition-transform ${prodiForm.is_active ? 'ml-auto' : ''}`} />
+                </button>
+              </div>
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => {
+                    setShowEditProdiModal(false);
+                    setSelectedProdi(null);
+                    setProdiForm({ kode_prodi: '', nama_prodi: '', is_active: true });
+                  }}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-3 rounded-xl border-2 border-border bg-background hover:bg-muted transition-colors font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleUpdateProdi}
+                  disabled={isSubmitting}
+                  className="flex-1 px-4 py-3 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-colors font-semibold shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Icon icon="svg-spinners:ring-resize" className="size-5" />
+                      <span>Menyimpan...</span>
+                    </>
+                  ) : (
+                    'Simpan'
+                  )}
                 </button>
               </div>
             </div>

@@ -6,29 +6,14 @@ export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
 
 
-// GET - Fetch rekap poin mahasiswa
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest) {
   try {
-    const { id: dosenId } = await context.params;
-    const { searchParams } = new URL(request.url);
-    const search = searchParams.get('search') || '';
-
-    // 1. Fetch all active mahasiswa
-    let query = supabaseAdmin
+    // Fetch all mahasiswa
+    const { data: mahasiswaList, error: mahasiswaError } = await supabaseAdmin
       .from('mahasiswa')
-      .select('id, nim, nama, foto, is_active')
+      .select('id, nama, nim, prodi, foto')
       .eq('is_active', true)
       .order('nama', { ascending: true });
-
-    // Apply search filter if provided
-    if (search) {
-      query = query.or(`nama.ilike.%${search}%,nim.ilike.%${search}%`);
-    }
-
-    const { data: mahasiswaList, error: mahasiswaError } = await query;
 
     if (mahasiswaError) {
       console.error('Error fetching mahasiswa:', mahasiswaError);
@@ -38,8 +23,8 @@ export async function GET(
       );
     }
 
-    // 2. For each mahasiswa, calculate stats (like waket3/rekapitulasi)
-    const mahasiswaWithPoin = await Promise.all(
+    // For each mahasiswa, calculate stats
+    const rekapitulasi = await Promise.all(
       (mahasiswaList || []).map(async (mhs) => {
         // Count approved
         const { count: approved } = await supabaseAdmin
@@ -62,12 +47,11 @@ export async function GET(
           .eq('mahasiswa_id', mhs.id)
           .eq('status', 'rejected');
 
-        // Get all approved aktivitas with kategori details
-        const { data: aktivitas } = await supabaseAdmin
+        // Calculate total poin from approved activities
+        const { data: approvedActivities } = await supabaseAdmin
           .from('poin_aktivitas')
           .select(`
-            id,
-            kategori:kategori_id (
+            kategori_poin:kategori_id (
               bobot,
               jenis
             )
@@ -75,29 +59,24 @@ export async function GET(
           .eq('mahasiswa_id', mhs.id)
           .eq('status', 'approved');
 
-        // Calculate total poin
+        // Calculate total poin (consider positif/negatif)
         let totalPoin = 0;
-        if (aktivitas && aktivitas.length > 0) {
-          aktivitas.forEach((akt: any) => {
-            const kategori = akt.kategori;
-            if (kategori) {
-              const bobot = kategori.bobot || 0;
-              const jenis = kategori.jenis;
-              
-              // Add or subtract based on jenis
-              if (jenis === 'positif') {
-                totalPoin += bobot;
-              } else if (jenis === 'negatif') {
-                totalPoin -= bobot;
-              }
-            }
-          });
-        }
+        (approvedActivities || []).forEach((item: any) => {
+          const bobot = item.kategori_poin?.bobot || 0;
+          const jenis = item.kategori_poin?.jenis || 'positif';
+          
+          if (jenis === 'positif') {
+            totalPoin += bobot;
+          } else if (jenis === 'negatif') {
+            totalPoin -= bobot;
+          }
+        });
 
         return {
           mahasiswa_id: mhs.id,
           mahasiswa_nama: mhs.nama,
           mahasiswa_nim: mhs.nim,
+          mahasiswa_prodi: mhs.prodi,
           mahasiswa_foto: mhs.foto,
           total_poin: totalPoin,
           total_approved: approved || 0,
@@ -107,19 +86,18 @@ export async function GET(
       })
     );
 
-    // Sort by total poin descending
-    mahasiswaWithPoin.sort((a, b) => b.total_poin - a.total_poin);
+    // Sort by total_poin descending
+    rekapitulasi.sort((a, b) => b.total_poin - a.total_poin);
 
     return NextResponse.json({
       success: true,
-      data: mahasiswaWithPoin,
+      data: rekapitulasi,
     });
   } catch (error) {
-    console.error('Error in rekap-poin API:', error);
+    console.error('Error in musyrif rekapitulasi API:', error);
     return NextResponse.json(
       { success: false, error: 'Internal server error' },
       { status: 500 }
     );
   }
 }
-

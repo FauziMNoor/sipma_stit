@@ -32,11 +32,25 @@ export default function LaporanStatistik() {
   const [semester, setSemester] = useState('all');
   const [prodi, setProdi] = useState('all');
   const [tahunAjaranAktif, setTahunAjaranAktif] = useState('');
+  const [prodiList, setProdiList] = useState<any[]>([]);
 
   // Fetch tahun ajaran aktif on mount
   useEffect(() => {
     fetchTahunAjaranAktif();
+    fetchProdiList();
   }, []);
+
+  const fetchProdiList = async () => {
+    try {
+      const response = await fetch('/api/master-prodi?active_only=true');
+      const result = await response.json();
+      if (result.success) {
+        setProdiList(result.data);
+      }
+    } catch (error) {
+      console.error('Error fetching prodi:', error);
+    }
+  };
 
   // Fetch stats when filters change (but only after tahun ajaran is loaded)
   useEffect(() => {
@@ -306,9 +320,11 @@ export default function LaporanStatistik() {
                   className="w-full px-4 py-3 rounded-xl border border-border bg-input text-foreground text-sm"
                 >
                   <option value="all">Semua Prodi</option>
-                  <option value="Pendidikan Agama Islam">Pendidikan Agama Islam</option>
-                  <option value="Ekonomi Syariah">Ekonomi Syariah</option>
-                  <option value="Hukum Keluarga Islam">Hukum Keluarga Islam</option>
+                  {prodiList.map((p) => (
+                    <option key={p.id} value={p.nama_prodi}>
+                      {p.nama_prodi}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>

@@ -71,8 +71,74 @@ export default function ProfilMahasiswa() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-background">
-        <Icon icon="solar:loading-bold" className="size-8 text-primary animate-spin" />
+      <div className="flex flex-col h-screen bg-background">
+        <div className="flex-1 overflow-y-auto pb-24">
+          {/* Profile Header Skeleton */}
+          <div className="bg-card px-6 pt-8 pb-6 border-b border-border">
+            <div className="max-w-3xl mx-auto flex flex-col items-center text-center space-y-4">
+              <div className="size-28 rounded-full bg-muted animate-pulse" />
+              <div className="space-y-2 w-full">
+                <div className="h-6 bg-muted rounded-lg w-48 mx-auto animate-pulse" />
+                <div className="h-4 bg-muted rounded w-32 mx-auto animate-pulse" />
+              </div>
+              <div className="h-8 bg-muted rounded-full w-40 animate-pulse" />
+            </div>
+          </div>
+
+          {/* Total Poin Card Skeleton */}
+          <div className="px-6 py-6 space-y-6">
+            <div className="max-w-3xl mx-auto space-y-6">
+              <div className="rounded-3xl p-6 shadow-lg bg-muted animate-pulse">
+                <div className="text-center space-y-3">
+                  <div className="h-4 bg-background/50 rounded w-32 mx-auto" />
+                  <div className="h-12 bg-background/50 rounded w-24 mx-auto" />
+                  <div className="h-3 bg-background/50 rounded w-16 mx-auto" />
+                </div>
+              </div>
+
+              {/* Menu Items Skeleton */}
+              <div className="space-y-3">
+                {[1, 2].map((i) => (
+                  <div key={i} className="bg-card rounded-2xl p-4 border border-border flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="size-12 rounded-xl bg-muted animate-pulse" />
+                      <div className="h-5 bg-muted rounded w-32 animate-pulse" />
+                    </div>
+                    <div className="size-5 rounded bg-muted animate-pulse" />
+                  </div>
+                ))}
+
+                {/* Poin per Kategori Skeleton */}
+                <div className="bg-card rounded-2xl p-4 border border-border">
+                  <div className="flex items-center gap-4 mb-4">
+                    <div className="size-12 rounded-xl bg-muted animate-pulse" />
+                    <div className="h-5 bg-muted rounded w-40 animate-pulse" />
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <div key={i} className="flex flex-col items-center space-y-2 p-2">
+                        <div className="size-12 rounded-xl bg-muted animate-pulse" />
+                        <div className="h-3 bg-muted rounded w-16 animate-pulse" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Navigation */}
+        <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border">
+          <div className="max-w-3xl mx-auto flex items-center justify-around py-3 px-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="flex flex-col items-center gap-1.5 flex-1">
+                <div className="size-6 rounded bg-muted animate-pulse" />
+                <div className="h-3 bg-muted rounded w-12 animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

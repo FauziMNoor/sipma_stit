@@ -5,43 +5,29 @@ import { Icon } from '@iconify/react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 
-interface MahasiswaWithPoin {
-  id: string;
-  nim: string;
-  nama: string;
-  foto: string | null;
-  is_active: boolean;
+interface MahasiswaStats {
+  mahasiswa_id: string;
+  mahasiswa_nama: string;
+  mahasiswa_nim: string;
+  mahasiswa_foto: string | null;
   total_poin: number;
+  total_approved: number;
+  total_pending: number;
+  total_rejected: number;
 }
 
 export default function RekapPoinDosenPA() {
   const router = useRouter();
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
-  const [mahasiswaList, setMahasiswaList] = useState<MahasiswaWithPoin[]>([]);
+  const [mahasiswaList, setMahasiswaList] = useState<MahasiswaStats[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [filteredMahasiswa, setFilteredMahasiswa] = useState<MahasiswaWithPoin[]>([]);
 
   useEffect(() => {
     if (user?.id) {
       fetchRekapPoin();
     }
   }, [user]);
-
-  useEffect(() => {
-    // Filter mahasiswa based on search query
-    if (searchQuery.trim() === '') {
-      setFilteredMahasiswa(mahasiswaList);
-    } else {
-      const query = searchQuery.toLowerCase();
-      const filtered = mahasiswaList.filter(
-        (mhs) =>
-          mhs.nama.toLowerCase().includes(query) ||
-          mhs.nim.toLowerCase().includes(query)
-      );
-      setFilteredMahasiswa(filtered);
-    }
-  }, [searchQuery, mahasiswaList]);
 
   const fetchRekapPoin = async () => {
     try {
@@ -56,7 +42,6 @@ export default function RekapPoinDosenPA() {
       if (response.ok) {
         const result = await response.json();
         setMahasiswaList(result.data || []);
-        setFilteredMahasiswa(result.data || []);
       }
     } catch (error) {
       console.error('Error fetching rekap poin:', error);
@@ -64,6 +49,16 @@ export default function RekapPoinDosenPA() {
       setIsLoading(false);
     }
   };
+
+  // Filter mahasiswa based on search query
+  const filteredList = mahasiswaList.filter((item) => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      item.mahasiswa_nama.toLowerCase().includes(query) ||
+      item.mahasiswa_nim.toLowerCase().includes(query)
+    );
+  });
 
   if (isLoading) {
     return (
@@ -122,34 +117,48 @@ export default function RekapPoinDosenPA() {
       </div>
 
       {/* Mahasiswa List */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
-        <div className="max-w-2xl mx-auto space-y-3">
-          {filteredMahasiswa.length === 0 ? (
-            <div className="text-center py-12">
-              <Icon icon="solar:user-cross-rounded-bold" className="size-16 text-muted-foreground mx-auto mb-4" />
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
+        <div className="max-w-3xl mx-auto space-y-4">
+          {filteredList.length === 0 ? (
+            <div className="bg-card rounded-2xl p-8 text-center">
+              <Icon icon="solar:inbox-line-bold" className="size-12 text-muted-foreground mx-auto mb-3" />
               <p className="text-sm text-muted-foreground">
-                {searchQuery ? 'Tidak ada mahasiswa yang ditemukan' : 'Belum ada data mahasiswa'}
+                {searchQuery ? 'Tidak ada hasil pencarian' : 'Tidak ada data'}
               </p>
             </div>
           ) : (
-            filteredMahasiswa.map((mhs, index) => (
-              <div key={mhs.id} className="bg-card rounded-xl p-4 border border-border shadow-sm">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="relative">
-                    <img
-                      src={mhs.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(mhs.nama)}`}
-                      alt={mhs.nama}
-                      className="size-14 rounded-xl border-2 border-border object-cover"
-                    />
-                  </div>
+            filteredList.map((item) => (
+              <div
+                key={item.mahasiswa_id}
+                className="bg-card rounded-2xl p-4 shadow-sm border border-border"
+              >
+                <div className="flex gap-3 mb-3">
+                  <img
+                    alt="Mahasiswa"
+                    src={item.mahasiswa_foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(item.mahasiswa_nama)}
+                    className="size-12 rounded-full border-2 border-primary object-cover"
+                  />
                   <div className="flex-1">
-                    <p className="text-sm font-bold text-foreground">{mhs.nama}</p>
-                    <p className="text-xs text-muted-foreground">{mhs.nim}</p>
+                    <p className="text-sm font-bold text-foreground">{item.mahasiswa_nama}</p>
+                    <p className="text-xs text-muted-foreground">{item.mahasiswa_nim}</p>
                   </div>
-                  <div className="flex flex-col items-end gap-1">
-                    <span className="px-3 py-1 rounded-lg bg-blue-500/10 text-blue-600 text-xs font-bold">
-                      {mhs.total_poin} Poin
-                    </span>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-primary">{item.total_poin}</p>
+                    <p className="text-xs text-muted-foreground">Total Poin</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-2 pt-3 border-t border-border">
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-green-600">{item.total_approved}</p>
+                    <p className="text-xs text-muted-foreground">Disetujui</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-accent-foreground">{item.total_pending}</p>
+                    <p className="text-xs text-muted-foreground">Pending</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-destructive">{item.total_rejected}</p>
+                    <p className="text-xs text-muted-foreground">Ditolak</p>
                   </div>
                 </div>
               </div>

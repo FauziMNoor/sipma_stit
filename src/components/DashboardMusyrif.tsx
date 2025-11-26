@@ -135,7 +135,7 @@ export default function DashboardMusyrif() {
               />
               <div>
                 <p className="text-sm sm:text-base font-bold text-white">{data.musyrif.nama}</p>
-                <p className="text-[10px] sm:text-xs text-white/80">Musyrif / LPM Asrama</p>
+                <p className="text-[10px] sm:text-xs text-white/80">Musyrif</p>
               </div>
             </div>
             <div className="relative">
@@ -240,16 +240,16 @@ export default function DashboardMusyrif() {
               </div>
             </button>
             <button
-              onClick={() => router.push('/musyrif/kegiatan-asrama')}
+              onClick={() => router.push('/musyrif/rekapitulasi-poin')}
               className="bg-linear-to-br from-primary to-secondary rounded-3xl p-6 shadow-lg hover:shadow-xl transition-shadow"
             >
               <div className="flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center justify-center size-16 rounded-2xl bg-white/30">
-                  <Icon icon="solar:buildings-2-bold" className="size-8 text-white" />
+                  <Icon icon="solar:chart-bold" className="size-8 text-white" />
                 </div>
                 <div>
-                  <p className="text-base font-bold text-white">Kegiatan Asrama</p>
-                  <p className="text-xs text-white/80">Verifikasi kegiatan</p>
+                  <p className="text-base font-bold text-white">Rekapitulasi Poin</p>
+                  <p className="text-xs text-white/80">Lihat rekap poin mahasiswa</p>
                 </div>
               </div>
             </button>
