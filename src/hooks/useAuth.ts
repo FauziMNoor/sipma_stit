@@ -67,10 +67,12 @@ export function useAuth() {
         throw new Error(data.error?.message || 'Login gagal');
       }
 
-      // Store token in localStorage as fallback (for Next.js 16 Turbopack bug)
+      // Store token in localStorage and sync with cookie for Vercel Edge Runtime
       if (data.token) {
         localStorage.setItem('auth-token', data.token);
-        console.log('✅ Token saved to localStorage:', { tokenLength: data.token.length });
+        // Also set cookie from client-side for better persistence across Edge/Node runtimes
+        document.cookie = `auth-token=${data.token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax${process.env.NODE_ENV === 'production' ? '; Secure' : ''}`;
+        console.log('✅ Token saved to localStorage and cookie:', { tokenLength: data.token.length });
       }
 
       setUser(data.user);
@@ -83,10 +85,19 @@ export function useAuth() {
   const handleLogout = async () => {
     try {
       await fetch('/api/auth/logout', { method: 'POST' });
+      // Clear localStorage
+      localStorage.removeItem('auth-token');
+      // Clear cookie from client-side
+      document.cookie = 'auth-token=; path=/; max-age=0';
       logout();
       window.location.href = '/login';
     } catch (error) {
       console.error('Logout error:', error);
+      // Clear local state even if API call fails
+      localStorage.removeItem('auth-token');
+      document.cookie = 'auth-token=; path=/; max-age=0';
+      logout();
+      window.location.href = '/login';
     }
   };
 

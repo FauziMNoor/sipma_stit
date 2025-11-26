@@ -166,9 +166,11 @@ export async function POST(request: NextRequest) {
     });
 
     // Set cookie using NextResponse.cookies API (more reliable in production)
+    // Note: httpOnly is disabled to allow localStorage sync due to Vercel Edge Runtime limitations
+    // The cookie needs to be accessible by client-side JS to work reliably across Edge/Node runtimes
     const maxAge = 60 * 60 * 24 * 7; // 7 days
     response.cookies.set('auth-token', token, {
-      httpOnly: true,
+      httpOnly: false, // Disabled for Vercel Edge Runtime compatibility
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax',
       maxAge: maxAge,

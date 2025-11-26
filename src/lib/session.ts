@@ -3,7 +3,7 @@ import { verifyJWT, type JWTPayload } from './auth';
 
 const COOKIE_NAME = 'auth-token';
 const COOKIE_OPTIONS = {
-  httpOnly: true,
+  httpOnly: false, // Disabled for Vercel Edge Runtime compatibility
   secure: process.env.NODE_ENV === 'production',
   sameSite: 'lax' as const,
   maxAge: 60 * 60 * 24 * 7, // 7 days

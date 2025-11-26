@@ -47,20 +47,19 @@ export async function middleware(request: NextRequest) {
     // Check if this is a post-login navigation (has _auth query param)
     const authBypass = searchParams.get('_auth');
     if (authBypass === '1') {
-      console.log('🔄 Middleware: Post-login navigation detected, bypassing auth check');
+      console.log('🔄 Middleware: Post-login navigation detected, bypassing auth check once');
       // Remove the query param and let the request through
       const url = request.nextUrl.clone();
       url.searchParams.delete('_auth');
       return NextResponse.rewrite(url);
     }
 
-    // If it's a client-side navigation from login, let it through
-    // The client will handle auth check and redirect if needed
-    if (isClientNavigation && referer && referer.includes('/login')) {
-      console.log('🔄 Middleware: Client navigation from login, letting through');
-      return NextResponse.next();
-    }
-
+    // Redirect to login
+    console.log('🔒 Middleware: No token found for protected route, redirecting to login');
+    console.log('   Path:', pathname);
+    console.log('   Has cookie:', !!request.cookies.get('auth-token'));
+    console.log('   Referer:', referer || 'none');
+    
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
