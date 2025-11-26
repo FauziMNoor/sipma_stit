@@ -157,31 +157,25 @@ export async function POST(request: NextRequest) {
     // Return user data (without password)
     const { password: _, ...userWithoutPassword } = user;
 
-    // Create cookie string manually for better compatibility
-    const maxAge = 60 * 60 * 24 * 7; // 7 days
-    const cookieValue = `auth-token=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${
-      process.env.NODE_ENV === 'production' ? '; Secure' : ''
-    }`;
-
-    console.log('🍪 Setting cookie:', {
-      cookieLength: cookieValue.length,
-      hasHttpOnly: cookieValue.includes('HttpOnly'),
-      hasPath: cookieValue.includes('Path=/'),
-    });
-
-    // Create response with cookie AND token in body (for localStorage fallback)
+    // Create response with token in body
     const response = NextResponse.json({
       success: true,
       user: userWithoutPassword,
       token: token, // Send token in response body for localStorage
       message: 'Login berhasil',
-    }, {
-      headers: {
-        'Set-Cookie': cookieValue,
-      },
     });
 
-    console.log('✅ Response created with Set-Cookie header and token in body');
+    // Set cookie using NextResponse.cookies API (more reliable in production)
+    const maxAge = 60 * 60 * 24 * 7; // 7 days
+    response.cookies.set('auth-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: maxAge,
+      path: '/',
+    });
+
+    console.log('✅ Response created with cookie and token in body');
 
     return response;
   } catch (error: any) {

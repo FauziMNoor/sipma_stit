@@ -1,19 +1,42 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/useToast';
 import { Icon } from '@iconify/react';
 import { useAuth } from '@/hooks/useAuth';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const toast = useToast();
-  const { login } = useAuth();
+  const router = useRouter();
+  const { login, user, isLoading: authLoading } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Redirect if already authenticated
+  useEffect(() => {
+    if (!authLoading && user) {
+      // User already logged in, redirect based on role
+      let redirectPath = '/dashboard';
+      if (user.role === 'admin' || user.role === 'staff') {
+        redirectPath = '/admin';
+      } else if (user.role === 'dosen_pa') {
+        redirectPath = '/dosen-pa/dashboard';
+      } else if (user.role === 'waket3') {
+        redirectPath = '/waket3/dashboard';
+      } else if (user.role === 'musyrif') {
+        redirectPath = '/musyrif/dashboard';
+      } else if (user.role === 'mahasiswa') {
+        redirectPath = '/mahasiswa/dashboard';
+      }
+
+      router.replace(redirectPath);
+    }
+  }, [user, authLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -51,8 +74,8 @@ export default function LoginPage() {
     }
   };
 
-  // Show skeleton loader during login process
-  if (isLoading) {
+  // Show skeleton loader during auth check or login process
+  if (authLoading || isLoading) {
     return (
       <div className="flex flex-col h-screen bg-white">
         <div className="flex-1 flex flex-col justify-center px-6 sm:px-8 lg:px-12 py-12">
