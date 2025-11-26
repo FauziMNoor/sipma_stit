@@ -144,10 +144,16 @@ export default function InputKegiatan() {
         }
       }
 
+      // Get token from localStorage
+      const token = localStorage.getItem('auth-token');
+      
       // Submit kegiatan
       const response = await fetch('/api/mahasiswa/kegiatan', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
         credentials: 'include',
         body: JSON.stringify({
           kategori_poin_id: selectedKategori,

@@ -46,7 +46,13 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
   const fetchDetail = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/waket3/verifikasi/detail/${pengajuanId}`);
+      const token = localStorage.getItem('auth-token');
+      const response = await fetch(`/api/waket3/verifikasi/detail/${pengajuanId}`, {
+        headers: {
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        credentials: 'include',
+      });
       const result = await response.json();
 
       if (!response.ok || !result.success) {
@@ -67,9 +73,14 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
 
     try {
       setProcessing(true);
+      const token = localStorage.getItem('auth-token');
       const response = await fetch(`/api/waket3/verifikasi/${pengajuanId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        credentials: 'include',
         body: JSON.stringify({
           action: 'approve',
           verifikator_id: userId,
@@ -100,9 +111,14 @@ export default function DetailPengajuanWaket3({ pengajuanId, userId }: DetailPen
 
     try {
       setProcessing(true);
+      const token = localStorage.getItem('auth-token');
       const response = await fetch(`/api/waket3/verifikasi/${pengajuanId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
+        },
+        credentials: 'include',
         body: JSON.stringify({
           action: 'reject',
           verifikator_id: userId,

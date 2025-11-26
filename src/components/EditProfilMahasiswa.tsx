@@ -87,6 +87,9 @@ export default function EditProfilMahasiswa() {
     try {
       setSaving(true);
 
+      // Get token from localStorage
+      const token = localStorage.getItem('auth-token');
+
       // Upload foto if changed
       let fotoUrl = mahasiswa?.foto;
       if (fotoFile) {
@@ -95,7 +98,11 @@ export default function EditProfilMahasiswa() {
 
         const uploadResponse = await fetch('/api/upload', {
           method: 'POST',
+          headers: {
+            ...(token && { 'Authorization': `Bearer ${token}` })
+          },
           body: uploadFormData,
+          credentials: 'include',
         });
 
         const uploadResult = await uploadResponse.json();
@@ -109,7 +116,9 @@ export default function EditProfilMahasiswa() {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          ...(token && { 'Authorization': `Bearer ${token}` })
         },
+        credentials: 'include',
         body: JSON.stringify({
           ...formData,
           foto: fotoUrl,
