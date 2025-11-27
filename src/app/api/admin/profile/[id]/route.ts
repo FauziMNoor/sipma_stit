@@ -16,8 +16,16 @@ export async function GET(
   try {
     const { id } = await params;
 
-    // Verify authentication
-    const token = request.cookies.get('auth-token')?.value;
+    // Verify authentication - check cookie first, then Authorization header
+    let token = request.cookies.get('auth-token')?.value;
+
+    if (!token) {
+      const authHeader = request.headers.get('authorization');
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
     if (!token) {
       return NextResponse.json(
         { success: false, error: 'Tidak terautentikasi' },
@@ -99,8 +107,16 @@ export async function PUT(
   try {
     const { id } = await params;
 
-    // Verify authentication
-    const token = request.cookies.get('auth-token')?.value;
+    // Verify authentication - check cookie first, then Authorization header
+    let token = request.cookies.get('auth-token')?.value;
+
+    if (!token) {
+      const authHeader = request.headers.get('authorization');
+      if (authHeader?.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
     if (!token) {
       return NextResponse.json(
         { success: false, error: 'Tidak terautentikasi' },
